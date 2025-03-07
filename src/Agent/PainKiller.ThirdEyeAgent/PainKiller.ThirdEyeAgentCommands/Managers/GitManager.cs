@@ -73,17 +73,6 @@ public class GitHubManager : IGitManager
 
         return new List<Team>();
     }
-
-
-    //public IEnumerable<Repository> GetRepositories(Guid projectId)
-    //{
-
-    //    var response = _client.GetStringAsync($"https://api.github.com/orgs/{_organisationName}/repos").Result;
-    //    var repositories = JsonSerializer.Deserialize<List<GitHubRepo>>(response);
-
-    //    return repositories?.Select(repo => new Repository { Name = repo.Name, RepositoryId = repo.Id.ToGuid(), Url = repo.HtmlUrl }) ?? new List<Repository>();
-    //}
-
     public IEnumerable<Repository> GetRepositories(Guid projectId)
     {
         var response = _client.GetStringAsync("https://api.github.com/user/repos").Result;
@@ -92,7 +81,6 @@ public class GitHubManager : IGitManager
         return  repositories?.Select(repo => new Repository { Name = repo.Name, RepositoryId = repo.Id.ToGuid(), Url = repo.HtmlUrl, ProjectId = projectId}) ?? new List<Repository>();
         
     }
-
     private string GetRepositoryNameFromId(Guid repositoryId)
     {
         if (_repoCache.ContainsKey(repositoryId))

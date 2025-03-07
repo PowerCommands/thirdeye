@@ -2,7 +2,7 @@ version: 1.0
 configuration:
   showDiagnosticInformation: false
   prompt: "PC>"
-  defaultCommand: commands
+  defaultCommand: component
   codeEditor: C:\Users\%USERNAME%\AppData\Local\Programs\Microsoft VS Code\Code.exe
   repository: https://github.com/PowerCommands/PowerCommands2022
   defaultAIBotUri: https://chatgpt.com/?q=$QUERY$&hints=search
