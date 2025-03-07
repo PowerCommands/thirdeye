@@ -10,7 +10,7 @@ configuration:
   thirdEyeAgent:
     host: https://klingsten.visualstudio.com/
     projects: 
-    - Hitchhiker
+    - "*"
     teams: 
     - "*"
   infoPanel:

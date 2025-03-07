@@ -8,8 +8,10 @@ public abstract class ThirdEyeBaseCommando : CommandBase<PowerCommandsConfigurat
     {
         DbManager = new DbManager(configuration.ThirdEyeAgent.Host);
         AdsManager = new AdsManager(Configuration.ThirdEyeAgent.Host,Configuration.Secret.DecryptSecret(ConfigurationGlobals.AccessTokenName), this);
+        PresentationManager = new PresentationManager(this);
     }
     protected DbManager DbManager { get; }
     protected AdsManager AdsManager { get; } 
     protected FileAnalyzeManager AnalyzeManager { get; } = new();
+    protected PresentationManager PresentationManager { get; }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using PainKiller.ThirdEyeAgentCommands.Contracts;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
-using PainKiller.ThirdEyeAgentCommands.Managers.ComponentExtractors;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
@@ -36,10 +35,12 @@ public class FileAnalyzeManager
         return relevantExtensions.Contains(Path.GetExtension(path));
     }
     private List<Item> GetRelevantFiles(IEnumerable<Item> files) => files.Where(file => !file.IsFolder && IsRelevantFile(file.Path)).ToList();
-    public  List<ThirdPartyComponent> AnalyzeFiles(IEnumerable<Item> files)
+    public  Analyze AnalyzeRepo(List<Item> repoItems)
     {
-        var retVal = new List<ThirdPartyComponent>();
-        var relevantFiles = GetRelevantFiles(files);
+        var retVal = new Analyze();
+        var devProjects = DevProjectManager.IdentifyProjects(repoItems);
+        var components = new List<ThirdPartyComponent>();
+        var relevantFiles = GetRelevantFiles(repoItems);
         var extractors = GetExtractors();
         foreach ( var extractor in extractors)
         {
@@ -47,10 +48,19 @@ public class FileAnalyzeManager
             {
                 if (extractor.CanHandle(file))
                 {
-                    retVal.AddRange(extractor.ExtractComponents(file));
+                    components.AddRange(extractor.ExtractComponents(file));
                 }
             }
         }
+
+        foreach (var project in devProjects)
+        {
+            var normalizedProjectPath = Path.GetFullPath(project.Path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            var projectComponents = components.Where(c => Path.GetFullPath(c.Path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).StartsWith(normalizedProjectPath, StringComparison.OrdinalIgnoreCase)).ToList();
+            project.Components = projectComponents;
+        }
+        retVal.DevProjects = devProjects;
+        retVal.ThirdPartyComponents = components;
         return retVal;
     }
     public List<IComponentExtractor> GetExtractors()

@@ -20,9 +20,14 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var selectedRepo = repository[key2];
             var files = AdsManager.GetAllFilesInRepository(selectedRepo.RepositoryId).ToList();
             WriteSeparatorLine();
-            var components = AnalyzeManager.AnalyzeFiles(files);
-            foreach (var thirdPartyComponent in components) WriteCodeExample(thirdPartyComponent.Name, thirdPartyComponent.Version);
-            
+            var analyzeRepo = AnalyzeManager.AnalyzeRepo(files);
+            PresentationManager.DisplayRepository(selectedRepo.Name, files, analyzeRepo);
+            //foreach (var devProject in analyzeRepo.DevProjects)
+            //{
+            //    WriteCodeExample(devProject.Name, devProject.Sdk);
+            //    WriteCodeExample(devProject.Framework, devProject.Language);
+            //    foreach (var component in devProject.Components) WriteCodeExample(component.Name, component.Version);
+            //}
             return Ok();
         }
         private List<Project> SyncWithServer()
