@@ -3,10 +3,11 @@ using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
+using PainKiller.ThirdEyeAgentCommands.Contracts;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
-public class AdsManager(string serverUrl, string accessToken, IConsoleWriter writer)
+public class AdsManager(string serverUrl, string accessToken, IConsoleWriter writer) : IGitManager
 {
     private readonly VssConnection _connection = new(new Uri(serverUrl), new VssBasicCredential(string.Empty, accessToken));
     public void Connect()
@@ -18,22 +19,22 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
     public IEnumerable<Project> GetProjects()
     {
         var client = _connection.GetClient<ProjectHttpClient>();
-        return client.GetProjects().Result.Select(p => new Project { Description = p.Description, LastUpdateTime = p.LastUpdateTime, Name = p.Name, Revision = p.Revision, State = p.State.ToString(), Url = p.Url, Visibility = p.Visibility, Id = p.Id });
+        return client.GetProjects().Result.Select(p => new Project { Description = p.Description, LastUpdateTime = p.LastUpdateTime, Name = p.Name, Revision = p.Revision, State = p.State.ToString(), Url = p.Url, Id = p.Id });
     }
-    public Project? GetProject(string projectName)
-    {
-        try
-        {
-            var client = _connection.GetClient<ProjectHttpClient>();
-            var project = client.GetProject(projectName).Result;
-            return new Project { Description = project.Description, LastUpdateTime = project.LastUpdateTime, Name = project.Name, Revision = project.Revision, State = project.State.ToString(), Url = project.Url, Visibility = project.Visibility, Id = project.Id };
-        }
-        catch (Exception ex)
-        {
-            writer.WriteFailure($"Kunde inte hämta projekt '{projectName}': {ex.Message}");
-            return null;
-        }
-    }
+    //public Project? GetProject(string projectName)
+    //{
+    //    try
+    //    {
+    //        var client = _connection.GetClient<ProjectHttpClient>();
+    //        var project = client.GetProject(projectName).Result;
+    //        return new Project { Description = project.Description, LastUpdateTime = project.LastUpdateTime, Name = project.Name, Revision = project.Revision, State = project.State.ToString(), Url = project.Url, Id = project.Id };
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        writer.WriteFailure($"Kunde inte hämta projekt '{projectName}': {ex.Message}");
+    //        return null;
+    //    }
+    //}
     public IEnumerable<Team> GetAllTeams()
     {
         var teamClient = _connection.GetClient<TeamHttpClient>();
@@ -79,7 +80,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
         }
         return retVal;
     }
-    public IEnumerable<Team> GetTeams(Guid projectId)
+    private IEnumerable<Team> GetTeams(Guid projectId)
     {
         var teamClient = _connection.GetClient<TeamHttpClient>();
         var retVal = new List<Team>();
@@ -92,7 +93,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
             retVal.Add(team);
         }
         return retVal;
-    } 
+    }
     public IEnumerable<Repository> GetRepositories(Guid projectId)
     {
         try

@@ -8,7 +8,8 @@ configuration:
   defaultAIBotUri: https://chatgpt.com/?q=$QUERY$&hints=search
   backupPath: ..\..\..\..\..\
   thirdEyeAgent:
-    host: https://klingsten.visualstudio.com/
+    host: https://github.com/PowerCommands
+    organisationName: PowerCommands
     projects: 
     - "*"
     teams: 
@@ -65,6 +66,9 @@ configuration:
   secret:
     secrets:    
     - name: TE_RepositoryToken
+      options:
+        target: User
+    - name: TE_github_RepositoryToken
       options:
         target: User
   environment:

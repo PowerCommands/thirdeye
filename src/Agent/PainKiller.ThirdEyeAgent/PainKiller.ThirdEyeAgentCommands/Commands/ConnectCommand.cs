@@ -7,7 +7,7 @@
     {
         public override RunResult Run()
         {
-            AdsManager.Connect();
+            GitManager.Connect();
             return Ok();
         }
     }

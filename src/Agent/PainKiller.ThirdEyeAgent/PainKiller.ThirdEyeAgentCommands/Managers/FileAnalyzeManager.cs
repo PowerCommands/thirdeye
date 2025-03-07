@@ -38,6 +38,7 @@ public class FileAnalyzeManager
     public  Analyze AnalyzeRepo(List<Item> repoItems, Guid projectId, Guid repositoryId)
     {
         var retVal = new Analyze();
+        if(repoItems.Count == 0) return retVal;
         var devProjects = DevProjectManager.IdentifyProjects(repoItems);
         var components = new List<ThirdPartyComponent>();
         var relevantFiles = GetRelevantFiles(repoItems);
