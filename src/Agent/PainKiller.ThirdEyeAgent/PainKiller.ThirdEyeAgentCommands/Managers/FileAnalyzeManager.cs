@@ -35,7 +35,7 @@ public class FileAnalyzeManager
         return relevantExtensions.Contains(Path.GetExtension(path));
     }
     private List<Item> GetRelevantFiles(IEnumerable<Item> files) => files.Where(file => !file.IsFolder && IsRelevantFile(file.Path)).ToList();
-    public  Analyze AnalyzeRepo(List<Item> repoItems)
+    public  Analyze AnalyzeRepo(List<Item> repoItems, Guid projectId, Guid repositoryId)
     {
         var retVal = new Analyze();
         var devProjects = DevProjectManager.IdentifyProjects(repoItems);
@@ -52,12 +52,13 @@ public class FileAnalyzeManager
                 }
             }
         }
-
-        foreach (var project in devProjects)
+        foreach (var devProject in devProjects)
         {
-            var normalizedProjectPath = Path.GetFullPath(project.Path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            var normalizedProjectPath = Path.GetFullPath(devProject.Path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             var projectComponents = components.Where(c => Path.GetFullPath(c.Path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).StartsWith(normalizedProjectPath, StringComparison.OrdinalIgnoreCase)).ToList();
-            project.Components = projectComponents;
+            devProject.Components = projectComponents;
+            devProject.ProjectId = projectId;
+            devProject.RepositoryId = repositoryId;
         }
         retVal.DevProjects = devProjects;
         retVal.ThirdPartyComponents = components;

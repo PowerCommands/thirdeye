@@ -1,4 +1,5 @@
-﻿using Microsoft.TeamFoundation.Core.WebApi;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
@@ -18,6 +19,20 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
     {
         var client = _connection.GetClient<ProjectHttpClient>();
         return client.GetProjects().Result.Select(p => new Project { Description = p.Description, LastUpdateTime = p.LastUpdateTime, Name = p.Name, Revision = p.Revision, State = p.State.ToString(), Url = p.Url, Visibility = p.Visibility, Id = p.Id });
+    }
+    public Project? GetProject(string projectName)
+    {
+        try
+        {
+            var client = _connection.GetClient<ProjectHttpClient>();
+            var project = client.GetProject(projectName).Result;
+            return new Project { Description = project.Description, LastUpdateTime = project.LastUpdateTime, Name = project.Name, Revision = project.Revision, State = project.State.ToString(), Url = project.Url, Visibility = project.Visibility, Id = project.Id };
+        }
+        catch (Exception ex)
+        {
+            writer.WriteFailure($"Kunde inte hämta projekt '{projectName}': {ex.Message}");
+            return null;
+        }
     }
     public IEnumerable<Team> GetAllTeams()
     {
@@ -77,7 +92,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
             retVal.Add(team);
         }
         return retVal;
-    }
+    } 
     public IEnumerable<Repository> GetRepositories(Guid projectId)
     {
         try
@@ -100,17 +115,27 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
             return new List<Repository>();
         }
     }
-    private Branch GetMainBranch(Guid repositoryId)
+    private Branch? GetMainBranch(Guid repositoryId)
     {
-        var gitClient = _connection.GetClient<GitHttpClient>();
-        var branches = gitClient.GetBranchesAsync(repositoryId.ToString()).Result;
+        try
+        {
+            var gitClient = _connection.GetClient<GitHttpClient>();
+            var branches = gitClient.GetBranchesAsync(repositoryId.ToString()).Result;
 
-        var baseBranch = branches.FirstOrDefault(b => b.IsBaseVersion);
-        var mainBranch = baseBranch ?? branches.FirstOrDefault(b =>
-            b.Name.Equals("refs/heads/main", StringComparison.OrdinalIgnoreCase) ||
-            b.Name.Equals("refs/heads/master", StringComparison.OrdinalIgnoreCase));
-        return mainBranch == null ? new Branch { Name = "MISSING" } : new Branch { CommitId = mainBranch.Commit.CommitId, Name = mainBranch.Name, Author = mainBranch.Commit.Author.Email, IsBaseVersion = true };
-    }
+            var baseBranch = branches.FirstOrDefault(b => b.IsBaseVersion);
+            var mainBranch = (baseBranch ?? branches.FirstOrDefault(b =>
+                b.Name.Equals("refs/heads/main", StringComparison.OrdinalIgnoreCase) ||
+                b.Name.Equals("refs/heads/master", StringComparison.OrdinalIgnoreCase))) ?? branches.FirstOrDefault();
+
+            return mainBranch == null ? null : new Branch { CommitId = mainBranch.Commit.CommitId, Name = mainBranch.Name, Author = mainBranch.Commit.Author.Email, IsBaseVersion = true };
+        }
+        catch (Exception ex)
+        {
+            IPowerCommandServices.DefaultInstance?.Logger.Log(LogLevel.Error, $"{ex.Message}");
+            return null;
+        }
+
+    } 
     public IEnumerable<Item> GetAllFilesInRepository(Guid repositoryId)
     {
         try
@@ -122,7 +147,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
         }
         catch (Exception ex)
         {
-            writer.WriteFailure($"Error when fetching files in repository: {ex.Message}");
+            IPowerCommandServices.DefaultInstance?.Logger.Log(LogLevel.Error, $"{ex.Message}");
             return new List<Item>();
         }
     }

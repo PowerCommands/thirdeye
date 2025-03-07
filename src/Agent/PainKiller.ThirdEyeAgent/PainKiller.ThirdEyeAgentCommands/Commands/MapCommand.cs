@@ -14,14 +14,14 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
         }
         public void DisplayThreeView()
         {
-            var projects = DbManager.GetProjects().GetFilteredProjects(Configuration.ThirdEyeAgent.Projects);
-            var repositories = DbManager.GetRepositories();
+            var projects = ObjectStorage.GetProjects().GetFilteredProjects(Configuration.ThirdEyeAgent.Projects);
+            var repositories = ObjectStorage.GetRepositories();
             WriteSuccessLine("\n🏠 Organisation");
             foreach (var project in projects)
             {
                 if(repositories.All(p => p.ProjectId != project.Id)) continue;
                 WriteSuccessLine($"  ├── 📦 {project.Name}");
-                var teams = DbManager.GetTeams().Where(t => t.ProjectIds.Any(p => p == project.Id));
+                var teams = ObjectStorage.GetTeams().Where(t => t.ProjectIds.Any(p => p == project.Id));
                 foreach (var team in teams)
                 {
                     WriteSuccessLine($"  │   ├── 👨‍👩‍👧‍👦 {team.Name.Trim()}");

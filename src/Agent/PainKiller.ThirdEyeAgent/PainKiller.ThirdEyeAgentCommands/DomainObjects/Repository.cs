@@ -5,5 +5,5 @@ public class Repository
     public string Url { get; set; } = "";
     public Guid ProjectId { get; set; }
     public Guid RepositoryId { get; set; }
-    public Branch MainBranch { get; set; } = new();
+    public Branch? MainBranch { get; set; } = new();
 }

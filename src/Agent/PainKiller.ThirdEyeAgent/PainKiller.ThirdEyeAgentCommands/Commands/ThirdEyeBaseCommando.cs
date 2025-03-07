@@ -6,11 +6,11 @@ public abstract class ThirdEyeBaseCommando : CommandBase<PowerCommandsConfigurat
 {
     protected ThirdEyeBaseCommando(string identifier, PowerCommandsConfiguration configuration) : base(identifier, configuration)
     {
-        DbManager = new DbManager(configuration.ThirdEyeAgent.Host);
+        ObjectStorage = new ObjectStorageManager(configuration.ThirdEyeAgent.Host);
         AdsManager = new AdsManager(Configuration.ThirdEyeAgent.Host,Configuration.Secret.DecryptSecret(ConfigurationGlobals.AccessTokenName), this);
         PresentationManager = new PresentationManager(this);
     }
-    protected DbManager DbManager { get; }
+    protected ObjectStorageManager ObjectStorage { get; }
     protected AdsManager AdsManager { get; } 
     protected FileAnalyzeManager AnalyzeManager { get; } = new();
     protected PresentationManager PresentationManager { get; }

@@ -2,6 +2,8 @@
 
 public class DevProject
 {
+    public Guid ProjectId { get; set; }
+    public Guid RepositoryId { get; set; }
     public string Name { get; set; } = "";
     public string Path { get; set; } = "";
     public string Sdk { get; set; } = "";
