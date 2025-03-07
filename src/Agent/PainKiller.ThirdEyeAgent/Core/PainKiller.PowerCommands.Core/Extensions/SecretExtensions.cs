@@ -1,4 +1,5 @@
-﻿using PainKiller.PowerCommands.Security.Services;
+﻿using Microsoft.Extensions.Logging;
+using PainKiller.PowerCommands.Security.Services;
 
 namespace PainKiller.PowerCommands.Core.Extensions
 {
@@ -6,10 +7,18 @@ namespace PainKiller.PowerCommands.Core.Extensions
     {
         public static string DecryptSecret(this SecretConfiguration secretConfiguration, string secretName)
         {
-            var secret = secretConfiguration.Secrets.FirstOrDefault(s => s.Name == secretName);
-            if (secret == null) return "";
-            var retVal = SecretService.Service.GetSecret(secret.Name, secret.Options, EncryptionService.Service.DecryptString);
-            return retVal;
+            try
+            {
+                var secret = secretConfiguration.Secrets.FirstOrDefault(s => s.Name == secretName);
+                if (secret == null) return "";
+                var retVal = SecretService.Service.GetSecret(secret.Name, secret.Options, EncryptionService.Service.DecryptString);
+                return retVal;
+            }
+            catch(Exception ex)
+            {
+                IPowerCommandServices.DefaultInstance?.Logger.Log(LogLevel.Error, message: $"{nameof(SecretExtensions)} {nameof(DecryptSecret)} {ex.Message}");
+                return "";
+            }
         }
         public static string EncryptSecret<T>(this T configuration,  EnvironmentVariableTarget target, string secretName, string secret) where T : ICommandsConfiguration, new()
         {
