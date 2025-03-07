@@ -11,4 +11,5 @@ public abstract class ThirdEyeBaseCommando : CommandBase<PowerCommandsConfigurat
     }
     protected DbManager DbManager { get; }
     protected AdsManager AdsManager { get; } 
+    protected FileAnalyzeManager AnalyzeManager { get; } = new();
 }

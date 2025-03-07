@@ -9,6 +9,10 @@ configuration:
   backupPath: ..\..\..\..\..\
   thirdEyeAgent:
     host: https://klingsten.visualstudio.com/
+    projects: 
+    - Hitchhiker
+    teams: 
+    - "*"
   infoPanel:
     use: false
     autoAdjustOnResize: true

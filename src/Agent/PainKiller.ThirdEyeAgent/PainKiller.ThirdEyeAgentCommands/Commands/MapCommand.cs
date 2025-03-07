@@ -1,4 +1,6 @@
-﻿namespace PainKiller.ThirdEyeAgentCommands.Commands
+﻿using PainKiller.ThirdEyeAgentCommands.Extensions;
+
+namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
     [PowerCommandDesign( description: "Shows an overview of your sourcecode host.",
                   disableProxyOutput: true,
@@ -12,7 +14,7 @@
         }
         public void DisplayThreeView()
         {
-            var projects = DbManager.GetProjects();
+            var projects = DbManager.GetProjects().GetFilteredProjects(Configuration.ThirdEyeAgent.Projects);
             var repositories = DbManager.GetRepositories();
             WriteSuccessLine("\n🏠 Organisation");
             foreach (var project in projects)

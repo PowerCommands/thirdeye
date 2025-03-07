@@ -1,4 +1,6 @@
-﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+﻿using System.Reflection;
+using PainKiller.ThirdEyeAgentCommands.Contracts;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Managers.ComponentExtractors;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
@@ -33,18 +35,34 @@ public class FileAnalyzeManager
         };
         return relevantExtensions.Contains(Path.GetExtension(path));
     }
-    private static List<Item> GetRelevantFiles(IEnumerable<Item> files) => files.Where(file => !file.IsFolder && IsRelevantFile(file.Path)).ToList();
-    public static List<ThirdPartyComponent> AnalyzeFiles(IEnumerable<Item> files)
+    private List<Item> GetRelevantFiles(IEnumerable<Item> files) => files.Where(file => !file.IsFolder && IsRelevantFile(file.Path)).ToList();
+    public  List<ThirdPartyComponent> AnalyzeFiles(IEnumerable<Item> files)
     {
         var retVal = new List<ThirdPartyComponent>();
         var relevantFiles = GetRelevantFiles(files);
-        var extractor = new CsProjExtractor();
-        foreach (var file in relevantFiles)
+        var extractors = GetExtractors();
+        foreach ( var extractor in extractors)
         {
-            if (extractor.CanHandle(file))
+            foreach (var file in relevantFiles)
             {
-                retVal.AddRange(extractor.ExtractComponents(file));
+                if (extractor.CanHandle(file))
+                {
+                    retVal.AddRange(extractor.ExtractComponents(file));
+                }
             }
+        }
+        return retVal;
+    }
+    public List<IComponentExtractor> GetExtractors()
+    {
+        var currentAssembly = Assembly.GetCallingAssembly();
+        var types = currentAssembly.GetTypes().Where(t => t.IsClass && t.Name.EndsWith("Extractor") && !t.IsAbstract).ToList();
+        var retVal = new List<IComponentExtractor>();
+        if (types.Count == 0) return retVal;
+        foreach (var extractorType in types)
+        {
+            var extractor = (IComponentExtractor)Activator.CreateInstance(extractorType)!;
+            retVal.Add(extractor);
         }
         return retVal;
     }

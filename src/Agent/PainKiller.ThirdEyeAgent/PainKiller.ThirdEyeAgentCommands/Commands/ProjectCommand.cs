@@ -1,5 +1,5 @@
 ﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects;
-using PainKiller.ThirdEyeAgentCommands.Managers;
+using PainKiller.ThirdEyeAgentCommands.Extensions;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
@@ -11,7 +11,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
     {
         public override RunResult Run()
         {
-            var projects = HasOption("sync-with-host") ? SyncWithServer() : DbManager.GetProjects();
+            var projects = HasOption("sync-with-host") ? SyncWithServer() : DbManager.GetProjects().GetFilteredProjects(Configuration.ThirdEyeAgent.Projects);
             var (key, _) = ListService.ListDialog("Choose project", projects.Select(p => $"{p.Name, 50} {p.Id}").ToList()).First();
             var selectedProject = projects[key];
             WriteSuccess(selectedProject.Name);
@@ -19,7 +19,8 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var (key2, _) = ListService.ListDialog("Choose repository", repository.Select(r => $"{r.Name, 50} {r.RepositoryId}").ToList()).First();
             var selectedRepo = repository[key2];
             var files = AdsManager.GetAllFilesInRepository(selectedRepo.RepositoryId).ToList();
-            var components = FileAnalyzeManager.AnalyzeFiles(files);
+            WriteSeparatorLine();
+            var components = AnalyzeManager.AnalyzeFiles(files);
             foreach (var thirdPartyComponent in components) WriteCodeExample(thirdPartyComponent.Name, thirdPartyComponent.Version);
             
             return Ok();
