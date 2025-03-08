@@ -2,7 +2,7 @@
 {
     [PowerCommandDesign( description: "Text connection to server",
                   disableProxyOutput: true,
-                             example: "//Text connection|conenct")]
+                             example: "//Test connection|conenct")]
     public class ConnectCommand(string identifier, PowerCommandsConfiguration configuration) :ThirdEyeBaseCommando(identifier, configuration)
     {
         public override RunResult Run()

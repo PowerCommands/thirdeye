@@ -7,28 +7,18 @@ namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
 public static class DevProjectManager
 {
-    public static List<Item> IdentifyProjectNoContent(List<Item> files)
-    {
-        var projectFiles = files.
-            Where(f => f.Path.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) 
-                       || f.Path.EndsWith("vbproj.json", StringComparison.OrdinalIgnoreCase) 
-                       || f.Path.EndsWith("package.json", StringComparison.OrdinalIgnoreCase) 
-                       || f.Path.EndsWith("go.mod", StringComparison.OrdinalIgnoreCase) 
-                       || f.Path.EndsWith("pom.xml", StringComparison.OrdinalIgnoreCase)).ToList();
-        return projectFiles;
-    }
     public static List<DevProject> IdentifyProjects(List<Item> files)
     {
         try
         {
-            var projectFiles = IdentifyProjectNoContent(files);
+            var projectFiles = files.Where(f => f.Path.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) || f.Path.EndsWith("vbproj.json", StringComparison.OrdinalIgnoreCase) || f.Path.EndsWith("package.json", StringComparison.OrdinalIgnoreCase) || f.Path.EndsWith("go.mod", StringComparison.OrdinalIgnoreCase) || f.Path.EndsWith("pom.xml", StringComparison.OrdinalIgnoreCase)).ToList();
             return projectFiles.Select(file => new DevProject { Name = Path.GetFileNameWithoutExtension(file.Path), Path = Path.GetDirectoryName(file.Path) ?? "", Version = ExtractVersion(file), Framework = ExtractFramework(file), Language = DetectLanguage(files), Sdk = ExtractSdk(file)}).ToList();
         }
         catch(Exception ex)
         {
             PowerCommandServices.Service.Logger.Log(LogLevel.Error, $"{nameof(DevProjectManager)} {nameof(IdentifyProjects)} {ex.Message}");
         }
-        return new List<DevProject>();
+        return [];
     }
     private static string ExtractVersion(Item file)
     {

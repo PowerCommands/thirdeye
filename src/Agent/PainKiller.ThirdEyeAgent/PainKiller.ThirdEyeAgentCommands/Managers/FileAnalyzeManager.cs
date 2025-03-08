@@ -32,7 +32,7 @@ public class FileAnalyzeManager
             "Cargo.lock",
             "mix.exs", // Elixir Mix
         };
-        return relevantExtensions.Contains(Path.GetExtension(path));
+        return relevantExtensions.Any(extension => path.EndsWith(extension, StringComparison.OrdinalIgnoreCase));
     }
     private List<Item> GetRelevantFiles(IEnumerable<Item> files) => files.Where(file => !file.IsFolder && IsRelevantFile(file.Path)).ToList();
     public  Analyze AnalyzeRepo(List<Item> repoItems, Guid projectId, Guid repositoryId)

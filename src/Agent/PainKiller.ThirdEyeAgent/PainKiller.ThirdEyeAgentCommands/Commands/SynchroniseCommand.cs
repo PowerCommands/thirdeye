@@ -37,9 +37,12 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var removeRepositories = new List<Repository>();   //No Git repository found or project without any repository
             var allDistinctComponents = new List<ThirdPartyComponent>();
             var allDevProjects = new List<DevProject>();
-            
+
+            var projectIterationCount = 0;
             foreach (var project in projects)
             {
+                projectIterationCount++;
+                WriteLine($"Synchronosing project {project.Name} ({projectIterationCount} of {projects.Count})");
                 var repositories = GitManager.GetRepositories(project.Id).ToList();
                 if (repositories.Count == 0)
                 {
@@ -47,14 +50,19 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                     continue;
                 }
                 allRepositories.AddRange(repositories);
+                var repositoryIterationCount = 0;
                 foreach (var repository in repositories)
                 {
+                    repositoryIterationCount++;
+                    WriteLine($"Synchronosing repo {repository.Name} ({repositoryIterationCount} of {repositories.Count})");
                     var files = GitManager.GetAllFilesInRepository(repository.RepositoryId).ToList();
                     if (files.Count == 0)
                     {
+                        WriteLine($"Repo {repository.Name} has no files and will be removed.");
                         removeRepositories.Add(repository);
                         continue;
                     }
+                    WriteLine($"Found {files.Count} files, that now will be analyzed to find projects and components...");
                     var analyzeRepo = AnalyzeManager.AnalyzeRepo(files, project.Id, repository.RepositoryId);
                     foreach (var thirdPartyComponent in analyzeRepo.ThirdPartyComponents.Where(thirdPartyComponent => !allDistinctComponents.Any(c => c.Name == thirdPartyComponent.Name && c.Version == thirdPartyComponent.Version))) allDistinctComponents.Add(thirdPartyComponent);
                     allDevProjects.AddRange(analyzeRepo.DevProjects);

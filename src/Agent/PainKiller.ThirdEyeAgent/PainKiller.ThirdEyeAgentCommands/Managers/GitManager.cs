@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Microsoft.TeamFoundation.SourceControl.WebApi;
 using PainKiller.ThirdEyeAgentCommands.Contracts;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Extensions;
@@ -103,22 +102,9 @@ public class GitHubManager : IGitManager
 
             var response = _client.GetStringAsync($"https://api.github.com/repos/{_organisationName}/{repoName}/git/trees/main?recursive=1").Result;
             var tree = JsonSerializer.Deserialize<GitHubTreeResponse>(response);
-
-            var items =tree?.Tree?.Select(file => new Item
-            {
-                Path = file.Path,
-                CommitId = tree.Sha,
-                IsFolder = file.Type == "tree",
-            }).ToList() ?? new List<Item>();
-            var projectFiles = DevProjectManager.IdentifyProjectNoContent(items);
-            var retVal = new List<Item>();
-            foreach (var item in items)
-            {
-                if(projectFiles.Any(p => p.Path == item.Path)) 
-                    item.Content = GetContent(new GitItem{CommitId = item.CommitId,Path = item.Path}, repositoryId);
-                retVal.Add(item);
-            }
-            return retVal;
+            var items =tree?.Tree?.Select(file => new Item { Path = file.Path, CommitId = tree.Sha, IsFolder = file.Type == "tree", }).ToList() ?? new List<Item>();
+            foreach (var item in items.Where(i => FileAnalyzeManager.IsRelevantFile(i.Path))) item.Content = GetContent(item, repositoryId);
+            return items;
         }
         catch (Exception ex)
         {
@@ -126,7 +112,7 @@ public class GitHubManager : IGitManager
         }
         return new List<Item>();
     }
-    public string GetContent(GitItem item, Guid repositoryId)
+    public string GetContent(Item item, Guid repositoryId)
     {
         var repoName = GetRepositoryNameFromId(repositoryId);
         if (string.IsNullOrEmpty(repoName)) return "";

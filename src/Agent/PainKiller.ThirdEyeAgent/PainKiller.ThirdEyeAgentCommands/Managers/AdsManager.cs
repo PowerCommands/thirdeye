@@ -142,9 +142,9 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
         try
         {
             var gitClient = _connection.GetClient<GitHttpClient>();
-            var items = gitClient.GetItemsAsync(repositoryId.ToString(), scopePath: "/", recursionLevel: VersionControlRecursionType.Full).Result;
+            var items = gitClient.GetItemsAsync(repositoryId.ToString(), scopePath: "/", recursionLevel: VersionControlRecursionType.Full).Result.Select(i => new Item { CommitId = i.CommitId, Content = i.Content, IsFolder = i.IsFolder, Path = i.Path, RepositoryId = repositoryId}).ToList();
             foreach (var item in items.Where(i => FileAnalyzeManager.IsRelevantFile(i.Path))) item.Content = GetContent(item, repositoryId);
-            return items.Select(i => new Item { CommitId = i.CommitId, Content = i.Content, IsFolder = i.IsFolder, Path = i.Path, RepositoryId = repositoryId});
+            return items;
         }
         catch (Exception ex)
         {
@@ -152,7 +152,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
             return new List<Item>();
         }
     }
-    public string GetContent(GitItem item, Guid repositoryId)
+    public string GetContent(Item item, Guid repositoryId)
     {
         var gitClient = _connection.GetClient<GitHttpClient>();
         var stream = gitClient.GetItemTextAsync(repositoryId, item.Path).Result;
