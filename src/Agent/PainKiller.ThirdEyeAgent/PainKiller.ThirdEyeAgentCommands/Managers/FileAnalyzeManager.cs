@@ -4,7 +4,7 @@ using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
-public class FileAnalyzeManager
+public class FileAnalyzeManager : IFileAnalyzeManager
 {
     public static bool IsRelevantFile(string path)
     {

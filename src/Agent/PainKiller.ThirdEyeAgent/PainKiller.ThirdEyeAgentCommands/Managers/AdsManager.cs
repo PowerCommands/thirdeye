@@ -21,20 +21,6 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
         var client = _connection.GetClient<ProjectHttpClient>();
         return client.GetProjects().Result.Select(p => new Project { Description = p.Description, LastUpdateTime = p.LastUpdateTime, Name = p.Name, Revision = p.Revision, State = p.State.ToString(), Url = p.Url, Id = p.Id });
     }
-    //public Project? GetProject(string projectName)
-    //{
-    //    try
-    //    {
-    //        var client = _connection.GetClient<ProjectHttpClient>();
-    //        var project = client.GetProject(projectName).Result;
-    //        return new Project { Description = project.Description, LastUpdateTime = project.LastUpdateTime, Name = project.Name, Revision = project.Revision, State = project.State.ToString(), Url = project.Url, Id = project.Id };
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        writer.WriteFailure($"Kunde inte hämta projekt '{projectName}': {ex.Message}");
-    //        return null;
-    //    }
-    //}
     public IEnumerable<Team> GetAllTeams()
     {
         var teamClient = _connection.GetClient<TeamHttpClient>();

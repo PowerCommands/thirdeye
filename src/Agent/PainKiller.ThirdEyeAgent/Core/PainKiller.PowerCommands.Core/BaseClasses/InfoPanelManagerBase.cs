@@ -29,6 +29,7 @@ public abstract class InfoPanelManagerBase(InfoPanelConfiguration configuration,
             {
                 Display(_previousWidth);
                 _previousWidth = Console.WindowWidth;
+                if(configuration.UpdateIntervalSeconds > 0) break;
                 await Task.Delay(configuration.UpdateIntervalSeconds * 1000, token);
             }
             catch (OperationCanceledException)

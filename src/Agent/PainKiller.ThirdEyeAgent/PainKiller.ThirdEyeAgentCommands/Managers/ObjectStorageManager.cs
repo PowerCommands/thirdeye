@@ -1,8 +1,9 @@
-﻿using PainKiller.ThirdEyeAgentCommands.Data;
+﻿using PainKiller.ThirdEyeAgentCommands.Contracts;
+using PainKiller.ThirdEyeAgentCommands.Data;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
-public class ObjectStorageManager
+public class ObjectStorageManager : IObjectStorageManager
 {
     private readonly string _storagePath;
     private TeamObjects _teamObjects;

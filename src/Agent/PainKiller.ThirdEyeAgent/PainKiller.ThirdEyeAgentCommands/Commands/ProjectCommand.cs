@@ -10,7 +10,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
         public override RunResult Run()
         {
             DisableLog();
-            var projects =  ObjectStorage.GetProjects().GetFilteredProjects(Configuration.ThirdEyeAgent.Projects);
+            var projects =  ObjectStorage.GetProjects().GetFilteredProjects(configuration.ThirdEyeAgent.Projects);
             var (key, _) = ListService.ListDialog("Choose project", projects.Select(p => $"{p.Name} {p.Id}").ToList()).FirstOrDefault();
             var selectedProject = projects[key];
             WriteSuccessLine($"\n{selectedProject.Name}");

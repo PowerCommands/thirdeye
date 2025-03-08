@@ -3,7 +3,7 @@
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
     [PowerCommandDesign(description: "Search for components",
-                           arguments: "!<search arguments>",
+                           arguments: "<search arguments>",
                   disableProxyOutput: true,
                              example: "//Search components|components <search1> <search2>...")]
     public class ComponentCommand(string identifier, PowerCommandsConfiguration configuration) : ThirdEyeBaseCommando(identifier, configuration)
@@ -60,7 +60,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var repos = new List<Repository>();
             var teams = ObjectStorage.GetTeams();
             foreach (var projectRepos in projects.Select(project => ObjectStorage.GetRepositories().Where(r => r.ProjectId == project.Id))) repos.AddRange(projectRepos);
-            PresentationManager.DisplayOrganisation(Configuration.ThirdEyeAgent.OrganisationName, projects, repos, teams, devProjects);
+            PresentationManager.DisplayOrganisation(configuration.ThirdEyeAgent.OrganisationName, projects, repos, teams, devProjects);
         }
     }
 }
