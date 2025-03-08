@@ -34,6 +34,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             
             var allRepositories = new List<Repository>();
             var removeProjects = new List<Project>();   //No Git repository found or project without any repository
+            var removeRepositories = new List<Repository>();   //No Git repository found or project without any repository
             var allDistinctComponents = new List<ThirdPartyComponent>();
             var allDevProjects = new List<DevProject>();
             
@@ -49,6 +50,11 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                 foreach (var repository in repositories)
                 {
                     var files = GitManager.GetAllFilesInRepository(repository.RepositoryId).ToList();
+                    if (files.Count == 0)
+                    {
+                        removeRepositories.Add(repository);
+                        continue;
+                    }
                     var analyzeRepo = AnalyzeManager.AnalyzeRepo(files, project.Id, repository.RepositoryId);
                     foreach (var thirdPartyComponent in analyzeRepo.ThirdPartyComponents.Where(thirdPartyComponent => !allDistinctComponents.Any(c => c.Name == thirdPartyComponent.Name && c.Version == thirdPartyComponent.Version))) allDistinctComponents.Add(thirdPartyComponent);
                     allDevProjects.AddRange(analyzeRepo.DevProjects);
@@ -58,6 +64,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             WriteSuccessLine($"Extracted {allDistinctComponents.Count} distinct components and persisted them to storage.");
             ObjectStorage.SaveDevProjects(allDevProjects);
             WriteSuccessLine($"Extracted {allDevProjects.Count} dev projects and persisted them to storage.");
+            foreach (var repo in removeRepositories) allRepositories.Remove(repo);
             ObjectStorage.SaveRepositories(allRepositories);
             WriteSuccessLine($"Fetched {allRepositories.Count} repositories and persisted them to storage.");
             foreach (var project in removeProjects) projects.Remove(project);

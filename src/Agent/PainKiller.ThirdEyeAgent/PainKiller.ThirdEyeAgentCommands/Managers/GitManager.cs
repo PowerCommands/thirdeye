@@ -45,7 +45,7 @@ public class GitHubManager : IGitManager
             _writer.WriteFailure($"Failed to connect to GitHub: {response.ReasonPhrase}");
         }
     }
-    public IEnumerable<Project> GetProjects() => new List<Project> { new Project { Name = "Project 1", Description = "Description 1", LastUpdateTime = DateTime.Now, Revision = 1, State = "Active", Url = "" } };
+    public IEnumerable<Project> GetProjects() => new List<Project> { new Project { Name = _organisationName, Description = "Github account", LastUpdateTime = DateTime.Now, Revision = 1, State = "Active", Url = _serverUrl, Id = Guid.NewGuid()} };
     public IEnumerable<Team> GetAllTeams()
     {
         try
