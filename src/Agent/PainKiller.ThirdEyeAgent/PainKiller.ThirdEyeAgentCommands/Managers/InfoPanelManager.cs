@@ -1,6 +1,7 @@
-﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects.InfoPanelContens;
+﻿using PainKiller.ThirdEyeAgentCommands.Data;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects.InfoPanelContent;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers
 {
-    public class InfoPanelManager(InfoPanelConfiguration configuration) : InfoPanelManagerBase(configuration, new HostInfoPanelContent(), new ThirdEyeInfoPanelContent(), new CurrentDirectoryInfoPanel());
+    public class InfoPanelManager(InfoPanelConfiguration configuration) : InfoPanelManagerBase(configuration, new HostInfoPanelContent(), new ThirdEyeInfoPanelContent(), new NvdInfoPanelContent(new CveStorage()));
 }

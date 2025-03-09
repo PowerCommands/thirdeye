@@ -1,6 +1,6 @@
-﻿using PainKiller.ThirdEyeAgentCommands.Managers;
+﻿using PainKiller.ThirdEyeAgentCommands.Data;
 
-namespace PainKiller.ThirdEyeAgentCommands.DomainObjects.InfoPanelContens;
+namespace PainKiller.ThirdEyeAgentCommands.DomainObjects.InfoPanelContent;
 
 public class ThirdEyeInfoPanelContent : IInfoPanelContent
 {

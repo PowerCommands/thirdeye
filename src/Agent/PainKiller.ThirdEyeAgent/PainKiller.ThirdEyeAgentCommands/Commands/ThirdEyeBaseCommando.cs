@@ -1,5 +1,6 @@
 ﻿using PainKiller.PowerCommands.Core.Commands;
 using PainKiller.ThirdEyeAgentCommands.Contracts;
+using PainKiller.ThirdEyeAgentCommands.Data;
 using PainKiller.ThirdEyeAgentCommands.Managers;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands;
@@ -15,6 +16,7 @@ public abstract class ThirdEyeBaseCommando : CdCommand
         PresentationManager = new PresentationManager(this);
         Configuration = configuration;
     }
+    protected ICveStorage CveStorage { get; } = new CveStorage();
     protected IObjectStorageManager Storage { get; }
     protected IGitManager GitManager { get; } 
     protected IFileAnalyzeManager AnalyzeManager { get; } = new FileAnalyzeManager();

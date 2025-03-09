@@ -1,5 +1,4 @@
 ﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects;
-using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
 
 namespace PainKiller.ThirdEyeAgentCommands.Contracts;
 
@@ -13,7 +12,6 @@ public interface IObjectStorageManager
     List<ThirdPartyComponent> GetThirdPartyComponents();
     List<DevProject> GetDevProjects();
     List<ComponentCve> GetComponentCves();
-    List<CveEntry> GetCveEntries();
     void SaveTeams(List<Team> teams);
     void SaveProjects(List<Project> projects);
     void SaveRepositories(List<Repository> repositories);
@@ -25,7 +23,5 @@ public interface IObjectStorageManager
     bool InsertDevProject(DevProject project);
     int InsertDevProjects(IEnumerable<DevProject> projects);
     void InsertOrUpdateCve(ComponentCve componentCve);
-    
-    void SaveCveEntries(List<CveEntry> cves);
     void ReLoad();
 }

@@ -1,6 +1,4 @@
-﻿using PainKiller.ThirdEyeAgentCommands.Managers;
-
-namespace PainKiller.ThirdEyeAgentCommands.DomainObjects.InfoPanelContens;
+﻿namespace PainKiller.ThirdEyeAgentCommands.DomainObjects.InfoPanelContent;
 
 public class HostInfoPanelContent : IInfoPanelContent
 {

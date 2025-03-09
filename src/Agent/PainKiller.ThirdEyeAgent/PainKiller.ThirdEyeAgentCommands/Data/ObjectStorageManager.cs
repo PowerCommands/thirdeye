@@ -1,9 +1,7 @@
 ﻿using PainKiller.ThirdEyeAgentCommands.Contracts;
-using PainKiller.ThirdEyeAgentCommands.Data;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
-using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
 
-namespace PainKiller.ThirdEyeAgentCommands.Managers;
+namespace PainKiller.ThirdEyeAgentCommands.Data;
 public class ObjectStorageManager : IObjectStorageManager
 {
     private readonly string _storagePath;
@@ -12,8 +10,7 @@ public class ObjectStorageManager : IObjectStorageManager
     private RepositoryObjects _repositoryObjects;
     private ThirdPartyComponentObjects _thirdPartyComponentObjects;
     private DevProjectObjects _devProjectObjects;
-    private readonly CveComponentObjects _cveComponentObjects;
-    private readonly CveObjects _cveObjects;
+    private readonly CveComponentObjects _cveComponentObjects = new();
     public ObjectStorageManager(string host)
     {
         _storagePath = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, host.Replace("https://","").Replace("http://","").Replace("/",""));
@@ -23,8 +20,6 @@ public class ObjectStorageManager : IObjectStorageManager
         _repositoryObjects = StorageService<RepositoryObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
         _thirdPartyComponentObjects = StorageService<ThirdPartyComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
         _devProjectObjects = StorageService<DevProjectObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(DevProjectObjects)}.json"));
-        _cveComponentObjects = StorageService<CveComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(CveComponentObjects)}.json"));
-        _cveObjects = StorageService<CveObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(CveObjects)}.json"));
     }
     public List<Team> GetTeams() => _teamObjects.Teams;
     public List<Project> GetProjects() => _projectObjects.Projects;
@@ -32,16 +27,7 @@ public class ObjectStorageManager : IObjectStorageManager
     public List<ThirdPartyComponent> GetThirdPartyComponents() => _thirdPartyComponentObjects.Components;
     public List<DevProject> GetDevProjects() => _devProjectObjects.DevProjects;
     public List<ComponentCve> GetComponentCves() => _cveComponentObjects.ComponentCve;
-    public List<CveEntry> GetCveEntries() => _cveObjects.Entries;
-
-
-
-    public void SaveCveEntries(List<CveEntry> cves)
-    {
-        _cveObjects.Entries = cves;
-        _projectObjects.LastUpdated = DateTime.Now;
-        StorageService<CveObjects>.Service.StoreObject(_cveObjects, Path.Combine(_storagePath, $"{nameof(CveObjects)}.json"));
-    }
+    
     public void SaveTeams(List<Team> teams)
     {
         _teamObjects.Teams = teams;

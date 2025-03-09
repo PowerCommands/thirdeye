@@ -1,24 +1,27 @@
 ﻿using System.Text.Json;
+using PainKiller.ThirdEyeAgentCommands.Contracts;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
-public class NvdDataFetcherManager
+public class NvdDataFetcherManager(ICveStorage storage, IConsoleWriter writer)
 {
     private readonly HttpClient _client = new();
     private const string BaseUrl = "https://services.nvd.nist.gov/rest/json/cves/2.0";
 
     public async Task<List<CveEntry>> FetchAllCves()
     {
-        int resultsPerPage = 2000; // Standard API-limit
-        int startIndex = 0;
-        bool hasMoreResults = true;
-        var allCves = new List<CveEntry>();
+        storage.ReLoad();
+        writer.WriteSuccessLine($"NVD storage last updated: {storage.LastUpdated.ToShortDateString()} Last indexed page was: {storage.LastIndexedPage}");
+        writer.WriteSuccessLine($"{storage.LoadedCveCount} CVE:s in your local storage.");
+        const int resultsPerPage = ICveStorage.PAGE_SIZE;
+        var startIndex = storage.LastIndexedPage * ICveStorage.PAGE_SIZE;
+        var hasMoreResults = true;
+        var newCves = new List<CveEntry>();
 
         while (hasMoreResults)
         {
-            string url = $"{BaseUrl}?startIndex={startIndex}&resultsPerPage={resultsPerPage}";
-
+            var url = $"{BaseUrl}?startIndex={startIndex}&resultsPerPage={resultsPerPage}";
             try
             {
                 var response = await _client.GetAsync(url);
@@ -31,35 +34,35 @@ public class NvdDataFetcherManager
 
                 if (result?.vulnerabilities != null && result.vulnerabilities.Any())
                 {
-                    Console.WriteLine($"✅ Fetched {result.vulnerabilities.Length} CVEs, start index: {startIndex}");
-                    allCves.AddRange(ProcessCveEntries(result.vulnerabilities));
+                    writer.WriteLine($"✅ Fetched {result.vulnerabilities.Length} CVEs, start index: {startIndex}");
+                    newCves.AddRange(ProcessCveEntries(result.vulnerabilities, startIndex));
                     startIndex += resultsPerPage;
                 }
                 else
                 {
-                    hasMoreResults = false; // Inga fler resultat
+                    hasMoreResults = false;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error fetching CVEs: {ex.Message}");
+                writer.WriteFailureLine($"❌ Error fetching CVEs: {ex.Message}");
                 break;
             }
 
             await Task.Delay(1000); // Skydda API:et från rate limiting
         }
 
-        Console.WriteLine($"🎯 Total CVEs fetched: {allCves.Count}");
-        return allCves;
+        writer.WriteSuccessLine($"🎯 Total CVEs fetched: {newCves.Count}");
+        return newCves;
     }
-    private List<CveEntry> ProcessCveEntries(Vulnerability[] vulnerabilities)
+    private List<CveEntry> ProcessCveEntries(Vulnerability[] vulnerabilities, int index)
     {
         var result = new List<CveEntry>();
         foreach (var v in vulnerabilities)
         {
             if (v?.cve == null)
             {
-                Console.WriteLine("⚠️ Skipped a CVE entry due to missing data.");
+                writer.WriteFailureLine("⚠️ Skipped a CVE entry due to missing data.");
                 continue;
             }
 
@@ -83,9 +86,10 @@ public class NvdDataFetcherManager
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error processing CVE {v.cve.id}: {ex.Message}");
+                writer.WriteFailureLine($"❌ Error processing CVE {v.cve.id}: {ex.Message}");
             }
         }
+        storage.AppendEntries(result, index);
         return result;
     }
 
