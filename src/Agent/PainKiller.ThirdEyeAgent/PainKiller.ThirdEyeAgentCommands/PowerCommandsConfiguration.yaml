@@ -9,7 +9,7 @@ configuration:
   backupPath: ..\..\..\..\..\
   thirdEyeAgent:
     host: https://klingsten.visualstudio.com/
-    organisationName: Klingsten
+    organizationName: Klingsten
     projects: 
     - "*"
     teams: 

@@ -11,7 +11,7 @@ public abstract class ThirdEyeBaseCommando : CdCommand
         var gitHub = configuration.ThirdEyeAgent.Host.Contains("github.com");
         var accessToken = Configuration.Secret.DecryptSecret(ConfigurationGlobals.GetAccessTokenName(gitHub));
         ObjectStorage = new ObjectStorageManager(configuration.ThirdEyeAgent.Host);
-        GitManager = gitHub ? new GitHubManager(configuration.ThirdEyeAgent.Host, accessToken, configuration.ThirdEyeAgent.OrganisationName, this) : new AdsManager(configuration.ThirdEyeAgent.Host, accessToken, this);;
+        GitManager = gitHub ? new GitHubManager(configuration.ThirdEyeAgent.Host, accessToken, configuration.ThirdEyeAgent.OrganizationName, this) : new AdsManager(configuration.ThirdEyeAgent.Host, accessToken, this);;
         PresentationManager = new PresentationManager(this);
         Configuration = configuration;
     }

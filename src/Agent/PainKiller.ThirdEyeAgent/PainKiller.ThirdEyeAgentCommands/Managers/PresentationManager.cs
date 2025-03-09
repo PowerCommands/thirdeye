@@ -13,9 +13,9 @@ public class PresentationManager(IConsoleWriter writer)
             foreach (var component in devProject.Components) {writer.WriteHeadLine($"│  │   ├── {component.Name} {component.Version}");}
         }
     }
-    public void DisplayOrganisation(string organisationName, List<Project> projects, List<Repository> repositories, List<Team> teams, List<DevProject> devProjects)
+    public void DisplayOrganization(string organizationName, List<Project> projects, List<Repository> repositories, List<Team> teams, List<DevProject> devProjects)
     {
-        writer.WriteHeadLine($"\n🏠 {organisationName}");
+        writer.WriteHeadLine($"\n🏠 {organizationName}");
         foreach (var project in projects)
         {
             if(repositories.All(p => p.ProjectId != project.Id)) continue;

@@ -2,10 +2,10 @@
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
-    [PowerCommandDesign( description: "Shows an overview of your organisation, based on what you have configured to fetch.",
+    [PowerCommandDesign( description: "Shows an overview of your organization, based on what you have configured to fetch.",
                   disableProxyOutput: true,
-                             example: "//Show hierarchy of your organisation|organisation")]
-    public class OrganisationCommand(string identifier, PowerCommandsConfiguration configuration) : ThirdEyeBaseCommando(identifier, configuration)
+                             example: "//Show hierarchy of your organization|organization")]
+    public class OrganizationCommand(string identifier, PowerCommandsConfiguration configuration) : ThirdEyeBaseCommando(identifier, configuration)
     {
         public override RunResult Run()
         {
@@ -14,7 +14,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var repositories = ObjectStorage.GetRepositories();
             var teams = ObjectStorage.GetTeams();
             var devProjects = ObjectStorage.GetDevProjects();
-            PresentationManager.DisplayOrganisation(configuration.ThirdEyeAgent.OrganisationName, projects, repositories, teams, devProjects);
+            PresentationManager.DisplayOrganization(configuration.ThirdEyeAgent.OrganizationName, projects, repositories, teams, devProjects);
             EnableLog();
             return Ok();
         }

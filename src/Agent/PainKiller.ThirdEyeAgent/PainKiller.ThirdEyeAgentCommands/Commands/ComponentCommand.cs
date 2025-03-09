@@ -1,4 +1,5 @@
-﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+﻿using System.Reflection;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
@@ -18,6 +19,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             {
                 Console.Clear();
                 Console.WriteLine("➡ Type to filter results, press ENTER to select, BACKSPACE to delete, ESC to exit:");
+                Console.Title = inputBuffer;
                 filteredComponents = allComponents.Where(c => c.Name.ToLower().Contains(inputBuffer) || c.Version.ToLower().Contains(inputBuffer) || c.Path.ToLower().Contains(inputBuffer)).ToList();
                 if (filteredComponents.Count == 0) Console.WriteLine("No matching result... (Press ESC to exit)");
                 else
@@ -38,6 +40,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                     inputBuffer += key.KeyChar;
                 }
             }
+            Console.Title = $"{ConfigurationGlobals.ApplicationName} {ReflectionService.Service.GetVersion(Assembly.GetExecutingAssembly())}";
             if (filteredComponents.Count > 0)
             {
                 var selected = ListService.ListDialog("Choose a component to view details.", filteredComponents.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
@@ -60,7 +63,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var repos = new List<Repository>();
             var teams = ObjectStorage.GetTeams();
             foreach (var projectRepos in projects.Select(project => ObjectStorage.GetRepositories().Where(r => r.ProjectId == project.Id))) repos.AddRange(projectRepos);
-            PresentationManager.DisplayOrganisation(configuration.ThirdEyeAgent.OrganisationName, projects, repos, teams, devProjects);
+            PresentationManager.DisplayOrganization(configuration.ThirdEyeAgent.OrganizationName, projects, repos, teams, devProjects);
         }
     }
 }

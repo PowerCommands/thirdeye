@@ -13,13 +13,13 @@ public class GitHubManager : IGitManager
     private readonly Dictionary<Guid, string> _repoCache = new();
     private readonly string _serverUrl;
     private readonly string _accessToken;
-    private readonly string _organisationName;
+    private readonly string _organizationName;
     private readonly IConsoleWriter _writer;
-    public GitHubManager(string serverUrl, string accessToken, string organisationName, IConsoleWriter writer)
+    public GitHubManager(string serverUrl, string accessToken, string organizationName, IConsoleWriter writer)
     {
         _serverUrl = serverUrl;
         _accessToken = accessToken;
-        _organisationName = organisationName;
+        _organizationName = organizationName;
         _writer = writer;
         _client = new HttpClient();
         _client.DefaultRequestHeaders.Clear();
@@ -44,7 +44,7 @@ public class GitHubManager : IGitManager
             _writer.WriteFailure($"Failed to connect to GitHub: {response.ReasonPhrase}");
         }
     }
-    public IEnumerable<Project> GetProjects() => new List<Project> { new Project { Name = _organisationName, Description = "Github account", LastUpdateTime = DateTime.Now, Revision = 1, State = "Active", Url = _serverUrl, Id = Guid.NewGuid()} };
+    public IEnumerable<Project> GetProjects() => new List<Project> { new Project { Name = _organizationName, Description = "Github account", LastUpdateTime = DateTime.Now, Revision = 1, State = "Active", Url = _serverUrl, Id = Guid.NewGuid()} };
     public IEnumerable<Team> GetAllTeams()
     {
         try
@@ -55,7 +55,7 @@ public class GitHubManager : IGitManager
                 throw new InvalidOperationException("Authorization header is missing.");
             }
 
-            var response = _client.GetAsync($"https://api.github.com/orgs/{_organisationName}/teams").Result;
+            var response = _client.GetAsync($"https://api.github.com/orgs/{_organizationName}/teams").Result;
 
             if (!response.IsSuccessStatusCode)
             {
@@ -100,7 +100,7 @@ public class GitHubManager : IGitManager
             var repoName = GetRepositoryNameFromId(repositoryId);
             if (string.IsNullOrEmpty(repoName)) return new List<Item>();
 
-            var response = _client.GetStringAsync($"https://api.github.com/repos/{_organisationName}/{repoName}/git/trees/main?recursive=1").Result;
+            var response = _client.GetStringAsync($"https://api.github.com/repos/{_organizationName}/{repoName}/git/trees/main?recursive=1").Result;
             var tree = JsonSerializer.Deserialize<GitHubTreeResponse>(response);
             var items =tree?.Tree?.Select(file => new Item { Path = file.Path, CommitId = tree.Sha, IsFolder = file.Type == "tree", }).ToList() ?? new List<Item>();
             foreach (var item in items.Where(i => FileAnalyzeManager.IsRelevantFile(i.Path))) item.Content = GetContent(item, repositoryId);
@@ -117,7 +117,7 @@ public class GitHubManager : IGitManager
         var repoName = GetRepositoryNameFromId(repositoryId);
         if (string.IsNullOrEmpty(repoName)) return "";
 
-        var response = _client.GetStringAsync($"https://api.github.com/repos/{_organisationName}/{repoName}/contents/{item.Path}").Result;
+        var response = _client.GetStringAsync($"https://api.github.com/repos/{_organizationName}/{repoName}/contents/{item.Path}").Result;
         var fileData = JsonSerializer.Deserialize<GitHubFileResponse>(response);
 
         return fileData?.Content != null ? Encoding.UTF8.GetString(Convert.FromBase64String(fileData.Content)).Trim().Replace("\uFEFF", "") : "";

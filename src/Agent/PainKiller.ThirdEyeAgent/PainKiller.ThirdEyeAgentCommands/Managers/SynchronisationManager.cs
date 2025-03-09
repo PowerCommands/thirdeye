@@ -1,25 +1,17 @@
 ﻿using PainKiller.ThirdEyeAgentCommands.Contracts;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+using PainKiller.ThirdEyeAgentCommands.Extensions;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
 public class SynchronisationManager(IGitManager gitManager, IObjectStorageManager storage, IFileAnalyzeManager analyzeManager, IConsoleWriter writer, ThirdEyeConfiguration configuration)
 {
-    public List<Project> InitializeOrganisation()
+    public List<Project> InitializeOrganization()
     {
         var allProjects = gitManager.GetProjects().ToList();
-        var projects = new List<Project>();
-        foreach (var project in configuration.Projects)
-        {
-            if (project == "*")
-            {
-                projects.AddRange(allProjects);
-                break;
-            }
-            var foundProject = allProjects.FirstOrDefault(p => p.Name == project);
-            if (foundProject != null) projects.Add(foundProject);
-        }
+        var projects = configuration.ConfigurationFilter(allProjects, configuration.Projects, p => p.Name).ToList();
         writer.WriteSuccessLine($"Fetched {projects.Count} Projects.");
-        var teams = gitManager.GetAllTeams().ToList();
+        var allTeams = gitManager.GetAllTeams().ToList();
+        var teams = configuration.ConfigurationFilter(allTeams, configuration.Teams, t => t.Name).ToList();
         storage.SaveTeams(teams);
         writer.WriteSuccessLine($"Fetched {teams.Count} Teams and persisted to storage.");
 
@@ -71,22 +63,14 @@ public class SynchronisationManager(IGitManager gitManager, IObjectStorageManage
         writer.WriteSuccessLine($"{projects.Count} projects persisted to storage.\n");
         return projects;
     }
-    public void UpdateOrganisation()
+    public void UpdateOrganization()
     {
         var allGitProjects = gitManager.GetProjects().ToList();
-        var allProjects = new List<Project>();
-        foreach (var project in configuration.Projects)
-        {
-            if (project == "*")
-            {
-                allProjects.AddRange(allGitProjects);
-                break;
-            }
-            var foundProject = allGitProjects.FirstOrDefault(p => p.Name == project);
-            if (foundProject != null) allProjects.Add(foundProject);
-        }
+        var allProjects = configuration.ConfigurationFilter(allGitProjects, configuration.Projects, p => p.Name).ToList();
+        
         writer.WriteSuccessLine($"Fetched {allProjects.Count} Projects.");
-        var teams = gitManager.GetAllTeams().ToList();
+        var allTeams = gitManager.GetAllTeams().ToList();
+        var teams = configuration.ConfigurationFilter(allTeams, configuration.Teams, t => t.Name).ToList();
         storage.SaveTeams(teams);
         writer.WriteSuccessLine($"Fetched {teams.Count} Teams and persisted to storage.");
         foreach (var project in allProjects)

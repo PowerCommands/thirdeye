@@ -14,7 +14,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
     {
         var client = _connection.GetClient<ProjectHttpClient>();
         var projects = client.GetProjects().Result;
-        writer.WriteSuccess($"Number of projects in organisation: {projects.Count}");
+        writer.WriteSuccess($"Number of projects in organization: {projects.Count}");
     }
     public IEnumerable<Project> GetProjects()
     {
