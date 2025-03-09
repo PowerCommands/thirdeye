@@ -77,7 +77,7 @@ public class SynchronisationManager(IGitManager gitManager, IObjectStorageManage
         var syncRepos = new List<Repository>();
         var syncDevProjects = new List<DevProject>();
 
-        var projects = storage.GetProjects();
+        var projects = new List<Project>();
         var repositories = storage.GetRepositories();
         var devProjects = storage.GetDevProjects();
         var allDistinctComponents = storage.GetThirdPartyComponents();
