@@ -37,20 +37,90 @@ public class ObjectStorageManager : IObjectStorageManager
         _projectObjects.Projects = projects;
         StorageService<ProjectObjects>.Service.StoreObject(_projectObjects, Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
     }
+    public void InsertOrUpdateProject(Project project)
+    {
+        var existing = _projectObjects.Projects.FirstOrDefault(p => p.Id == project.Id);
+        if (existing != null)
+        {
+            _projectObjects.Projects.Remove(existing);
+            _projectObjects.Projects.Add(project);
+            StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
+        }
+        _projectObjects.Projects.Add(project);
+        StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
+    }
+    public bool RemoveProject(Guid projectId)
+    {
+        var existing = _projectObjects.Projects.FirstOrDefault(p => p.Id == projectId);
+        if (existing == null) return false;
+        _projectObjects.Projects.Remove(existing);
+        StorageService<ProjectObjects>.Service.StoreObject(_projectObjects, Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
+        return true;
+    }
     public void SaveRepositories(List<Repository> repositories)
     {
         _repositoryObjects.Repositories = repositories;
         StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
+    }
+    public string UpdateOrInsertRepository(Repository repository)
+    {
+        var existing = _repositoryObjects.Repositories.FirstOrDefault(r => r.RepositoryId == repository.RepositoryId);
+        if (existing != null)
+        {
+            _repositoryObjects.Repositories.Remove(existing);
+            existing.Name = repository.Name;
+            existing.Url = repository.Url;
+            existing.MainBranch = repository.MainBranch;
+            existing.ProjectId = repository.ProjectId;
+            _repositoryObjects.Repositories.Add(existing);
+            StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
+            return existing.MainBranch?.CommitId ?? "";
+        }
+        _repositoryObjects.Repositories.Add(repository);
+        StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
+        return repository.MainBranch?.CommitId ?? "";
+    }
+    public bool RemoveRepository(Guid repositoryId)
+    {
+        var existing = _repositoryObjects.Repositories.FirstOrDefault(r => r.RepositoryId == repositoryId);
+        if (existing == null) return false;
+        _repositoryObjects.Repositories.Remove(existing);
+        StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
+        return true;
     }
     public void SaveThirdPartyComponents(List<ThirdPartyComponent> components)
     {
         _thirdPartyComponentObjects.Components = components;
         StorageService<ThirdPartyComponentObjects>.Service.StoreObject(_thirdPartyComponentObjects, Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
     }
+    public bool InsertComponent(ThirdPartyComponent component)
+    {
+        if (_thirdPartyComponentObjects.Components.Any(c => c.CommitId == component.CommitId && c.Name == component.Name && c.Version == component.Version && c.Path == component.Path)) return false;
+        _thirdPartyComponentObjects.Components.Add(component);
+        StorageService<ThirdPartyComponentObjects>.Service.StoreObject(_thirdPartyComponentObjects, Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
+        return true;
+    }
     public void SaveDevProjects(List<DevProject> devProjects)
     {
         _devProjectObjects.DevProjects = devProjects;
         StorageService<DevProjectObjects>.Service.StoreObject(_devProjectObjects, Path.Combine(_storagePath, $"{nameof(DevProjectObjects)}.json"));
+    }
+    public bool InsertDevProject(DevProject project)
+    {
+        if (_devProjectObjects.DevProjects.Any(p => p.ProjectId == project.ProjectId && p.RepositoryId == project.RepositoryId && p.Path == project.Path)) return false;
+        _devProjectObjects.DevProjects.Add(project);
+        StorageService<DevProjectObjects>.Service.StoreObject(_devProjectObjects, Path.Combine(_storagePath, $"{nameof(DevProjectObjects)}.json"));
+        return true;
+    }
+    public int InsertDevProjects(IEnumerable<DevProject> projects)
+    {
+        var insertedCounter = 0;
+        foreach (var project in projects)
+        {
+            var inserted = InsertDevProject(project);
+            if(inserted) insertedCounter++;
+        }
+        return insertedCounter;
     }
     public void ReLoad()
     {
