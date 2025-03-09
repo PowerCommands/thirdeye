@@ -12,7 +12,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
         public override RunResult Run()
         {
             var filter = Input.SingleArgument.ToLower();
-            var allComponents = ObjectStorage.GetThirdPartyComponents();
+            var allComponents = Storage.GetThirdPartyComponents();
             List<ThirdPartyComponent> filteredComponents;
             var inputBuffer = filter;
             while (true)
@@ -58,11 +58,11 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
         }
         private void ProjectSearch(ThirdPartyComponent component, bool detailedSearch)
         {
-            var devProjects = ObjectStorage.GetDevProjects().Where(dp => dp.Components.Any(c => c.Name == component.Name && (c.Version == component.Version || !detailedSearch))).ToList();
-            var projects = ObjectStorage.GetProjects().Where(p => devProjects.Any(dp => dp.ProjectId == p.Id)).ToList();
+            var devProjects = Storage.GetDevProjects().Where(dp => dp.Components.Any(c => c.Name == component.Name && (c.Version == component.Version || !detailedSearch))).ToList();
+            var projects = Storage.GetProjects().Where(p => devProjects.Any(dp => dp.ProjectId == p.Id)).ToList();
             var repos = new List<Repository>();
-            var teams = ObjectStorage.GetTeams();
-            foreach (var projectRepos in projects.Select(project => ObjectStorage.GetRepositories().Where(r => r.ProjectId == project.Id))) repos.AddRange(projectRepos);
+            var teams = Storage.GetTeams();
+            foreach (var projectRepos in projects.Select(project => Storage.GetRepositories().Where(r => r.ProjectId == project.Id))) repos.AddRange(projectRepos);
             PresentationManager.DisplayOrganization(configuration.ThirdEyeAgent.OrganizationName, projects, repos, teams, devProjects);
         }
     }

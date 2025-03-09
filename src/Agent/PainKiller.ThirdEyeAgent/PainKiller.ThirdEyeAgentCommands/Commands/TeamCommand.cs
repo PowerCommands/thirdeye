@@ -7,7 +7,7 @@
     {
         public override RunResult Run()
         {
-            var teams = ObjectStorage.GetTeams(); 
+            var teams = Storage.GetTeams(); 
             var (key, _) = ListService.FilteredListDialog("Choose Team", teams.Select(p => $"{p.Name,-50} {p.Id}").ToList()).First();
             var selectedTeam = teams[key];
             WriteSuccess(selectedTeam.Name);
