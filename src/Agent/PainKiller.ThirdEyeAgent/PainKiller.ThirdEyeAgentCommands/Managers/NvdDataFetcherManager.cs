@@ -1,31 +1,42 @@
-﻿using System.Text.Json;
+﻿using System.Net;
+using System.Text.Json;
 using PainKiller.ThirdEyeAgentCommands.Contracts;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
-public class NvdDataFetcherManager(ICveStorage storage, IConsoleWriter writer)
+public class NvdDataFetcherManager(ICveStorage storage, ThirdEyeConfiguration configuration, string apiKey, IConsoleWriter writer)
 {
     private readonly HttpClient _client = new();
-    private const string BaseUrl = "https://services.nvd.nist.gov/rest/json/cves/2.0";
+    private readonly string _baseUrl = configuration.Nvd.Url;
 
     public async Task<List<CveEntry>> FetchAllCves()
     {
+
         storage.ReLoad();
-        writer.WriteSuccessLine($"NVD storage last updated: {storage.LastUpdated.ToShortDateString()} Last indexed page was: {storage.LastIndexedPage}");
+        writer.WriteSuccessLine($"NVD storage last updated: {storage.LastUpdated.ToShortDateString()} Last indexed page was: {storage.LastIndex}");
         writer.WriteSuccessLine($"{storage.LoadedCveCount} CVE:s in your local storage.");
-        const int resultsPerPage = ICveStorage.PAGE_SIZE;
-        var startIndex = storage.LastIndexedPage * ICveStorage.PAGE_SIZE;
+        var resultsPerPage = configuration.Nvd.PageSize;
+        var startIndex = storage.LastIndex;
         var hasMoreResults = true;
         var newCves = new List<CveEntry>();
 
         while (hasMoreResults)
         {
-            var url = $"{BaseUrl}?startIndex={startIndex}&resultsPerPage={resultsPerPage}";
+            var url = $"{_baseUrl}?startIndex={startIndex}&resultsPerPage={resultsPerPage}";
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("apiKey", apiKey);
             try
             {
-                var response = await _client.GetAsync(url);
+                var response = await _client.SendAsync(request);
                 response.EnsureSuccessStatusCode();
+
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    writer.WriteFailureLine("🚫 API returned 403 Forbidden. Waiting 1 minute before retry...");
+                    await Task.Delay(60000); // Wait one minute before retrying
+                    continue;
+                }
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<Rootobject>(jsonResponse, new JsonSerializerOptions
                 {
@@ -48,8 +59,7 @@ public class NvdDataFetcherManager(ICveStorage storage, IConsoleWriter writer)
                 writer.WriteFailureLine($"❌ Error fetching CVEs: {ex.Message}");
                 break;
             }
-
-            await Task.Delay(1000); // Skydda API:et från rate limiting
+            await Task.Delay(configuration.Nvd.DelayIntervalSeconds); // Protects against rate limiting
         }
 
         writer.WriteSuccessLine($"🎯 Total CVEs fetched: {newCves.Count}");
@@ -78,8 +88,8 @@ public class NvdDataFetcherManager(ICveStorage storage, IConsoleWriter writer)
                         .SelectMany(c => c.nodes?
                             .SelectMany(n => n.cpeMatch?
                                 .Where(m => m.vulnerable)
-                                .Select(m => m.criteria)) ?? Enumerable.Empty<string>())
-                        .ToList() ?? new List<string>()
+                                .Select(m => m.criteria) ?? Array.Empty<string>()) ?? [])
+                        .ToList() ?? []
                 };
 
                 result.Add(entry);

@@ -9,11 +9,15 @@ configuration:
   backupPath: ..\..\..\..\..\
   thirdEyeAgent:
     host: https://klingsten.visualstudio.com/
-    organizationName: Klingsten
+    organizationName: Klingsten     
     projects: 
     - "*"
     teams: 
     - "*"
+    nvd:
+      url: https://services.nvd.nist.gov/rest/json/cves/2.0            
+      pageSize: 2000
+      delayIntervalSeconds: 1
   infoPanel:
     use: true
     autoAdjustOnResize: true
@@ -69,6 +73,9 @@ configuration:
       options:
         target: User
     - name: TE_github_RepositoryToken
+      options:
+        target: User
+    - name: TE_api_key
       options:
         target: User
   environment:

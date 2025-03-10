@@ -22,6 +22,6 @@ public class CveStorage : ICveStorage
     }
     public int LoadedCveCount => _cveObjects.Entries.Count;
     public DateTime LastUpdated => _cveObjects.LastUpdated;
-    public int LastIndexedPage => _cveObjects.LastIndexedPage;
+    public int LastIndex => _cveObjects.LastIndexedPage;
     public void ReLoad() => _cveObjects = StorageService<CveObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(Data.CveObjects)}.json"));
 }
