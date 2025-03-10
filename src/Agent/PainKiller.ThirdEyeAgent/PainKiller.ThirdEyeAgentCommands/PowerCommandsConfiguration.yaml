@@ -18,6 +18,7 @@ configuration:
       url: https://services.nvd.nist.gov/rest/json/cves/2.0            
       pageSize: 2000
       delayIntervalSeconds: 1
+      pathToUpdates: $ROAMING$\nvd\updates
   infoPanel:
     use: true
     autoAdjustOnResize: true

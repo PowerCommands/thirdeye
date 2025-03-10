@@ -2,9 +2,9 @@
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
-    [PowerCommandDesign( description: "Update your cve:s from Nantional Vulnerability Database (NVD). \nPlease start with a baseline database file so that you don´t need to download every single CVE.",
+    [PowerCommandDesign( description: "Update your cve:s from National Vulnerability Database (NVD). \nPlease start with a baseline database file so that you don´t need to download every single CVE.",
                   disableProxyOutput: true,
-                             options: "!api-key",
+                             options: "!api-key|sync",
                              example: "//Update your cve:s from the last page you collected.|nvd")]
     public class NvdCommand(string identifier, PowerCommandsConfiguration configuration) : ThirdEyeBaseCommando(identifier, configuration)
     {
@@ -15,10 +15,20 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                 SetupApiKey();
                 return Ok();
             }
-            var apiKey = configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
-            var nvdFetcher = new NvdDataFetcherManager(CveStorage, configuration.ThirdEyeAgent, apiKey,this);
-            var cve = nvdFetcher.FetchAllCves().Result;
-            WriteSuccessLine($"{cve.Count} updated in database");
+            if (HasOption("sync"))
+            {
+                var apiKey = configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
+                var nvdFetcher = new CveFetcherManager(CveStorage, configuration.ThirdEyeAgent, apiKey,this);
+                var cve = nvdFetcher.FetchAllCves().Result;
+                WriteSuccessLine($"{cve.Count} updated in database");
+                WriteSeparatorLine();
+                var checkSum = CveStorage.CreateUpdateFile();
+                WriteSuccessLine($"A new update file created with Checksum: {checkSum}");
+            
+                IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
+                return Ok();
+            }
+            CveStorage.Update(this);
             IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
             return Ok();
         }

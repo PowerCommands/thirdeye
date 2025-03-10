@@ -78,7 +78,7 @@ namespace PainKiller.PowerCommands.Core.Services
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(text);
             Console.ForegroundColor = currentColor;
-            WriteToLog(scope, $"{text}", LogLevel.Warning);
+            WriteToLog(scope, $"⚠️ {text}", LogLevel.Warning);
             OnWriteToOutput($"{text}");
         }
         public void WriteError(string scope, string text)
@@ -87,7 +87,7 @@ namespace PainKiller.PowerCommands.Core.Services
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(text);
             Console.ForegroundColor = currentColor;
-            WriteToLog(scope, $"{text}", LogLevel.Error);
+            WriteToLog(scope, $"❌ {text}", LogLevel.Error);
             OnWriteToOutput($"{text}");
         }
         public void WriteCritical(string scope, string text)
@@ -96,11 +96,11 @@ namespace PainKiller.PowerCommands.Core.Services
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine(text);
             Console.ForegroundColor = currentColor;
-            WriteToLog(scope, $"{text}", LogLevel.Critical);
+            WriteToLog(scope, $"🚫 {text}", LogLevel.Critical);
             OnWriteToOutput($"{text}");
         }
-        public void WriteSuccessLine(string scope, string text, bool writeLog = true) => WriteLine(scope, text, ConsoleColor.Green, writeLog);
-        public void WriteSuccess(string scope, string text, bool writeLog = true) => Write(scope, text, ConsoleColor.Green, writeLog);
+        public void WriteSuccessLine(string scope, string text, bool writeLog = true) => WriteLine(scope, $"✅ {text}", ConsoleColor.Green, writeLog);
+        public void WriteSuccess(string scope, string text, bool writeLog = true) => Write(scope, $"✅ {text}", ConsoleColor.Green, writeLog);
         public void WriteUrl(string scope, string text, bool writeLog = true)
         {
             var currentColor = Console.ForegroundColor;

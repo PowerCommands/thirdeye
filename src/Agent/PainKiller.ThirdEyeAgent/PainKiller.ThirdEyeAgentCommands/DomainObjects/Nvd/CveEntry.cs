@@ -7,4 +7,5 @@ public class CveEntry
     public float CvssScore { get; set; }
     public string Severity { get; set; }
     public List<string> AffectedProducts { get; set; }
+    public int FetchedIndex { get; set; }
 }

@@ -5,19 +5,18 @@ using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
-public class NvdDataFetcherManager(ICveStorage storage, ThirdEyeConfiguration configuration, string apiKey, IConsoleWriter writer)
+public class CveFetcherManager(ICveStorageService storage, ThirdEyeConfiguration configuration, string apiKey, IConsoleWriter writer)
 {
     private readonly HttpClient _client = new();
     private readonly string _baseUrl = configuration.Nvd.Url;
 
     public async Task<List<CveEntry>> FetchAllCves()
     {
-
         storage.ReLoad();
-        writer.WriteSuccessLine($"NVD storage last updated: {storage.LastUpdated.ToShortDateString()} Last indexed page was: {storage.LastIndex}");
+        writer.WriteSuccessLine($"NVD storage last updated: {storage.LastUpdated.ToShortDateString()}");
         writer.WriteSuccessLine($"{storage.LoadedCveCount} CVE:s in your local storage.");
         var resultsPerPage = configuration.Nvd.PageSize;
-        var startIndex = storage.LastIndex;
+        var startIndex = storage.LoadedCveCount;
         var hasMoreResults = true;
         var newCves = new List<CveEntry>();
 
@@ -33,7 +32,7 @@ public class NvdDataFetcherManager(ICveStorage storage, ThirdEyeConfiguration co
 
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    writer.WriteFailureLine("🚫 API returned 403 Forbidden. Waiting 1 minute before retry...");
+                    writer.WriteFailureLine("API returned 403 Forbidden. Waiting 1 minute before retry...");
                     await Task.Delay(60000); // Wait one minute before retrying
                     continue;
                 }
@@ -45,8 +44,8 @@ public class NvdDataFetcherManager(ICveStorage storage, ThirdEyeConfiguration co
 
                 if (result?.vulnerabilities != null && result.vulnerabilities.Any())
                 {
-                    writer.WriteLine($"✅ Fetched {result.vulnerabilities.Length} CVEs, start index: {startIndex}");
-                    newCves.AddRange(ProcessCveEntries(result.vulnerabilities, startIndex));
+                    writer.WriteSuccessLine($"Fetched {result.vulnerabilities.Length} CVEs, start index: {startIndex}");
+                    newCves.AddRange(ProcessCveEntries(result.vulnerabilities));
                     startIndex += resultsPerPage;
                 }
                 else
@@ -56,23 +55,22 @@ public class NvdDataFetcherManager(ICveStorage storage, ThirdEyeConfiguration co
             }
             catch (Exception ex)
             {
-                writer.WriteFailureLine($"❌ Error fetching CVEs: {ex.Message}");
+                writer.WriteFailureLine($"Error fetching CVEs: {ex.Message}");
                 break;
             }
             await Task.Delay(configuration.Nvd.DelayIntervalSeconds); // Protects against rate limiting
         }
-
-        writer.WriteSuccessLine($"🎯 Total CVEs fetched: {newCves.Count}");
+        writer.WriteSuccessLine($"Total CVEs fetched: {newCves.Count}");
         return newCves;
     }
-    private List<CveEntry> ProcessCveEntries(Vulnerability[] vulnerabilities, int index)
+    private List<CveEntry> ProcessCveEntries(Vulnerability[] vulnerabilities)
     {
         var result = new List<CveEntry>();
         foreach (var v in vulnerabilities)
         {
             if (v?.cve == null)
             {
-                writer.WriteFailureLine("⚠️ Skipped a CVE entry due to missing data.");
+                writer.WriteFailureLine("Skipped a CVE entry due to missing data.");
                 continue;
             }
 
@@ -96,12 +94,10 @@ public class NvdDataFetcherManager(ICveStorage storage, ThirdEyeConfiguration co
             }
             catch (Exception ex)
             {
-                writer.WriteFailureLine($"❌ Error processing CVE {v.cve.id}: {ex.Message}");
+                writer.WriteFailureLine($"Error processing CVE {v.cve.id}: {ex.Message}");
             }
         }
-        storage.AppendEntries(result, index);
+        storage.AppendEntries(result, writer);
         return result;
     }
-
 }
-

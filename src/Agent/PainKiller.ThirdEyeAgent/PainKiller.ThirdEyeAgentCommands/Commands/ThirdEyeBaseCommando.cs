@@ -15,8 +15,10 @@ public abstract class ThirdEyeBaseCommando : CdCommand
         GitManager = gitHub ? new GitHubManager(configuration.ThirdEyeAgent.Host, accessToken, configuration.ThirdEyeAgent.OrganizationName, this) : new AdsManager(configuration.ThirdEyeAgent.Host, accessToken, this);;
         PresentationManager = new PresentationManager(this);
         Configuration = configuration;
+        CveStorageService.Initialize(configuration.ThirdEyeAgent.Nvd.PathToUpdates);
+        CveStorage = CveStorageService.Service;
     }
-    protected ICveStorage CveStorage { get; } = new CveStorage();
+    protected ICveStorageService CveStorage { get; init; } 
     protected IObjectStorageManager Storage { get; }
     protected IGitManager GitManager { get; } 
     protected IFileAnalyzeManager AnalyzeManager { get; } = new FileAnalyzeManager();
