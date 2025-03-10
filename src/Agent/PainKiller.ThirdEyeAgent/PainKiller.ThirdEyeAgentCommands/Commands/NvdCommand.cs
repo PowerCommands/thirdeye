@@ -6,7 +6,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                   disableProxyOutput: true,
                              options: "!api-key|sync",
                              example: "//Update your cve:s from the last page you collected.|nvd")]
-    public class NvdCommand(string identifier, PowerCommandsConfiguration configuration) : ThirdEyeBaseCommando(identifier, configuration)
+    public class NvdCommand(string identifier, PowerCommandsConfiguration config) : ThirdEyeBaseCommando(identifier, config)
     {
         public override RunResult Run()
         {
@@ -17,8 +17,8 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             }
             if (HasOption("sync"))
             {
-                var apiKey = configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
-                var nvdFetcher = new CveFetcherManager(CveStorage, configuration.ThirdEyeAgent, apiKey,this);
+                var apiKey = Configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
+                var nvdFetcher = new CveFetcherManager(CveStorage, Configuration.ThirdEyeAgent, apiKey,this);
                 var cve = nvdFetcher.FetchAllCves().Result;
                 WriteSuccessLine($"{cve.Count} updated in database");
                 WriteSeparatorLine();

@@ -10,7 +10,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
     {
         public override RunResult Run()
         {
-            var synchronisationManager = new SynchronisationManager(GitManager, Storage, AnalyzeManager, this, configuration.ThirdEyeAgent);
+            var synchronisationManager = new SynchronisationManager(GitManager, Storage, AnalyzeManager, this, Configuration.ThirdEyeAgent);
             if(HasOption("init")) synchronisationManager.InitializeOrganization();
             else synchronisationManager.UpdateOrganization();
             Storage.ReLoad();

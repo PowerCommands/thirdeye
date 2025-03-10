@@ -12,7 +12,7 @@
             var nvdApiKey = EnvironmentService.Service.GetEnvironmentVariable(ConfigurationGlobals.NvdApiKeyName);
 
             if(!string.IsNullOrEmpty(authorizationToken)) WriteSuccessLine("Authorization token found: ✅");
-            else if(!configuration.ThirdEyeAgent.Host.Contains("github"))
+            else if(!Configuration.ThirdEyeAgent.Host.Contains("github"))
             {
                 WriteHeadLine("Authorization is needed to fetch your repositories.");
                 var setupAuthorizationToken = DialogService.YesNoDialog("Do you want to setup an authorization token now?");
@@ -24,7 +24,7 @@
                 }
             }
             if (!string.IsNullOrEmpty(gitToken)) WriteSuccessLine($"{"Git token found:", -26} ✅");
-            else if(!configuration.ThirdEyeAgent.Host.Contains("github"))
+            else if(!Configuration.ThirdEyeAgent.Host.Contains("github"))
             {
                 WriteHeadLine("Git token is needed to fetch your github repositories.");
                 var setupGitToken = DialogService.YesNoDialog("Do you want to setup a git token now?");
@@ -58,14 +58,14 @@
             var allProjects = GitManager.GetProjects().ToList();
             var teamProjects = allProjects.Where(p => selectedTeam.ProjectIds.Any(t => t == p.Id)).ToList();
             var selectedProjects = ListService.ListDialog("Choose your projects", teamProjects.Select(p => p.Name).ToList(), multiSelect: true, autoSelectIfOnlyOneItem: false);
-            configuration.ThirdEyeAgent.Teams = [selectedTeam.Name];
-            configuration.ThirdEyeAgent.Projects = selectedProjects.Count == 0 ? ["*"] : selectedProjects.Select(p => p.Value).ToArray();
+            Configuration.ThirdEyeAgent.Teams = [selectedTeam.Name];
+            Configuration.ThirdEyeAgent.Projects = selectedProjects.Count == 0 ? ["*"] : selectedProjects.Select(p => p.Value).ToArray();
 
             var host = DialogService.QuestionAnswerDialog("Enter you host:", "Host (url to server):");
             var organizationName = DialogService.QuestionAnswerDialog("Enter your organization (or github user) name:","Organization name:");
-            configuration.ThirdEyeAgent.Host = host;
-            configuration.ThirdEyeAgent.OrganizationName = organizationName;
-            ConfigurationService.Service.SaveChanges(configuration);
+            Configuration.ThirdEyeAgent.Host = host;
+            Configuration.ThirdEyeAgent.OrganizationName = organizationName;
+            ConfigurationService.Service.SaveChanges(Configuration);
             return Ok();
         }
     }

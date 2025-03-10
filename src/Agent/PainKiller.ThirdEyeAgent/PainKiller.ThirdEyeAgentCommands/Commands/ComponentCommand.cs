@@ -7,7 +7,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                            arguments: "<search arguments>",
                   disableProxyOutput: true,
                              example: "//Search components|components <search1> <search2>...")]
-    public class ComponentCommand(string identifier, PowerCommandsConfiguration configuration) : ThirdEyeBaseCommando(identifier, configuration)
+    public class ComponentCommand(string identifier, PowerCommandsConfiguration config) : ThirdEyeBaseCommando(identifier, config)
     {
         public override RunResult Run()
         {
@@ -63,7 +63,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var repos = new List<Repository>();
             var teams = Storage.GetTeams();
             foreach (var projectRepos in projects.Select(project => Storage.GetRepositories().Where(r => r.ProjectId == project.Id))) repos.AddRange(projectRepos);
-            PresentationManager.DisplayOrganization(configuration.ThirdEyeAgent.OrganizationName, projects, repos, teams, devProjects);
+            PresentationManager.DisplayOrganization(Configuration.ThirdEyeAgent.OrganizationName, projects, repos, teams, devProjects);
         }
     }
 }
