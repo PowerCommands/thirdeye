@@ -10,7 +10,7 @@ public class ObjectStorageManager : IObjectStorageManager
     private RepositoryObjects _repositoryObjects;
     private ThirdPartyComponentObjects _thirdPartyComponentObjects;
     private DevProjectObjects _devProjectObjects;
-    private readonly CveComponentObjects _cveComponentObjects = new();
+    private readonly CveComponentObjects _cveComponentObjects;
     public ObjectStorageManager(string host)
     {
         _storagePath = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, host.Replace("https://","").Replace("http://","").Replace("/",""));
@@ -20,6 +20,7 @@ public class ObjectStorageManager : IObjectStorageManager
         _repositoryObjects = StorageService<RepositoryObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
         _thirdPartyComponentObjects = StorageService<ThirdPartyComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
         _devProjectObjects = StorageService<DevProjectObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(DevProjectObjects)}.json"));
+        _cveComponentObjects = StorageService<CveComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(CveComponentObjects)}.json"));
     }
     public List<Team> GetTeams() => _teamObjects.Teams;
     public List<Project> GetProjects() => _projectObjects.Projects;
@@ -27,7 +28,6 @@ public class ObjectStorageManager : IObjectStorageManager
     public List<ThirdPartyComponent> GetThirdPartyComponents() => _thirdPartyComponentObjects.Components;
     public List<DevProject> GetDevProjects() => _devProjectObjects.DevProjects;
     public List<ComponentCve> GetComponentCves() => _cveComponentObjects.ComponentCve;
-    
     public void SaveTeams(List<Team> teams)
     {
         _teamObjects.Teams = teams;

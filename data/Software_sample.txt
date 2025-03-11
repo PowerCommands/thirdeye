@@ -1,0 +1,123 @@
+Microsoft Windows 10 22H2
+Microsoft Windows 11 23H2
+Microsoft Windows Server 2019 10.0.17763
+Microsoft Windows Server 2022 10.0.20348
+Google Chrome 122.0.6261.95
+Mozilla Firefox 123.0.1
+Microsoft Edge 122.0.2365.66
+Opera 107.0.5045.30
+Brave Browser 1.66.109
+Vivaldi 6.7.3329.20
+Internet Explorer 11.0.220
+Microsoft Office 365 2402
+Microsoft Word 2024 16.0.17531.20118
+Microsoft Excel 2024 16.0.17531.20118
+Microsoft PowerPoint 2024 16.0.17531.20118
+Microsoft Outlook 2024 16.0.17531.20118
+Microsoft OneNote 2024 16.0.17531.20118
+Microsoft Teams 1.6.00.4470
+LibreOffice 7.6.5
+Apache OpenOffice 4.1.14
+Evernote 10.89.2
+Slack 4.36.132
+Zoom 5.17.12 (x86)
+Google Drive 85.0.3.0
+Dropbox 191.4.5411
+Adobe Acrobat Reader DC 2024.002.20687
+Foxit PDF Reader 2024.1.0.23406
+Microsoft Visual Studio 2022 17.9.1
+Visual Studio Code 1.86.1
+JetBrains Rider 2024.1
+JetBrains IntelliJ IDEA 2024.1
+JetBrains PyCharm 2024.1
+JetBrains WebStorm 2024.1
+Eclipse IDE 2024-03
+NetBeans IDE 19
+Notepad++ 8.6.1
+Sublime Text 4 Build 4169
+Atom 1.63.1 (End of life)
+Git for Windows 2.44.0
+TortoiseGit 2.15.0 (Linux)
+TortoiseSVN 1.14.6
+GitHub Desktop 3.3.6
+Docker Desktop 4.29.1
+Postman 11.0.5
+Node.js 20.10.0
+Python 3.12.2
+Java Runtime Environment (JRE) 8u411
+Java Development Kit (JDK) 21.0.2
+.NET SDK 8.0.3
+.NET Runtime 8.0.3
+Adobe Photoshop 2024 25.3.1
+Adobe Illustrator 2024 28.1
+Adobe Premiere Pro 2024 24.2
+Adobe After Effects 2024 24.1
+CorelDRAW 2024 25.0.0.10
+GIMP 2.10.36
+Blender 4.1.0
+VLC Media Player 3.0.20
+Windows Media Player 12.0.22621.1
+Spotify 1.2.30.114
+Audacity 3.4.2
+HandBrake 1.7.2 (64-bit)
+Windows Defender 4.18.23080.2006
+Avast Antivirus 24.3.6105
+AVG Antivirus 24.3.6105
+Bitdefender 27.0.20.106
+Kaspersky 21.15.8.493
+Norton Security 22.24.1.37
+McAfee Total Protection 16.0 R53
+Malwarebytes 4.6.12
+CCleaner 6.20.10832
+Spybot Search & Destroy 2.9.85
+ZoneAlarm Firewall 15.8.211.19229
+Wireshark 4.2.1
+PuTTY 0.80
+OpenVPN 2.6.9
+Cisco AnyConnect VPN Client 5.0.06071
+TeamViewer 15.51.5
+Remote Desktop Connection (RDP) 10.2.22621
+OpenSSH for Windows 9.6p1
+Microsoft SQL Server 2022 16.0.4095.2
+MySQL 8.3.0 (Docker container)
+PostgreSQL 16.2
+SQLite 3.45.1
+MongoDB 7.0.6
+Redis 7.2.3
+Oracle Database Client 19.21.0 (x86)
+HeidiSQL 12.7.0.6717
+DBeaver 23.3.3
+pgAdmin 7.1
+Microsoft Access 2024 16.0.17531.20118
+AutoCAD 2024.1.2
+SolidWorks 2024 SP2
+SketchUp 2024 24.0.566
+Fusion 360 2.0.18044
+Autodesk Maya 2024.3
+Autodesk 3ds Max 2024.3
+OneDrive 24.033.0212.0001
+Google Backup & Sync 85.0.3.0
+iCloud för Windows 15.1.89
+Acronis True Image 2024 27.4.1.40721
+Macrium Reflect 8.1.7544
+Veeam Backup & Replication 12.1.1.50
+Discord 1.0.9033
+Telegram Desktop 5.2.1
+Signal Desktop 6.45.1
+WhatsApp Desktop 2.2405.6
+Thunderbird 115.9.0
+Steam 2024-03-07
+Epic Games Launcher 16.4.3
+Ubisoft Connect 140.1.0
+Origin (EA App) 12.198.0-5534
+Battle.net 2.24.3.14851
+Xbox Game Bar 5.823.1271.0
+NVIDIA GeForce Experience 3.27.0.112
+AMD Radeon Software 24.3.1
+7-Zip 24.00
+WinRAR 6.23
+WinZip 28.0.16234
+Rufus 4.3
+Balena Etcher 1.18.11
+PowerToys 0.81.1
+Sysinternals Suite 2024-03-07

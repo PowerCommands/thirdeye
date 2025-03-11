@@ -6,7 +6,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
     [PowerCommandDesign(description: "Search for components",
                            arguments: "<search arguments>",
                   disableProxyOutput: true,
-                             example: "//Search components|components <search1> <search2>...")]
+                             example: "//Search components|component <search1> <search2>...")]
     public class ComponentCommand(string identifier, PowerCommandsConfiguration config) : ThirdEyeBaseCommando(identifier, config)
     {
         public override RunResult Run()

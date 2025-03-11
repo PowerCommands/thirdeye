@@ -7,10 +7,10 @@ public class NvdInfoPanelContent() : IInfoPanelContent
     public string GetText()
     {
         var storage = CveStorageService.Service;
-        storage.ReLoad();
-        var updateInfo = storage.NeedsUpdate() ? "⚠️ Needs Update run [nvd] command" : "";
-        ShortText = updateInfo;
-        return $"Last updated: {storage.LastUpdated} Loaded NVD CVEs: {storage.LoadedCveCount} {updateInfo}";
+        var needsUpdateText = storage.NeedsUpdate() ? "⚠️ Needs Update run [nvd] command" : "";
+        ShortText = needsUpdateText;
+        var metaData = storage.GetUpdateInfo();
+        return $"Last updated: {metaData.Created} NVD CVEs count: {metaData.CveCount} {needsUpdateText}";
     }
     public string? ShortText { get; private set; }
 }

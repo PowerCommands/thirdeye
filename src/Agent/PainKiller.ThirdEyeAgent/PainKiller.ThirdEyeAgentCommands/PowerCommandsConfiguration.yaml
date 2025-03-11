@@ -62,8 +62,8 @@ configuration:
     name: PainKiller Core
   bookmark:
     bookmarks:
-    - name: Program
-      path: C:\Program Files
+    - name: data
+      path: ..\..\..\..\..\..\..\data
       index: 0    
     - name: VS
       path: C:\Users\harri\Documents\Visual Studio 2022
