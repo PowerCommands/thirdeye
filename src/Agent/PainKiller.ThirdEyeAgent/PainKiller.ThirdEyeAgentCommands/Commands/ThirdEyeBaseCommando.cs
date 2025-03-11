@@ -11,7 +11,8 @@ public abstract class ThirdEyeBaseCommando : CommandBase<PowerCommandsConfigurat
     {
         var gitHub = configuration.ThirdEyeAgent.Host.Contains("github.com");
         var accessToken = Configuration.Secret.DecryptSecret(ConfigurationGlobals.GetAccessTokenName(gitHub));
-        Storage = new ObjectStorageManager(configuration.ThirdEyeAgent.Host);
+        ObjectStorageManager.Initialize(configuration.ThirdEyeAgent.Host);
+        Storage = ObjectStorageManager.Service;
         GitManager = gitHub ? new GitHubManager(configuration.ThirdEyeAgent.Host, accessToken, configuration.ThirdEyeAgent.OrganizationName, this) : new AdsManager(Configuration.ThirdEyeAgent.Host, accessToken, this);
         PresentationManager = new PresentationManager(this);
         CveStorageService.Initialize(configuration.ThirdEyeAgent.Nvd.PathToUpdates);

@@ -11,7 +11,25 @@ public class ObjectStorageManager : IObjectStorageManager
     private ThirdPartyComponentObjects _thirdPartyComponentObjects;
     private DevProjectObjects _devProjectObjects;
     private readonly CveComponentObjects _cveComponentObjects;
-    public ObjectStorageManager(string host)
+
+    private static Lazy<IObjectStorageManager>? _lazy;
+    public static void Initialize(string host)
+    {
+        if (_lazy != null) return;
+        _lazy = new Lazy<IObjectStorageManager>(() => new ObjectStorageManager(host));
+    }
+    public static IObjectStorageManager Service
+    {
+        get
+        {
+            if (_lazy == null)
+            {
+                throw new InvalidOperationException($"{nameof(CveStorageService)} has not been initialized yet.");
+            }
+            return _lazy.Value;
+        }
+    }
+    private ObjectStorageManager(string host)
     {
         _storagePath = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, host.Replace("https://","").Replace("http://","").Replace("/",""));
         if(!Directory.Exists(_storagePath)) Directory.CreateDirectory(_storagePath);
