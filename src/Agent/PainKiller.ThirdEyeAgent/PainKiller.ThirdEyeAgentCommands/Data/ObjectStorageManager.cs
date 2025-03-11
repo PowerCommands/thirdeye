@@ -6,7 +6,7 @@ public class ObjectStorageManager : IObjectStorageManager
 {
     private readonly string _storagePath;
     private TeamObjects _teamObjects;
-    private ProjectObjects _projectObjects;
+    private WorkspaceObjects _workspaceObjects;
     private RepositoryObjects _repositoryObjects;
     private ThirdPartyComponentObjects _thirdPartyComponentObjects;
     private DevProjectObjects _devProjectObjects;
@@ -34,14 +34,14 @@ public class ObjectStorageManager : IObjectStorageManager
         _storagePath = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, host.Replace("https://","").Replace("http://","").Replace("/",""));
         if(!Directory.Exists(_storagePath)) Directory.CreateDirectory(_storagePath);
         _teamObjects = StorageService<TeamObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(TeamObjects)}.json"));
-        _projectObjects = StorageService<ProjectObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
+        _workspaceObjects = StorageService<WorkspaceObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(WorkspaceObjects)}.json"));
         _repositoryObjects = StorageService<RepositoryObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
         _thirdPartyComponentObjects = StorageService<ThirdPartyComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
         _devProjectObjects = StorageService<DevProjectObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(DevProjectObjects)}.json"));
         _cveComponentObjects = StorageService<CveComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(CveComponentObjects)}.json"));
     }
     public List<Team> GetTeams() => _teamObjects.Teams;
-    public List<Workspace> GetProjects() => _projectObjects.Projects;
+    public List<Workspace> GetWorkspaces() => _workspaceObjects.Workspaces;
     public List<Repository> GetRepositories() => _repositoryObjects.Repositories;
     public List<ThirdPartyComponent> GetThirdPartyComponents() => _thirdPartyComponentObjects.Components;
     public List<DevProject> GetDevProjects() => _devProjectObjects.DevProjects;
@@ -52,33 +52,33 @@ public class ObjectStorageManager : IObjectStorageManager
         _teamObjects.LastUpdated = DateTime.Now;
         StorageService<TeamObjects>.Service.StoreObject(_teamObjects, Path.Combine(_storagePath, $"{nameof(TeamObjects)}.json"));
     }
-    public void SaveProjects(List<Workspace> projects)
+    public void SaveWorkspace(List<Workspace> workspaces)
     {
-        _projectObjects.Projects = projects;
-        _projectObjects.LastUpdated = DateTime.Now;
-        StorageService<ProjectObjects>.Service.StoreObject(_projectObjects, Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
+        _workspaceObjects.Workspaces = workspaces;
+        _workspaceObjects.LastUpdated = DateTime.Now;
+        StorageService<WorkspaceObjects>.Service.StoreObject(_workspaceObjects, Path.Combine(_storagePath, $"{nameof(WorkspaceObjects)}.json"));
     }
-    public void InsertOrUpdateProject(Workspace project)
+    public void InsertOrUpdateWorkspace(Workspace workspace)
     {
-        var existing = _projectObjects.Projects.FirstOrDefault(p => p.Id == project.Id);
+        var existing = _workspaceObjects.Workspaces.FirstOrDefault(p => p.Id == workspace.Id);
         if (existing != null)
         {
-            _projectObjects.Projects.Remove(existing);
-            _projectObjects.Projects.Add(project);
-            _projectObjects.LastUpdated = DateTime.Now;
+            _workspaceObjects.Workspaces.Remove(existing);
+            _workspaceObjects.Workspaces.Add(workspace);
+            _workspaceObjects.LastUpdated = DateTime.Now;
             StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
         }
-        _projectObjects.Projects.Add(project);
-        _projectObjects.LastUpdated = DateTime.Now;
+        _workspaceObjects.Workspaces.Add(workspace);
+        _workspaceObjects.LastUpdated = DateTime.Now;
         StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
     }
-    public bool RemoveProject(Guid projectId)
+    public bool RemoveWorkspace(Guid workspaceId)
     {
-        var existing = _projectObjects.Projects.FirstOrDefault(p => p.Id == projectId);
+        var existing = _workspaceObjects.Workspaces.FirstOrDefault(p => p.Id == workspaceId);
         if (existing == null) return false;
-        _projectObjects.Projects.Remove(existing);
-        _projectObjects.LastUpdated = DateTime.Now;
-        StorageService<ProjectObjects>.Service.StoreObject(_projectObjects, Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
+        _workspaceObjects.Workspaces.Remove(existing);
+        _workspaceObjects.LastUpdated = DateTime.Now;
+        StorageService<WorkspaceObjects>.Service.StoreObject(_workspaceObjects, Path.Combine(_storagePath, $"{nameof(WorkspaceObjects)}.json"));
         return true;
     }
     public void SaveRepositories(List<Repository> repositories)
@@ -171,7 +171,7 @@ public class ObjectStorageManager : IObjectStorageManager
     public void ReLoad()
     {
         _teamObjects = StorageService<TeamObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(TeamObjects)}.json"));
-        _projectObjects = StorageService<ProjectObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
+        _workspaceObjects = StorageService<WorkspaceObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(WorkspaceObjects)}.json"));
         _repositoryObjects = StorageService<RepositoryObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
         _thirdPartyComponentObjects = StorageService<ThirdPartyComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
         _devProjectObjects = StorageService<DevProjectObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(DevProjectObjects)}.json"));

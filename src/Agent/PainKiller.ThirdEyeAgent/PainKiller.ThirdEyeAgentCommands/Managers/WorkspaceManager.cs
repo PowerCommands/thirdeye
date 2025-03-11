@@ -3,13 +3,13 @@ using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Extensions;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
-public class SynchronisationManager(IGitManager gitManager, IObjectStorageManager storage, IFileAnalyzeManager analyzeManager, IConsoleWriter writer, ThirdEyeConfiguration configuration)
+public class WorkspaceManager(IGitManager gitManager, IObjectStorageManager storage, IFileAnalyzeManager analyzeManager, IConsoleWriter writer, ThirdEyeConfiguration configuration)
 {
     public List<Workspace> InitializeOrganization()
     {
-        var allProjects = gitManager.GetProjects().ToList();
-        var projects = configuration.ConfigurationFilter(allProjects, configuration.Projects, p => p.Name).ToList();
-        writer.WriteSuccessLine($"Fetched {projects.Count} Projects.");
+        var allWorkspaces = gitManager.GetWorkspaces().ToList();
+        var workspaces = configuration.ConfigurationFilter(allWorkspaces, configuration.Workspaces, p => p.Name).ToList();
+        writer.WriteSuccessLine($"Fetched {workspaces.Count} workspace(s).");
         var allTeams = gitManager.GetAllTeams().ToList();
         var teams = configuration.ConfigurationFilter(allTeams, configuration.Teams, t => t.Name).ToList();
         storage.SaveTeams(teams);
@@ -21,15 +21,16 @@ public class SynchronisationManager(IGitManager gitManager, IObjectStorageManage
         var allDistinctComponents = new List<ThirdPartyComponent>();
         var allDevProjects = new List<DevProject>();
 
-        var projectIterationCount = 0;
-        foreach (var project in projects)
+        var workspaceIterationCount = 0;
+        foreach (var workspace in workspaces)
         {
-            projectIterationCount++;
-            writer.WriteLine($"Synchronosing project {project.Name} ({projectIterationCount} of {projects.Count})");
-            var repositories = gitManager.GetRepositories(project.Id).ToList();
+            workspaceIterationCount++;
+            writer.WriteLine($"Synchronosing workspace {workspace.Name} ({workspaceIterationCount} of {workspaces.Count})");
+            Console.CursorTop -= 1;
+            var repositories = gitManager.GetRepositories(workspace.Id).ToList();
             if (repositories.Count == 0)
             {
-                removeProjects.Add(project);
+                removeProjects.Add(workspace);
                 continue;
             }
             allRepositories.AddRange(repositories);
@@ -38,15 +39,18 @@ public class SynchronisationManager(IGitManager gitManager, IObjectStorageManage
             {
                 repositoryIterationCount++;
                 writer.WriteLine($"Synchronosing repo {repository.Name} ({repositoryIterationCount} of {repositories.Count})");
+                Console.CursorTop -= 1;
                 var files = gitManager.GetAllFilesInRepository(repository.RepositoryId).ToList();
                 if (files.Count == 0)
                 {
                     writer.WriteLine($"Repo {repository.Name} has no files and will be removed.");
+                    Console.CursorTop -= 1;
                     removeRepositories.Add(repository);
                     continue;
                 }
                 writer.WriteLine($"Found {files.Count} files, that now will be analyzed to find projects and components...");
-                var analyzeRepo = analyzeManager.AnalyzeRepo(files, project.Id, repository.RepositoryId);
+                Console.CursorTop -= 1;
+                var analyzeRepo = analyzeManager.AnalyzeRepo(files, workspace.Id, repository.RepositoryId);
                 foreach (var thirdPartyComponent in analyzeRepo.ThirdPartyComponents.Where(thirdPartyComponent => !allDistinctComponents.Any(c => c.Name == thirdPartyComponent.Name && c.Version == thirdPartyComponent.Version))) allDistinctComponents.Add(thirdPartyComponent);
                 allDevProjects.AddRange(analyzeRepo.DevProjects);
             }
@@ -54,28 +58,28 @@ public class SynchronisationManager(IGitManager gitManager, IObjectStorageManage
         storage.SaveThirdPartyComponents(allDistinctComponents);
         writer.WriteSuccessLine($"Extracted {allDistinctComponents.Count} distinct components and persisted them to storage.");
         storage.SaveDevProjects(allDevProjects);
-        writer.WriteSuccessLine($"Extracted {allDevProjects.Count} dev projects and persisted them to storage.");
+        writer.WriteSuccessLine($"Extracted {allDevProjects.Count} projects and persisted them to storage.");
         foreach (var repo in removeRepositories) allRepositories.Remove(repo);
         storage.SaveRepositories(allRepositories);
         writer.WriteSuccessLine($"Fetched {allRepositories.Count} repositories and persisted them to storage.");
-        foreach (var project in removeProjects) projects.Remove(project);
-        storage.SaveProjects(projects);
-        writer.WriteSuccessLine($"{projects.Count} projects persisted to storage.\n");
-        return projects;
+        foreach (var project in removeProjects) workspaces.Remove(project);
+        storage.SaveWorkspace(workspaces);
+        writer.WriteSuccessLine($"{workspaces.Count} workspaces persisted to storage.\n");
+        return workspaces;
     }
     public void UpdateOrganization()
     {
-        var allGitProjects = gitManager.GetProjects().ToList();
-        var allProjects = configuration.ConfigurationFilter(allGitProjects, configuration.Projects, p => p.Name).ToList();
+        var allGitWorkspaces = gitManager.GetWorkspaces().ToList();
+        var allWorkspaces = configuration.ConfigurationFilter(allGitWorkspaces, configuration.Workspaces, p => p.Name).ToList();
         
-        writer.WriteSuccessLine($"Fetched {allProjects.Count} Projects.");
+        writer.WriteSuccessLine($"Fetched {allWorkspaces.Count} workspace(s).");
         var allTeams = gitManager.GetAllTeams().ToList();
         var teams = configuration.ConfigurationFilter(allTeams, configuration.Teams, t => t.Name).ToList();
         storage.SaveTeams(teams);
         writer.WriteSuccessLine($"Fetched {teams.Count} Teams and persisted to storage.");
-        foreach (var project in allProjects)
+        foreach (var project in allWorkspaces)
         {
-            storage.InsertOrUpdateProject(project);
+            storage.InsertOrUpdateWorkspace(project);
             var gitRepos = gitManager.GetRepositories(project.Id);
             foreach (var repo in gitRepos)
             {
@@ -98,22 +102,22 @@ public class SynchronisationManager(IGitManager gitManager, IObjectStorageManage
                 var analyzeRepo = analyzeManager.AnalyzeRepo(files, project.Id, repo.RepositoryId);
                 foreach (var thirdPartyComponent in analyzeRepo.ThirdPartyComponents) storage.InsertComponent(thirdPartyComponent);
                 var insertCount = storage.InsertDevProjects(analyzeRepo.DevProjects);
-                writer.WriteLine($"{insertCount} DevProjects updated");
+                writer.WriteLine($"{insertCount} Projects updated");
             }
         }
-        CleanUpProjectsNotIncludedAnymore(allProjects);
+        CleanUpWorkspacesNotIncludedAnymore(allWorkspaces);
         CleanUpRemovedComponents();
         writer.WriteSuccessLine("Synchronisation done!");
     }
-    private void CleanUpProjectsNotIncludedAnymore(List<Workspace> allProjects)
+    private void CleanUpWorkspacesNotIncludedAnymore(List<Workspace> allProjects)
     {
-        var storageProjects = storage.GetProjects();
-        foreach (var project in storageProjects)
+        var storageWorkspaces = storage.GetWorkspaces();
+        foreach (var workspace in storageWorkspaces)
         {
-            if (allProjects.All(p => p.Id != project.Id))
+            if (allProjects.All(p => p.Id != workspace.Id))
             {
-                storage.RemoveProject(project.Id);
-                writer.WriteLine($"{project.Name} has been removed from storage because is no longer included in the configured selection of projects.");
+                storage.RemoveWorkspace(workspace.Id);
+                writer.WriteLine($"{workspace.Name} has been removed from storage because is no longer included in the configured selection of workspaces.");
             }
         }
     }

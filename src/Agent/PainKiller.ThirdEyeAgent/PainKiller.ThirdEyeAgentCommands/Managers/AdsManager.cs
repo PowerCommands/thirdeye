@@ -16,7 +16,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
         var projects = client.GetProjects().Result;
         writer.WriteSuccess($"Number of projects in organization: {projects.Count}");
     }
-    public IEnumerable<Workspace> GetProjects()
+    public IEnumerable<Workspace> GetWorkspaces()
     {
         var client = _connection.GetClient<ProjectHttpClient>();
         return client.GetProjects().Result.Select(p => new Workspace { Description = p.Description, LastUpdateTime = p.LastUpdateTime, Name = p.Name, Revision = p.Revision, State = p.State.ToString(), Url = p.Url, Id = p.Id });
@@ -25,7 +25,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
     {
         var teamClient = _connection.GetClient<TeamHttpClient>();
         var retVal = new List<Team>();
-        var projects = GetProjects();
+        var projects = GetWorkspaces();
         var members = new List<Member>();
 
         foreach (var project in projects)

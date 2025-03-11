@@ -44,12 +44,11 @@ public class GitHubManager : IGitManager
             _writer.WriteFailure($"Failed to connect to GitHub: {response.ReasonPhrase}");
         }
     }
-    public IEnumerable<Workspace> GetProjects() => new List<Workspace> { new Workspace { Name = _organizationName, Description = "Github account", LastUpdateTime = DateTime.Now, Revision = 1, State = "Active", Url = _serverUrl, Id = Guid.NewGuid()} };
+    public IEnumerable<Workspace> GetWorkspaces() => new List<Workspace> { new Workspace { Name = _organizationName, Description = "Github account", LastUpdateTime = DateTime.Now, Revision = 1, State = "Active", Url = _serverUrl, Id = Guid.NewGuid()} };
     public IEnumerable<Team> GetAllTeams()
     {
         try
         {
-            // Kontrollera att Authorization-headern finns
             if (!_client.DefaultRequestHeaders.Contains("Authorization"))
             {
                 throw new InvalidOperationException("Authorization header is missing.");

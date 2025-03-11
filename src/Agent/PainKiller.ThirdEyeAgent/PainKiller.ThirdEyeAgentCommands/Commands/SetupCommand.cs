@@ -55,11 +55,11 @@
             var teams = GitManager.GetAllTeams().ToList();
             var (key, _) = ListService.ListDialog("Choose your team", teams.Select(p => $"{p.Name,-50} {p.Id}").ToList(), autoSelectIfOnlyOneItem: false).First();
             var selectedTeam = teams[key];
-            var allProjects = GitManager.GetProjects().ToList();
+            var allProjects = GitManager.GetWorkspaces().ToList();
             var teamProjects = allProjects.Where(p => selectedTeam.WorkspaceIds.Any(t => t == p.Id)).ToList();
             var selectedProjects = ListService.ListDialog("Choose your projects", teamProjects.Select(p => p.Name).ToList(), multiSelect: true, autoSelectIfOnlyOneItem: false);
             Configuration.ThirdEyeAgent.Teams = [selectedTeam.Name];
-            Configuration.ThirdEyeAgent.Projects = selectedProjects.Count == 0 ? ["*"] : selectedProjects.Select(p => p.Value).ToArray();
+            Configuration.ThirdEyeAgent.Workspaces = selectedProjects.Count == 0 ? ["*"] : selectedProjects.Select(p => p.Value).ToArray();
 
             var host = DialogService.QuestionAnswerDialog("Enter you host:", "Host (url to server):");
             var organizationName = DialogService.QuestionAnswerDialog("Enter your organization (or github user) name:","Organization name:");
