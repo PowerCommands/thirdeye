@@ -138,7 +138,7 @@ public class ObjectStorageManager : IObjectStorageManager
     }
     public void InsertOrUpdateCve(ComponentCve componentCve)
     {
-        var existing = _cveComponentObjects.ComponentCve.FirstOrDefault(c => c.ComponentName == componentCve.ComponentName);
+        var existing = _cveComponentObjects.ComponentCve.FirstOrDefault(c => c.Name == componentCve.Name && c.Version == componentCve.Version);
         if (existing != null)
         {
             _cveComponentObjects.ComponentCve.Remove(existing);

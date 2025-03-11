@@ -19,7 +19,8 @@ public class CveAnalyzeManager(IConsoleWriter writer)
             if (entries.Count > 0)
             {
                 var thresholdEntries = entries.Where(e => e.CvssScore.IsEqualOrHigher(threshold)).ToList();
-                var componentCve = new ComponentCve { ComponentName = component.Name, CveEntries = thresholdEntries };
+                if(thresholdEntries.Count == 0) continue;
+                var componentCve = new ComponentCve { Name = component.Name, Version = component.Version, CveEntries = thresholdEntries };
                 vulnerableComponents.Add(componentCve);
             }
         }
