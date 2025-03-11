@@ -2,9 +2,9 @@
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
-    [PowerCommandDesign( description: "Update your cve:s from National Vulnerability Database (NVD). \nPlease start with a baseline database file so that you don´t need to download every single CVE.",
+    [PowerCommandDesign( description: "Manage your CVEs from National Vulnerability Database (NVD).",
                   disableProxyOutput: true,
-                             options: "!api-key|sync",
+                             options: "!api-key|fetch|push-update-file",
                              example: "//Update your cve:s from the last page you collected.|nvd")]
     public class NvdCommand(string identifier, PowerCommandsConfiguration config) : ThirdEyeBaseCommando(identifier, config)
     {
@@ -15,7 +15,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                 SetupApiKey();
                 return Ok();
             }
-            if (HasOption("sync"))
+            if (HasOption("fetch"))
             {
                 var apiKey = Configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
                 var nvdFetcher = new CveFetcherManager(CveStorage, Configuration.ThirdEyeAgent, apiKey,this);
@@ -25,6 +25,12 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                 var checkSum = CveStorage.CreateUpdateFile();
                 WriteSuccessLine($"A new update file created with Checksum: {checkSum}");
             
+                IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
+                return Ok();
+            }
+            if(HasOption("push-update-file")){
+                var checkSum = CveStorage.CreateUpdateFile();
+                WriteSuccessLine($"A new update file created with Checksum: {checkSum}");
                 IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
                 return Ok();
             }
