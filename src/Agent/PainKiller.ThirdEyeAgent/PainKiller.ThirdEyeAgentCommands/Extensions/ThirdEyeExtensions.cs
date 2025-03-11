@@ -1,4 +1,5 @@
 ﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+using PainKiller.ThirdEyeAgentCommands.Enums;
 
 namespace PainKiller.ThirdEyeAgentCommands.Extensions;
 
@@ -30,5 +31,28 @@ public static class ThirdEyeExtensions
             }
         }
         return retVal;
+    }
+    public static CvssSeverity GetSeverity(this float score)
+    {
+        if (score >= 9.0) return CvssSeverity.Critical;
+        if (score >= 7.0) return CvssSeverity.High;
+        if (score >= 4.0) return CvssSeverity.Medium;
+        if (score >= 0.1) return CvssSeverity.Low;
+        return CvssSeverity.None;
+    }
+    public static string GetDisplaySeverity(this float score)
+    {
+        return score.GetSeverity() switch
+        {
+            CvssSeverity.Critical => "🔴 Critical",
+            CvssSeverity.High => "🟠 High",
+            CvssSeverity.Medium => "🟡 Medium",
+            CvssSeverity.Low => "🟢 Low",
+            _ => "⚪ None"
+        };
+    }
+    public static bool IsEqualOrHigher(this float score, CvssSeverity threshold)
+    {
+        return score.GetSeverity() >= threshold;
     }
 }

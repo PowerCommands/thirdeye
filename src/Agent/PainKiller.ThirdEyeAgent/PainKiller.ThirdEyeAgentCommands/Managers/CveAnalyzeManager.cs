@@ -1,26 +1,28 @@
 ﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
+using PainKiller.ThirdEyeAgentCommands.Enums;
+using PainKiller.ThirdEyeAgentCommands.Extensions;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
-public class CveAnalyzeManager
+public class CveAnalyzeManager(IConsoleWriter writer)
 {
-    public List<ComponentCve> GetVulnerabilities(List<ComponentCve> cveEntries, List<ThirdPartyComponent> components)
+    public List<ComponentCve> GetVulnerabilities(List<CveEntry> cveEntries, List<ThirdPartyComponent> components, List<Software> softwareItems, CvssSeverity threshold)
     {
-        var vulnerabilities = new List<ComponentCve>();
-
-        foreach (var cveEntry in cveEntries)
+        var vulnerableComponents = new List<ComponentCve>();
+        foreach (var component in components)
         {
-            var matchingComponents = components.Where(c => c.Name == cveEntry.ComponentName);
+            writer.WriteCodeExample("Analyze", $"{component.Name} {component.Version}");
+            Console.CursorTop -= 1;
 
-            foreach (var match in matchingComponents)
+            var entries = cveEntries.Where(cv => cv.IsAffectedProduct(component.Name, component.Version)).ToList();
+            if (entries.Count > 0)
             {
-                if (cveEntry.CveEntries.Any(c => c.AffectedProducts.Any(p => p.Contains(match.Version))))
-                {
-                    vulnerabilities.Add(new ComponentCve { ComponentName = match.Name, CveEntries = cveEntry.CveEntries.Where(ce => ce.AffectedProducts.Any(p => p.Contains(match.Version))).ToList() });
-                }
+                var thresholdEntries = entries.Where(e => e.CvssScore.IsEqualOrHigher(threshold)).ToList();
+                var componentCve = new ComponentCve { ComponentName = component.Name, CveEntries = thresholdEntries };
+                vulnerableComponents.Add(componentCve);
             }
         }
-        return vulnerabilities;
+        return vulnerableComponents;
     }
-
 }

@@ -54,7 +54,7 @@ public class CveStorageService : ICveStorageService
         if(_cveObjects.Entries.Count == 0) return "";
         if(!Directory.Exists(PathToUpdates)) Directory.CreateDirectory(PathToUpdates);
         var batchFileName = $"{PathToUpdates}\\cve_baseline.json";
-        StorageService<CveObjects>.Service.StoreObject(_cveObjects, batchFileName);
+        File.Copy(Path.Combine(_storagePath, _storageFileName), batchFileName);
         var checkSum = new FileChecksum(batchFileName);
         var cveUpdateFileInfo = new CveUpdateFileInfo { Checksum = checkSum.Mde5Hash, Created = DateTime.Now, CveCount = _cveObjects.Entries.Count };
         StorageService<CveUpdateFileInfo>.Service.StoreObject(cveUpdateFileInfo, $"{PathToUpdates}\\metadata.json");

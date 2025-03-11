@@ -239,5 +239,13 @@ namespace PainKiller.PowerCommands.Shared.Extensions
 
             return $"{start}{ellipsis}{end}";
         }
+
+        public static string Truncate(this string input, int maxLength, string ellipse = "...")
+        {
+            if (string.IsNullOrEmpty(input) || input.Length <= maxLength) 
+                return input;
+
+            return input.Substring(0, maxLength - ellipse.Length) + ellipse;
+        }
     }
 }
