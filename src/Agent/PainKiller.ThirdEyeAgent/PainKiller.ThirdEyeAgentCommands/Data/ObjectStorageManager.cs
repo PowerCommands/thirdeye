@@ -9,7 +9,7 @@ public class ObjectStorageManager : IObjectStorageManager
     private WorkspaceObjects _workspaceObjects;
     private RepositoryObjects _repositoryObjects;
     private ThirdPartyComponentObjects _thirdPartyComponentObjects;
-    private DevProjectObjects _devProjectObjects;
+    private ProjectObjects _projectObjects;
     private readonly CveComponentObjects _cveComponentObjects;
 
     private static Lazy<IObjectStorageManager>? _lazy;
@@ -37,14 +37,14 @@ public class ObjectStorageManager : IObjectStorageManager
         _workspaceObjects = StorageService<WorkspaceObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(WorkspaceObjects)}.json"));
         _repositoryObjects = StorageService<RepositoryObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
         _thirdPartyComponentObjects = StorageService<ThirdPartyComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
-        _devProjectObjects = StorageService<DevProjectObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(DevProjectObjects)}.json"));
+        _projectObjects = StorageService<ProjectObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
         _cveComponentObjects = StorageService<CveComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(CveComponentObjects)}.json"));
     }
     public List<Team> GetTeams() => _teamObjects.Teams;
     public List<Workspace> GetWorkspaces() => _workspaceObjects.Workspaces;
     public List<Repository> GetRepositories() => _repositoryObjects.Repositories;
     public List<ThirdPartyComponent> GetThirdPartyComponents() => _thirdPartyComponentObjects.Components;
-    public List<DevProject> GetDevProjects() => _devProjectObjects.DevProjects;
+    public List<Project> GetProjects() => _projectObjects.Projects;
     public List<ComponentCve> GetComponentCves() => _cveComponentObjects.ComponentCve;
     public void SaveTeams(List<Team> teams)
     {
@@ -130,26 +130,26 @@ public class ObjectStorageManager : IObjectStorageManager
         StorageService<ThirdPartyComponentObjects>.Service.StoreObject(_thirdPartyComponentObjects, Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
         return true;
     }
-    public void SaveDevProjects(List<DevProject> devProjects)
+    public void SaveProjects(List<Project> projects)
     {
-        _devProjectObjects.DevProjects = devProjects;
-        _devProjectObjects.LastUpdated = DateTime.Now;
-        StorageService<DevProjectObjects>.Service.StoreObject(_devProjectObjects, Path.Combine(_storagePath, $"{nameof(DevProjectObjects)}.json"));
+        _projectObjects.Projects = projects;
+        _projectObjects.LastUpdated = DateTime.Now;
+        StorageService<ProjectObjects>.Service.StoreObject(_projectObjects, Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
     }
-    public bool InsertDevProject(DevProject project)
+    public bool InsertProject(Project project)
     {
-        if (_devProjectObjects.DevProjects.Any(p => p.WorkspaceId == project.WorkspaceId && p.RepositoryId == project.RepositoryId && p.Path == project.Path)) return false;
-        _devProjectObjects.DevProjects.Add(project);
-        _devProjectObjects.LastUpdated = DateTime.Now;
-        StorageService<DevProjectObjects>.Service.StoreObject(_devProjectObjects, Path.Combine(_storagePath, $"{nameof(DevProjectObjects)}.json"));
+        if (_projectObjects.Projects.Any(p => p.WorkspaceId == project.WorkspaceId && p.RepositoryId == project.RepositoryId && p.Path == project.Path)) return false;
+        _projectObjects.Projects.Add(project);
+        _projectObjects.LastUpdated = DateTime.Now;
+        StorageService<ProjectObjects>.Service.StoreObject(_projectObjects, Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
         return true;
     }
-    public int InsertDevProjects(IEnumerable<DevProject> projects)
+    public int InsertProjects(IEnumerable<Project> projects)
     {
         var insertedCounter = 0;
         foreach (var project in projects)
         {
-            var inserted = InsertDevProject(project);
+            var inserted = InsertProject(project);
             if(inserted) insertedCounter++;
         }
         return insertedCounter;
@@ -174,7 +174,7 @@ public class ObjectStorageManager : IObjectStorageManager
         _workspaceObjects = StorageService<WorkspaceObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(WorkspaceObjects)}.json"));
         _repositoryObjects = StorageService<RepositoryObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
         _thirdPartyComponentObjects = StorageService<ThirdPartyComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
-        _devProjectObjects = StorageService<DevProjectObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(DevProjectObjects)}.json"));
+        _projectObjects = StorageService<ProjectObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
     }
 
 }

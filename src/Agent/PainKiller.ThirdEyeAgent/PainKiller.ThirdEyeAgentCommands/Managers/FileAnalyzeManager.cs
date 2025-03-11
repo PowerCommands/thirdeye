@@ -35,11 +35,11 @@ public class FileAnalyzeManager : IFileAnalyzeManager
         return relevantExtensions.Any(extension => path.EndsWith(extension, StringComparison.OrdinalIgnoreCase));
     }
     private List<Item> GetRelevantFiles(IEnumerable<Item> files) => files.Where(file => !file.IsFolder && IsRelevantFile(file.Path)).ToList();
-    public  Analyze AnalyzeRepo(List<Item> repoItems, Guid projectId, Guid repositoryId)
+    public  Analyze AnalyzeRepo(List<Item> repoItems, Guid workspaceId, Guid repositoryId)
     {
         var retVal = new Analyze();
         if(repoItems.Count == 0) return retVal;
-        var devProjects = DevProjectManager.IdentifyProjects(repoItems);
+        var projects = ProjectManager.IdentifyProjects(repoItems);
         var components = new List<ThirdPartyComponent>();
         var relevantFiles = GetRelevantFiles(repoItems);
         var extractors = GetExtractors();
@@ -53,15 +53,15 @@ public class FileAnalyzeManager : IFileAnalyzeManager
                 }
             }
         }
-        foreach (var devProject in devProjects)
+        foreach (var project in projects)
         {
-            var normalizedProjectPath = Path.GetFullPath(devProject.Path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            var normalizedProjectPath = Path.GetFullPath(project.Path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             var projectComponents = components.Where(c => Path.GetFullPath(c.Path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).StartsWith(normalizedProjectPath, StringComparison.OrdinalIgnoreCase)).ToList();
-            devProject.Components = projectComponents;
-            devProject.WorkspaceId = projectId;
-            devProject.RepositoryId = repositoryId;
+            project.Components = projectComponents;
+            project.WorkspaceId = workspaceId;
+            project.RepositoryId = repositoryId;
         }
-        retVal.DevProjects = devProjects;
+        retVal.Projects = projects;
         retVal.ThirdPartyComponents = components;
         return retVal;
     }

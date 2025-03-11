@@ -10,7 +10,7 @@ public class NvdInfoPanelContent() : IInfoPanelContent
         var needsUpdateText = storage.NeedsUpdate() ? "⚠️ Needs Update run [nvd] command" : "";
         ShortText = needsUpdateText;
         var metaData = storage.GetUpdateInfo();
-        return $"Last updated: {metaData.Created} NVD CVEs count: {metaData.CveCount} {needsUpdateText}";
+        return $"NVD CVEs count: {metaData.CveCount} Last updated: {metaData.Created.ToShortDateString()} {needsUpdateText}";
     }
     public string? ShortText { get; private set; }
 }

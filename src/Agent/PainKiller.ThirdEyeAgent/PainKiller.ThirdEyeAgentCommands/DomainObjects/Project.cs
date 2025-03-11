@@ -1,6 +1,6 @@
 ﻿namespace PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
-public class DevProject
+public class Project
 {
     public Guid WorkspaceId { get; set; }
     public Guid RepositoryId { get; set; }

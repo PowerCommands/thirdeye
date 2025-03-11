@@ -7,20 +7,20 @@ namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
 public class PresentationManager(IConsoleWriter writer)
 {
-    public void DisplayRepository(string name, IEnumerable<DevProject> projects)
+    public void DisplayRepository(string name, IEnumerable<Project> projects)
     {
         writer.WriteHeadLine($"\n📁 {name}");
-        foreach (var devProject in projects)
+        foreach (var project in projects)
         {
-            writer.WriteHeadLine($"├── 🈁 {devProject.Name} {devProject.Sdk} {devProject.Language} {devProject.Framework}");
-            foreach (var component in devProject.Components)
+            writer.WriteHeadLine($"├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
+            foreach (var component in project.Components)
             {
                 writer.WriteHeadLine($"│  │   ├── {component.Name} {component.Version}");
             }
         }
     }
 
-    public void DisplayOrganization(string organizationName, List<Workspace> workspaces, List<Repository> repositories, List<Team> teams, List<DevProject> devProjects)
+    public void DisplayOrganization(string organizationName, List<Workspace> workspaces, List<Repository> repositories, List<Team> teams, List<Project> projects)
     {
         writer.WriteHeadLine($"\n🏠 {organizationName}");
         foreach (var workspace in workspaces)
@@ -43,11 +43,11 @@ public class PresentationManager(IConsoleWriter writer)
             foreach (var repository in projectRepos)
             {
                 writer.WriteHeadLine($"  │   ├── 📁 {repository.Name}");
-                var repoDevProjects = devProjects.Where(dp => dp.RepositoryId == repository.RepositoryId);
-                foreach (var devProject in repoDevProjects)
+                var repoProjects = projects.Where(dp => dp.RepositoryId == repository.RepositoryId);
+                foreach (var project in repoProjects)
                 {
-                    writer.WriteHeadLine($"  │   │   ├── 🈁 {devProject.Name} {devProject.Sdk} {devProject.Language} {devProject.Framework}");
-                    foreach (var component in devProject.Components)
+                    writer.WriteHeadLine($"  │   │   ├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
+                    foreach (var component in project.Components)
                     {
                         writer.WriteHeadLine($"  │   │   ├────── {component.Name} {component.Version}");
                     }

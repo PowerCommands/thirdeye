@@ -16,10 +16,10 @@ public class WorkspaceManager(IGitManager gitManager, IObjectStorageManager stor
         writer.WriteSuccessLine($"Fetched {teams.Count} Teams and persisted to storage.");
 
         var allRepositories = new List<Repository>();
-        var removeProjects = new List<Workspace>();           
+        var removeWorkspaces = new List<Workspace>();           
         var removeRepositories = new List<Repository>();    
         var allDistinctComponents = new List<ThirdPartyComponent>();
-        var allDevProjects = new List<DevProject>();
+        var allProjects = new List<Project>();
 
         var workspaceIterationCount = 0;
         foreach (var workspace in workspaces)
@@ -30,7 +30,7 @@ public class WorkspaceManager(IGitManager gitManager, IObjectStorageManager stor
             var repositories = gitManager.GetRepositories(workspace.Id).ToList();
             if (repositories.Count == 0)
             {
-                removeProjects.Add(workspace);
+                removeWorkspaces.Add(workspace);
                 continue;
             }
             allRepositories.AddRange(repositories);
@@ -52,17 +52,17 @@ public class WorkspaceManager(IGitManager gitManager, IObjectStorageManager stor
                 Console.CursorTop -= 1;
                 var analyzeRepo = analyzeManager.AnalyzeRepo(files, workspace.Id, repository.RepositoryId);
                 foreach (var thirdPartyComponent in analyzeRepo.ThirdPartyComponents.Where(thirdPartyComponent => !allDistinctComponents.Any(c => c.Name == thirdPartyComponent.Name && c.Version == thirdPartyComponent.Version))) allDistinctComponents.Add(thirdPartyComponent);
-                allDevProjects.AddRange(analyzeRepo.DevProjects);
+                allProjects.AddRange(analyzeRepo.Projects);
             }
         }
         storage.SaveThirdPartyComponents(allDistinctComponents);
         writer.WriteSuccessLine($"Extracted {allDistinctComponents.Count} distinct components and persisted them to storage.");
-        storage.SaveDevProjects(allDevProjects);
-        writer.WriteSuccessLine($"Extracted {allDevProjects.Count} projects and persisted them to storage.");
+        storage.SaveProjects(allProjects);
+        writer.WriteSuccessLine($"Extracted {allProjects.Count} projects and persisted them to storage.");
         foreach (var repo in removeRepositories) allRepositories.Remove(repo);
         storage.SaveRepositories(allRepositories);
         writer.WriteSuccessLine($"Fetched {allRepositories.Count} repositories and persisted them to storage.");
-        foreach (var project in removeProjects) workspaces.Remove(project);
+        foreach (var project in removeWorkspaces) workspaces.Remove(project);
         storage.SaveWorkspace(workspaces);
         writer.WriteSuccessLine($"{workspaces.Count} workspaces persisted to storage.\n");
         return workspaces;
@@ -101,7 +101,7 @@ public class WorkspaceManager(IGitManager gitManager, IObjectStorageManager stor
                 writer.WriteLine($"Found {files.Count} files, that now will be analyzed to find projects and components...");
                 var analyzeRepo = analyzeManager.AnalyzeRepo(files, project.Id, repo.RepositoryId);
                 foreach (var thirdPartyComponent in analyzeRepo.ThirdPartyComponents) storage.InsertComponent(thirdPartyComponent);
-                var insertCount = storage.InsertDevProjects(analyzeRepo.DevProjects);
+                var insertCount = storage.InsertProjects(analyzeRepo.Projects);
                 writer.WriteLine($"{insertCount} Projects updated");
             }
         }

@@ -2,8 +2,8 @@
 
 namespace PainKiller.ThirdEyeAgentCommands.Data;
 
-public class DevProjectObjects
+public class ProjectObjects
 {
     public DateTime LastUpdated { get; set; }
-    public List<DevProject> DevProjects { get; set; } = [];
+    public List<Project> Projects { get; set; } = [];
 }

@@ -19,11 +19,11 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             }
             
             DisableLog();
-            var projects =  Storage.GetWorkspaces().GetFilteredProjects(Configuration.ThirdEyeAgent.Workspaces);
-            var (key, _) = ListService.ListDialog("Choose workspace", projects.Select(p => $"{p.Name} {p.Id}").ToList()).FirstOrDefault();
-            var selectedProject = projects[key];
-            WriteSuccessLine($"\n{selectedProject.Name}");
-            var repositories = Storage.GetRepositories().Where(r => r.WorkspaceId == selectedProject.Id).ToList();
+            var workspaces =  Storage.GetWorkspaces().GetFilteredProjects(Configuration.ThirdEyeAgent.Workspaces);
+            var (key, _) = ListService.ListDialog("Choose workspace", workspaces.Select(p => $"{p.Name} {p.Id}").ToList()).FirstOrDefault();
+            var selectedWorkspace = workspaces[key];
+            WriteSuccessLine($"\n{selectedWorkspace.Name}");
+            var repositories = Storage.GetRepositories().Where(r => r.WorkspaceId == selectedWorkspace.Id).ToList();
             if(repositories.Count == 0)
             {
                 WriteLine("No repositories found for this project.");
@@ -31,8 +31,8 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             }
             var (key2, _) = ListService.ListDialog("Choose repository", repositories.Select(r => $"{r.Name} {r.RepositoryId}").ToList()).FirstOrDefault();
             var selectedRepo = repositories[key2];
-            var devProjects = Storage.GetDevProjects().Where(p => p.RepositoryId == selectedRepo.RepositoryId).ToList();
-            PresentationManager.DisplayRepository(selectedRepo.Name, devProjects);
+            var projects = Storage.GetProjects().Where(p => p.RepositoryId == selectedRepo.RepositoryId).ToList();
+            PresentationManager.DisplayRepository(selectedRepo.Name, projects);
             EnableLog();
             return Ok();
         }

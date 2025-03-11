@@ -10,7 +10,7 @@ public interface IObjectStorageManager
     void InsertOrUpdateWorkspace(Workspace workspace);
     List<Repository> GetRepositories();
     List<ThirdPartyComponent> GetThirdPartyComponents();
-    List<DevProject> GetDevProjects();
+    List<Project> GetProjects();
     List<ComponentCve> GetComponentCves();
     void SaveTeams(List<Team> teams);
     void SaveWorkspace(List<Workspace> workspaces);
@@ -19,9 +19,9 @@ public interface IObjectStorageManager
     bool RemoveRepository(Guid repositoryId);
     void SaveThirdPartyComponents(List<ThirdPartyComponent> components);
     bool InsertComponent(ThirdPartyComponent component);
-    void SaveDevProjects(List<DevProject> devProjects);
-    bool InsertDevProject(DevProject project);
-    int InsertDevProjects(IEnumerable<DevProject> projects);
+    void SaveProjects(List<Project> projects);
+    bool InsertProject(Project project);
+    int InsertProjects(IEnumerable<Project> projects);
     void InsertOrUpdateCve(ComponentCve componentCve);
     void ReLoad();
 }
