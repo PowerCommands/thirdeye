@@ -56,7 +56,7 @@
             var (key, _) = ListService.ListDialog("Choose your team", teams.Select(p => $"{p.Name,-50} {p.Id}").ToList(), autoSelectIfOnlyOneItem: false).First();
             var selectedTeam = teams[key];
             var allProjects = GitManager.GetProjects().ToList();
-            var teamProjects = allProjects.Where(p => selectedTeam.ProjectIds.Any(t => t == p.Id)).ToList();
+            var teamProjects = allProjects.Where(p => selectedTeam.WorkspaceIds.Any(t => t == p.Id)).ToList();
             var selectedProjects = ListService.ListDialog("Choose your projects", teamProjects.Select(p => p.Name).ToList(), multiSelect: true, autoSelectIfOnlyOneItem: false);
             Configuration.ThirdEyeAgent.Teams = [selectedTeam.Name];
             Configuration.ThirdEyeAgent.Projects = selectedProjects.Count == 0 ? ["*"] : selectedProjects.Select(p => p.Value).ToArray();

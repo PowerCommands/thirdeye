@@ -5,5 +5,5 @@ namespace PainKiller.ThirdEyeAgentCommands.Data;
 public class ProjectObjects
 {
     public DateTime LastUpdated { get; set; }
-    public List<Project> Projects { get; set; } = [];
+    public List<Workspace> Projects { get; set; } = [];
 }

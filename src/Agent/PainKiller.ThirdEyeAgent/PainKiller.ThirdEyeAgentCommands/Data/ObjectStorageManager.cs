@@ -23,7 +23,7 @@ public class ObjectStorageManager : IObjectStorageManager
         _cveComponentObjects = StorageService<CveComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(CveComponentObjects)}.json"));
     }
     public List<Team> GetTeams() => _teamObjects.Teams;
-    public List<Project> GetProjects() => _projectObjects.Projects;
+    public List<Workspace> GetProjects() => _projectObjects.Projects;
     public List<Repository> GetRepositories() => _repositoryObjects.Repositories;
     public List<ThirdPartyComponent> GetThirdPartyComponents() => _thirdPartyComponentObjects.Components;
     public List<DevProject> GetDevProjects() => _devProjectObjects.DevProjects;
@@ -34,13 +34,13 @@ public class ObjectStorageManager : IObjectStorageManager
         _teamObjects.LastUpdated = DateTime.Now;
         StorageService<TeamObjects>.Service.StoreObject(_teamObjects, Path.Combine(_storagePath, $"{nameof(TeamObjects)}.json"));
     }
-    public void SaveProjects(List<Project> projects)
+    public void SaveProjects(List<Workspace> projects)
     {
         _projectObjects.Projects = projects;
         _projectObjects.LastUpdated = DateTime.Now;
         StorageService<ProjectObjects>.Service.StoreObject(_projectObjects, Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
     }
-    public void InsertOrUpdateProject(Project project)
+    public void InsertOrUpdateProject(Workspace project)
     {
         var existing = _projectObjects.Projects.FirstOrDefault(p => p.Id == project.Id);
         if (existing != null)
@@ -78,7 +78,7 @@ public class ObjectStorageManager : IObjectStorageManager
             existing.Name = repository.Name;
             existing.Url = repository.Url;
             existing.MainBranch = repository.MainBranch;
-            existing.ProjectId = repository.ProjectId;
+            existing.WorkspaceId = repository.WorkspaceId;
             _repositoryObjects.Repositories.Add(existing);
             _repositoryObjects.LastUpdated = DateTime.Now;
             StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
@@ -120,7 +120,7 @@ public class ObjectStorageManager : IObjectStorageManager
     }
     public bool InsertDevProject(DevProject project)
     {
-        if (_devProjectObjects.DevProjects.Any(p => p.ProjectId == project.ProjectId && p.RepositoryId == project.RepositoryId && p.Path == project.Path)) return false;
+        if (_devProjectObjects.DevProjects.Any(p => p.WorkspaceId == project.WorkspaceId && p.RepositoryId == project.RepositoryId && p.Path == project.Path)) return false;
         _devProjectObjects.DevProjects.Add(project);
         _devProjectObjects.LastUpdated = DateTime.Now;
         StorageService<DevProjectObjects>.Service.StoreObject(_devProjectObjects, Path.Combine(_storagePath, $"{nameof(DevProjectObjects)}.json"));

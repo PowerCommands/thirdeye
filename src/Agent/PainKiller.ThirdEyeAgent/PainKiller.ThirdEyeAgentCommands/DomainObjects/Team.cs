@@ -7,5 +7,5 @@ public class Team
     public string Description { get; set; } = "";
     public string Url { get; set; } = "";
     public List<Member> Members { get; set; } = [];
-    public List<Guid> ProjectIds { get; set; } = [];
+    public List<Guid> WorkspaceIds { get; set; } = [];
 }

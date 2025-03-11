@@ -16,10 +16,10 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
         var projects = client.GetProjects().Result;
         writer.WriteSuccess($"Number of projects in organization: {projects.Count}");
     }
-    public IEnumerable<Project> GetProjects()
+    public IEnumerable<Workspace> GetProjects()
     {
         var client = _connection.GetClient<ProjectHttpClient>();
-        return client.GetProjects().Result.Select(p => new Project { Description = p.Description, LastUpdateTime = p.LastUpdateTime, Name = p.Name, Revision = p.Revision, State = p.State.ToString(), Url = p.Url, Id = p.Id });
+        return client.GetProjects().Result.Select(p => new Workspace { Description = p.Description, LastUpdateTime = p.LastUpdateTime, Name = p.Name, Revision = p.Revision, State = p.State.ToString(), Url = p.Url, Id = p.Id });
     }
     public IEnumerable<Team> GetAllTeams()
     {
@@ -36,7 +36,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
                 if (retVal.Any(t => t.Id == webApiTeam.Id))
                 {
                     var existingTeam = retVal.First(t => t.Id == webApiTeam.Id);
-                    existingTeam.ProjectIds.Add(project.Id);
+                    existingTeam.WorkspaceIds.Add(project.Id);
                     retVal.Remove(existingTeam);
                     retVal.Add(existingTeam);
                     continue;
@@ -60,7 +60,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
                     members.Add(member);
                 }
                 var team = new Team { Description = webApiTeam.Description, Id = webApiTeam.Id, Name = webApiTeam.Name, Url = webApiTeam.Url, Members = teamMembers.Select(m => new Member { Name = m.Identity.DisplayName, Url = m.Identity.Url, Id = m.Identity.Id, IsTeamAdmin = m.IsTeamAdmin }).ToList() };
-                team.ProjectIds.Add(project.Id);
+                team.WorkspaceIds.Add(project.Id);
                 retVal.Add(team);
             }
         }
@@ -90,7 +90,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
             foreach (var gitRepository in gitRepos)
             {
                 var mainBranch = GetMainBranch(gitRepository.Id);
-                var repo = new Repository { Name = gitRepository.Name, ProjectId = projectId, RepositoryId = gitRepository.Id, Url = gitRepository.Url, MainBranch = mainBranch };
+                var repo = new Repository { Name = gitRepository.Name, WorkspaceId = projectId, RepositoryId = gitRepository.Id, Url = gitRepository.Url, MainBranch = mainBranch };
                 repos.Add(repo);
             }
 

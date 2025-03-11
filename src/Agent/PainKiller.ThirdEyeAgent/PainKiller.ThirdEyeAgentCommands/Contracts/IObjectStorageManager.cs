@@ -5,15 +5,15 @@ namespace PainKiller.ThirdEyeAgentCommands.Contracts;
 public interface IObjectStorageManager
 {
     List<Team> GetTeams();
-    List<Project> GetProjects();
+    List<Workspace> GetProjects();
     bool RemoveProject(Guid projectId);
-    void InsertOrUpdateProject(Project project);
+    void InsertOrUpdateProject(Workspace project);
     List<Repository> GetRepositories();
     List<ThirdPartyComponent> GetThirdPartyComponents();
     List<DevProject> GetDevProjects();
     List<ComponentCve> GetComponentCves();
     void SaveTeams(List<Team> teams);
-    void SaveProjects(List<Project> projects);
+    void SaveProjects(List<Workspace> projects);
     void SaveRepositories(List<Repository> repositories);
     string UpdateOrInsertRepository(Repository repository);
     bool RemoveRepository(Guid repositoryId);

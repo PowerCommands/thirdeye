@@ -44,7 +44,7 @@ public class GitHubManager : IGitManager
             _writer.WriteFailure($"Failed to connect to GitHub: {response.ReasonPhrase}");
         }
     }
-    public IEnumerable<Project> GetProjects() => new List<Project> { new Project { Name = _organizationName, Description = "Github account", LastUpdateTime = DateTime.Now, Revision = 1, State = "Active", Url = _serverUrl, Id = Guid.NewGuid()} };
+    public IEnumerable<Workspace> GetProjects() => new List<Workspace> { new Workspace { Name = _organizationName, Description = "Github account", LastUpdateTime = DateTime.Now, Revision = 1, State = "Active", Url = _serverUrl, Id = Guid.NewGuid()} };
     public IEnumerable<Team> GetAllTeams()
     {
         try
@@ -77,7 +77,7 @@ public class GitHubManager : IGitManager
         var response = _client.GetStringAsync("https://api.github.com/user/repos").Result;
         var repositories = JsonSerializer.Deserialize<List<GitHubRepo>>(response);
 
-        return  repositories?.Select(repo => new Repository { Name = repo.Name, RepositoryId = repo.Id.ToGuid(), Url = repo.HtmlUrl, ProjectId = projectId}) ?? new List<Repository>();
+        return  repositories?.Select(repo => new Repository { Name = repo.Name, RepositoryId = repo.Id.ToGuid(), Url = repo.HtmlUrl, WorkspaceId = projectId}) ?? new List<Repository>();
         
     }
     private string GetRepositoryNameFromId(Guid repositoryId)

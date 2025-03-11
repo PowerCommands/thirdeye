@@ -50,9 +50,6 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                 WriteLine("");
                 WriteCodeExample(component.Name, component.Version);
                 ProjectSearch(component, detailedSearch: true);
-
-                var searchQuestion = DialogService.YesNoDialog($"Do you want to do a search for all versions of {component.Name}?");
-                if (searchQuestion) ProjectSearch(component, detailedSearch: false);
             }
             return Ok();
         }

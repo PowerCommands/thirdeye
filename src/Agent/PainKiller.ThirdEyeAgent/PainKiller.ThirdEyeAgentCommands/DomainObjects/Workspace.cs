@@ -2,13 +2,13 @@
 
 namespace PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
-public class Project
+public class Workspace
 {
-    public Project()
+    public Workspace()
     {
     }
 
-    public Project(string description, DateTime lastUpdateTime, string name, long revision, string state, string url, Guid id)
+    public Workspace(string description, DateTime lastUpdateTime, string name, long revision, string state, string url, Guid id)
     {
         Description = description;
         LastUpdateTime = lastUpdateTime;

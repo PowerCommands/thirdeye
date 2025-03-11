@@ -58,7 +58,7 @@ public class FileAnalyzeManager : IFileAnalyzeManager
             var normalizedProjectPath = Path.GetFullPath(devProject.Path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             var projectComponents = components.Where(c => Path.GetFullPath(c.Path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).StartsWith(normalizedProjectPath, StringComparison.OrdinalIgnoreCase)).ToList();
             devProject.Components = projectComponents;
-            devProject.ProjectId = projectId;
+            devProject.WorkspaceId = projectId;
             devProject.RepositoryId = repositoryId;
         }
         retVal.DevProjects = devProjects;

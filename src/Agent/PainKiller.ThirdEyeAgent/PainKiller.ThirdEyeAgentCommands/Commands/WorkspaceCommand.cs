@@ -2,16 +2,16 @@
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
-    [PowerCommandDesign( description: "Handle projects",
+    [PowerCommandDesign( description: "Handle workspaces (Projects in ADS)",
                   disableProxyOutput: true,
-                             example: "//List all projects|project")]
-    public class ProjectCommand(string identifier, PowerCommandsConfiguration configuration) : ThirdEyeBaseCommando(identifier, configuration)
+                             example: "//List all your configured workspaces|workspace")]
+    public class WorkspaceCommand(string identifier, PowerCommandsConfiguration configuration) : ThirdEyeBaseCommando(identifier, configuration)
     {
         public override RunResult Run()
         {
             DisableLog();
             var projects =  Storage.GetProjects().GetFilteredProjects(Configuration.ThirdEyeAgent.Projects);
-            var (key, _) = ListService.ListDialog("Choose project", projects.Select(p => $"{p.Name} {p.Id}").ToList()).FirstOrDefault();
+            var (key, _) = ListService.ListDialog("Choose workspace", projects.Select(p => $"{p.Name} {p.Id}").ToList()).FirstOrDefault();
             var selectedProject = projects[key];
             WriteSuccessLine($"\n{selectedProject.Name}");
             var repositories = Storage.GetRepositories().Where(r => r.WorkspaceId == selectedProject.Id).ToList();

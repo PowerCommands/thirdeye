@@ -25,10 +25,10 @@ public abstract class ThirdEyeBaseCommando : CommandBase<PowerCommandsConfigurat
     protected void ProjectSearch(ThirdPartyComponent component, bool detailedSearch)
     {
         var devProjects = Storage.GetDevProjects().Where(dp => dp.Components.Any(c => c.Name == component.Name && (c.Version == component.Version || !detailedSearch))).ToList();
-        var projects = Storage.GetProjects().Where(p => devProjects.Any(dp => dp.ProjectId == p.Id)).ToList();
+        var projects = Storage.GetProjects().Where(p => devProjects.Any(dp => dp.WorkspaceId == p.Id)).ToList();
         var repos = new List<Repository>();
         var teams = Storage.GetTeams();
-        foreach (var projectRepos in projects.Select(project => Storage.GetRepositories().Where(r => r.ProjectId == project.Id))) repos.AddRange(projectRepos);
+        foreach (var projectRepos in projects.Select(project => Storage.GetRepositories().Where(r => r.WorkspaceId == project.Id))) repos.AddRange(projectRepos);
         PresentationManager.DisplayOrganization(Configuration.ThirdEyeAgent.OrganizationName, projects, repos, teams, devProjects);
     }
 }

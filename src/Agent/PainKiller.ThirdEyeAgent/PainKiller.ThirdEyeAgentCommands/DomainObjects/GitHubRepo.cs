@@ -14,5 +14,5 @@ public class GitHubRepo
     public string Language { get; set; } = "";
 
     [JsonPropertyName("owner")]
-    public Owner Owner { get; set; }
+    public Owner Owner { get; set; } = new();
 }

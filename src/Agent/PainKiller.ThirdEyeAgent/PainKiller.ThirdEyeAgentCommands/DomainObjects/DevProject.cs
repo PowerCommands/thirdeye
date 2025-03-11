@@ -2,7 +2,7 @@
 
 public class DevProject
 {
-    public Guid ProjectId { get; set; }
+    public Guid WorkspaceId { get; set; }
     public Guid RepositoryId { get; set; }
     public string Name { get; set; } = "";
     public string Path { get; set; } = "";

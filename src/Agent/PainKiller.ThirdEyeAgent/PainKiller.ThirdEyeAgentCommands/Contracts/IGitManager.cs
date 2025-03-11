@@ -5,7 +5,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Contracts;
 public interface IGitManager
 {
     void Connect();
-    IEnumerable<Project> GetProjects();
+    IEnumerable<Workspace> GetProjects();
     IEnumerable<Team> GetAllTeams();
     IEnumerable<Repository> GetRepositories(Guid projectId);
     IEnumerable<Item> GetAllFilesInRepository(Guid repositoryId);

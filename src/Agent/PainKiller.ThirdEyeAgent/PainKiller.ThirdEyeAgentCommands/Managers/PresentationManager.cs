@@ -20,14 +20,14 @@ public class PresentationManager(IConsoleWriter writer)
         }
     }
 
-    public void DisplayOrganization(string organizationName, List<Project> projects, List<Repository> repositories, List<Team> teams, List<DevProject> devProjects)
+    public void DisplayOrganization(string organizationName, List<Workspace> workspaces, List<Repository> repositories, List<Team> teams, List<DevProject> devProjects)
     {
         writer.WriteHeadLine($"\n🏠 {organizationName}");
-        foreach (var project in projects)
+        foreach (var workspace in workspaces)
         {
-            if (repositories.All(p => p.ProjectId != project.Id)) continue;
-            writer.WriteHeadLine($"  ├── 📦 {project.Name}");
-            var projectTeams = teams.Where(t => t.ProjectIds.Any(p => p == project.Id));
+            if (repositories.All(p => p.WorkspaceId != workspace.Id)) continue;
+            writer.WriteHeadLine($"  ├── 📦 {workspace.Name}");
+            var projectTeams = teams.Where(t => t.WorkspaceIds.Any(p => p == workspace.Id));
             foreach (var team in projectTeams)
             {
                 writer.WriteHeadLine($"  │   ├── 👨‍👩‍👧‍👦 {team.Name.Trim()}");
@@ -38,7 +38,7 @@ public class PresentationManager(IConsoleWriter writer)
                 }
             }
 
-            var projectRepos = repositories.Where(r => r.ProjectId == project.Id);
+            var projectRepos = repositories.Where(r => r.WorkspaceId == workspace.Id);
             writer.WriteHeadLine("  │   ├── Repos");
             foreach (var repository in projectRepos)
             {

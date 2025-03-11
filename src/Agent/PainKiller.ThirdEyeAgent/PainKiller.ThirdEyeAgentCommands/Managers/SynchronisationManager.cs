@@ -5,7 +5,7 @@ using PainKiller.ThirdEyeAgentCommands.Extensions;
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
 public class SynchronisationManager(IGitManager gitManager, IObjectStorageManager storage, IFileAnalyzeManager analyzeManager, IConsoleWriter writer, ThirdEyeConfiguration configuration)
 {
-    public List<Project> InitializeOrganization()
+    public List<Workspace> InitializeOrganization()
     {
         var allProjects = gitManager.GetProjects().ToList();
         var projects = configuration.ConfigurationFilter(allProjects, configuration.Projects, p => p.Name).ToList();
@@ -16,7 +16,7 @@ public class SynchronisationManager(IGitManager gitManager, IObjectStorageManage
         writer.WriteSuccessLine($"Fetched {teams.Count} Teams and persisted to storage.");
 
         var allRepositories = new List<Repository>();
-        var removeProjects = new List<Project>();           
+        var removeProjects = new List<Workspace>();           
         var removeRepositories = new List<Repository>();    
         var allDistinctComponents = new List<ThirdPartyComponent>();
         var allDevProjects = new List<DevProject>();
@@ -105,7 +105,7 @@ public class SynchronisationManager(IGitManager gitManager, IObjectStorageManage
         CleanUpRemovedComponents();
         writer.WriteSuccessLine("Synchronisation done!");
     }
-    private void CleanUpProjectsNotIncludedAnymore(List<Project> allProjects)
+    private void CleanUpProjectsNotIncludedAnymore(List<Workspace> allProjects)
     {
         var storageProjects = storage.GetProjects();
         foreach (var project in storageProjects)
