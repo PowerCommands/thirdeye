@@ -7,7 +7,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
 public class CveAnalyzeManager(IConsoleWriter writer)
 {
-    public List<ComponentCve> GetVulnerabilities(List<CveEntry> cveEntries, List<ThirdPartyComponent> components, List<Software> softwareItems, CvssSeverity threshold)
+    public List<ComponentCve> GetVulnerabilities(List<CveEntry> cveEntries, List<ThirdPartyComponent> components, CvssSeverity threshold)
     {
         var vulnerableComponents = new List<ComponentCve>();
         foreach (var component in components)

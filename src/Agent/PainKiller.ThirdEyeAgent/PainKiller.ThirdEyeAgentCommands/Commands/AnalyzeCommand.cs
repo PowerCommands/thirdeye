@@ -1,5 +1,4 @@
-﻿using PainKiller.ThirdEyeAgentCommands.Data;
-using PainKiller.ThirdEyeAgentCommands.Enums;
+﻿using PainKiller.ThirdEyeAgentCommands.Enums;
 using PainKiller.ThirdEyeAgentCommands.Managers;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
@@ -18,7 +17,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
 
             var analyzer = new CveAnalyzeManager(this);
             var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
-            var components = analyzer.GetVulnerabilities(CveStorage.GetCveEntries(), Storage.GetThirdPartyComponents(), StorageService<SoftwareObjects>.Service.GetObject().Software, threshold);
+            var components = analyzer.GetVulnerabilities(CveStorage.GetCveEntries(), Storage.GetThirdPartyComponents(),threshold);
             var selectedComponentCves = PresentationManager.DisplayVulnerableComponents(components);
             
             var selected = ListService.ListDialog("Choose a component to view details.", selectedComponentCves.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
