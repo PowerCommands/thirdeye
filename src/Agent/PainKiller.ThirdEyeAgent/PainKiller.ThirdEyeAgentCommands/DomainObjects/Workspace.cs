@@ -1,13 +1,8 @@
-﻿using Microsoft.TeamFoundation.Core.WebApi;
-
-namespace PainKiller.ThirdEyeAgentCommands.DomainObjects;
+﻿namespace PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
 public class Workspace
 {
-    public Workspace()
-    {
-    }
-
+    public Workspace() { }
     public Workspace(string description, DateTime lastUpdateTime, string name, long revision, string state, string url, Guid id)
     {
         Description = description;
@@ -18,7 +13,6 @@ public class Workspace
         Url = url;
         Id = id;
     }
-
     public Guid Id { get; set; }
     public string Name { get; set; } = "";
     /// <summary>The project's description (if any).</summary>

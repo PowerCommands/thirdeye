@@ -7,17 +7,17 @@ using PainKiller.ThirdEyeAgentCommands.Services;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
-public class CveFetcherManager(ICveStorageService storage, ThirdEyeConfiguration configuration, string apiKey, IConsoleWriter writer)
+public class CveFetcherManager(ICveStorageService storage, NvdConfiguration configuration, string apiKey, IConsoleWriter writer)
 {
-    private readonly HttpClient _client = new();
-    private readonly string _baseUrl = configuration.Nvd.Url;
+    private readonly HttpClient _client = new(){Timeout = TimeSpan.FromSeconds(configuration.TimeoutSeconds)};
+    private readonly string _baseUrl = configuration.Url;
 
     public async Task<List<CveEntry>> FetchAllCvesAsync()
     {
         storage.ReLoad();
         writer.WriteSuccessLine($"NVD storage last updated: {storage.LastUpdated.ToShortDateString()}");
         writer.WriteSuccessLine($"{storage.LoadedCveCount} CVE:s in your local storage.");
-        var resultsPerPage = configuration.Nvd.PageSize;
+        var resultsPerPage = configuration.PageSize;
         var startIndex = storage.LoadedCveCount;
         var hasMoreResults = true;
         var newCves = new List<CveEntry>();
@@ -60,7 +60,7 @@ public class CveFetcherManager(ICveStorageService storage, ThirdEyeConfiguration
                 writer.WriteFailureLine($"Error fetching CVEs: {ex.Message}");
                 break;
             }
-            await Task.Delay(configuration.Nvd.DelayIntervalSeconds); // Protects against rate limiting
+            await Task.Delay(configuration.DelayIntervalSeconds); // Protects against rate limiting
         }
         writer.WriteSuccessLine($"Total CVEs fetched: {newCves.Count}");
         return newCves;

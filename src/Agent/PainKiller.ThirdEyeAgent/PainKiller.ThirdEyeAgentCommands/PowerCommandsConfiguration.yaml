@@ -15,9 +15,10 @@ configuration:
     teams: 
     - "*"
     nvd:
-      url: https://services.nvd.nist.gov/rest/json/cves/2.0            
+      url: https://services.nvd.nist.gov/rest/json/cves/2.0
+      timeoutSeconds: 120
       pageSize: 2000
-      delayIntervalSeconds: 1
+      delayIntervalSeconds: 2
       pathToUpdates: $ROAMING$\nvd\updates
   infoPanel:
     use: true

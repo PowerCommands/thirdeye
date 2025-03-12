@@ -105,7 +105,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             if (componentCve != null)
             {
                 var apiKey = Configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
-                var cveFetcher = new CveFetcherManager(cveStorage, configuration.ThirdEyeAgent, apiKey, this);
+                var cveFetcher = new CveFetcherManager(cveStorage, configuration.ThirdEyeAgent.Nvd, apiKey, this);
                 var cve = cveFetcher.FetchCveDetailsAsync(componentCve.Id).Result;
                 if(cve != null) presentationManager.DisplayCveDetails(cve);
             }

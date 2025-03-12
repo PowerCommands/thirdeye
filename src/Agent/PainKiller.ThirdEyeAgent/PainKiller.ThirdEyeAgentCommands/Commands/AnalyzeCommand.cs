@@ -17,6 +17,11 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
 
             var analyzer = new CveAnalyzeManager(this);
             var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
+            
+            
+            
+            
+            
             var components = analyzer.GetVulnerabilities(CveStorage.GetCveEntries(), Storage.GetThirdPartyComponents(),threshold);
             var selectedComponentCves = PresentationManager.DisplayVulnerableComponents(components);
             var selected = ListService.ListDialog("Choose a component to view details.", selectedComponentCves.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
@@ -26,7 +31,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             if (componentCve != null)
             {
                 var apiKey = Configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
-                var cveFetcher = new CveFetcherManager(CveStorage, configuration.ThirdEyeAgent, apiKey, this);
+                var cveFetcher = new CveFetcherManager(CveStorage, configuration.ThirdEyeAgent.Nvd, apiKey, this);
                 var cve = cveFetcher.FetchCveDetailsAsync(componentCve.Id).Result;
                 if(cve != null) PresentationManager.DisplayCveDetails(cve);
             }
