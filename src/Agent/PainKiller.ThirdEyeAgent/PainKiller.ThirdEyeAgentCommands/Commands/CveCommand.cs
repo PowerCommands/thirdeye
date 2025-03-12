@@ -12,7 +12,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
         {
             var cveId = Input.SingleArgument;
             var apiKey = Configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
-            var nvdFetcher = new CveFetcherManager(CveStorage, Configuration.ThirdEyeAgent, apiKey,this);
+            var nvdFetcher = new CveFetcherManager(CveStorage, Configuration.ThirdEyeAgent.Nvd, apiKey,this);
             var response = nvdFetcher.FetchCveDetailsAsync(cveId).Result;
             WriteHeadLine(cveId);
             PresentationManager.DisplayCveDetails(response);

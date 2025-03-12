@@ -8,8 +8,8 @@ configuration:
   defaultAIBotUri: https://chatgpt.com/?q=$QUERY$&hints=search
   backupPath: ..\..\..\..\..\
   thirdEyeAgent:
-    host: https://github.com/PowerCommands
-    organizationName: PowerCommands
+    host: https://klingsten.visualstudio.com/
+    organizationName: Klingsten
     workspaces: 
     - "*"
     teams: 
