@@ -1,7 +1,8 @@
 ﻿using PainKiller.ThirdEyeAgentCommands.Contracts;
+using PainKiller.ThirdEyeAgentCommands.Data;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
-namespace PainKiller.ThirdEyeAgentCommands.Data;
+namespace PainKiller.ThirdEyeAgentCommands.Services;
 public class ObjectStorageService : IObjectStorageService
 {
     private readonly string _storagePath;

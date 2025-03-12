@@ -1,4 +1,4 @@
-﻿using PainKiller.ThirdEyeAgentCommands.Data;
+﻿using PainKiller.ThirdEyeAgentCommands.Services;
 
 namespace PainKiller.ThirdEyeAgentCommands.DomainObjects.InfoPanelContent;
 

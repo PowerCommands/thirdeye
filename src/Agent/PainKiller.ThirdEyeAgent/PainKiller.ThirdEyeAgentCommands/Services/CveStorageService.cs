@@ -1,9 +1,10 @@
 ﻿using PainKiller.PowerCommands.Security.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Contracts;
+using PainKiller.ThirdEyeAgentCommands.Data;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
 
-namespace PainKiller.ThirdEyeAgentCommands.Data;
+namespace PainKiller.ThirdEyeAgentCommands.Services;
 
 public class CveStorageService : ICveStorageService
 {
@@ -74,7 +75,7 @@ public class CveStorageService : ICveStorageService
         var cveUpdateFileInfo = GetUpdateInfo();
         if(cveUpdateFileInfo.Created == DateTime.MinValue) return true;
         var checkSum = new FileChecksum(Path.Combine(_storagePath, _storageFileName));
-        return (checkSum.Mde5Hash != cveUpdateFileInfo.Checksum);
+        return checkSum.Mde5Hash != cveUpdateFileInfo.Checksum;
     }
     public bool Update(IConsoleWriter writer)
     {
