@@ -106,7 +106,7 @@ public class PresentationManager(IConsoleWriter writer)
         }
         return filteredComponents;
     }
-    public CveEntry DisplayVulnerableComponent(ComponentCve component)
+    public CveEntry? DisplayVulnerableComponent(ComponentCve component)
     {
         var padLength = component.CveEntries.Where(c => true).Select(cv => cv.Id.Length).Max();
         writer.WriteHeadLine($"├── {component.Name} {component.Version}");
@@ -114,6 +114,7 @@ public class PresentationManager(IConsoleWriter writer)
         var displayTextLength = Console.WindowWidth - textLength -10;
         var list = ListService.ListDialog("Choose a CVE to view details about it.", component.CveEntries.Select(c => $"{c.Id} {c.CvssScore.GetDisplaySeverity()} {c.Description.Truncate(displayTextLength)}").ToList());
         if(list.Count <= 0) return new CveEntry{Id = "-"};
+        if (list.Count == 0) return null;
         var selected = component.CveEntries[list.First().Key];
         return selected;
     }

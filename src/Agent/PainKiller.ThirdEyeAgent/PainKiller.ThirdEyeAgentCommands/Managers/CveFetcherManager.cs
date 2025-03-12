@@ -102,7 +102,7 @@ public class CveFetcherManager(ICveStorageService storage, ThirdEyeConfiguration
         storage.AppendEntries(result, writer);
         return result;
     }
-    public async Task<CveDetailResponse> FetchCveDetailsAsync(string cveId)
+    public async Task<CveDetailResponse?> FetchCveDetailsAsync(string cveId)
     {
         if (string.IsNullOrWhiteSpace(cveId))
             throw new ArgumentException("CVE ID cannot be null or empty", nameof(cveId));
@@ -126,6 +126,6 @@ public class CveFetcherManager(ICveStorageService storage, ThirdEyeConfiguration
             PropertyNameCaseInsensitive = true
         });
         if(retVal != null) CveCacheObjectsService.Service.Store(retVal);
-        return retVal ?? new CveDetailResponse();
+        return retVal;
     }
 }

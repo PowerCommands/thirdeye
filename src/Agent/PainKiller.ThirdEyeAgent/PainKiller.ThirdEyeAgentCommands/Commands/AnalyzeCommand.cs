@@ -22,11 +22,14 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var selected = ListService.ListDialog("Choose a component to view details.", selectedComponentCves.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
             if (selected.Count <= 0) return Ok();
             var component = selectedComponentCves[selected.First().Key];
-
-            
-
-
-            
+            var componentCve = PresentationManager.DisplayVulnerableComponent(component);
+            if (componentCve != null)
+            {
+                var apiKey = Configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
+                var cveFetcher = new CveFetcherManager(CveStorage, configuration.ThirdEyeAgent, apiKey, this);
+                var cve = cveFetcher.FetchCveDetailsAsync(componentCve.Id).Result;
+                if(cve != null) PresentationManager.DisplayCveDetails(cve);
+            }
             WriteLine("");
             var thirdPartyComponent = Storage.GetThirdPartyComponents().First(c => c.Name == component.Name && c.Version == component.Version);
             ProjectSearch(thirdPartyComponent, detailedSearch: true);

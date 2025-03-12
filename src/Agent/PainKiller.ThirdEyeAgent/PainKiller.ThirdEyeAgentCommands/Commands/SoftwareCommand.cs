@@ -101,8 +101,14 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var selected = ListService.ListDialog("Choose a software to view details.", selectedComponentCves.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
             if (selected.Count <= 0) return Ok();
             var component = selectedComponentCves[selected.First().Key];
-            var cve = presentationManager.DisplayVulnerableComponent(component);
-
+            var componentCve = presentationManager.DisplayVulnerableComponent(component);
+            if (componentCve != null)
+            {
+                var apiKey = Configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
+                var cveFetcher = new CveFetcherManager(cveStorage, configuration.ThirdEyeAgent, apiKey, this);
+                var cve = cveFetcher.FetchCveDetailsAsync(componentCve.Id).Result;
+                if(cve != null) presentationManager.DisplayCveDetails(cve);
+            }
             return Ok();
         }
     }
