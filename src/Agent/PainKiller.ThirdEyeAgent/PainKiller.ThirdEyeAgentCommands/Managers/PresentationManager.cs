@@ -1,5 +1,6 @@
 ﻿using PainKiller.PowerCommands.Shared.Extensions;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
 using PainKiller.ThirdEyeAgentCommands.Enums;
 using PainKiller.ThirdEyeAgentCommands.Extensions;
 
@@ -104,5 +105,16 @@ public class PresentationManager(IConsoleWriter writer)
             }
         }
         return filteredComponents;
+    }
+    public CveEntry DisplayVulnerableComponent(ComponentCve component)
+    {
+        var padLength = component.CveEntries.Where(c => true).Select(cv => cv.Id.Length).Max();
+        writer.WriteHeadLine($"├── {component.Name} {component.Version}");
+        var textLength = component.CveEntries.Select(c => $"{c.Id.PadRight(padLength)} {c.CvssScore.GetDisplaySeverity()}").Max(t => t.Length);
+        var displayTextLength = Console.WindowWidth - textLength -10;
+        var list = ListService.ListDialog("Choose a CVE to view details about it.", component.CveEntries.Select(c => $"{c.Id} {c.CvssScore.GetDisplaySeverity()} {c.Description.Truncate(displayTextLength)}").ToList());
+        if(list.Count <= 0) return new CveEntry{Id = "-"};
+        var selected = component.CveEntries[list.First().Key];
+        return selected;
     }
 }

@@ -85,7 +85,6 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
         private RunResult Analyze()
         {
             var cveStorage = CveStorageService.Service;
-            var storage = ObjectStorageManager.Service;
             var software = StorageService<SoftwareObjects>.Service.GetObject();
             var presentationManager = new PresentationManager(this);
 
@@ -98,10 +97,11 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
             var components = analyzer.GetVulnerabilities(cveStorage.GetCveEntries(), software.Softwares,threshold);
             var selectedComponentCves = presentationManager.DisplayVulnerableComponents(components);
-            
             var selected = ListService.ListDialog("Choose a software to view details.", selectedComponentCves.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
             if (selected.Count <= 0) return Ok();
             var component = selectedComponentCves[selected.First().Key];
+            var cve = presentationManager.DisplayVulnerableComponent(component);
+
             return Ok();
         }
     }

@@ -2,7 +2,7 @@
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
 namespace PainKiller.ThirdEyeAgentCommands.Data;
-public class ObjectStorageManager : IObjectStorageManager
+public class ObjectStorageService : IObjectStorageService
 {
     private readonly string _storagePath;
     private TeamObjects _teamObjects;
@@ -12,13 +12,13 @@ public class ObjectStorageManager : IObjectStorageManager
     private ProjectObjects _projectObjects;
     private readonly CveComponentObjects _cveComponentObjects;
 
-    private static Lazy<IObjectStorageManager>? _lazy;
+    private static Lazy<IObjectStorageService>? _lazy;
     public static void Initialize(string host)
     {
         if (_lazy != null) return;
-        _lazy = new Lazy<IObjectStorageManager>(() => new ObjectStorageManager(host));
+        _lazy = new Lazy<IObjectStorageService>(() => new ObjectStorageService(host));
     }
-    public static IObjectStorageManager Service
+    public static IObjectStorageService Service
     {
         get
         {
@@ -29,7 +29,7 @@ public class ObjectStorageManager : IObjectStorageManager
             return _lazy.Value;
         }
     }
-    private ObjectStorageManager(string host)
+    private ObjectStorageService(string host)
     {
         _storagePath = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, host.Replace("https://","").Replace("http://","").Replace("/",""));
         if(!Directory.Exists(_storagePath)) Directory.CreateDirectory(_storagePath);

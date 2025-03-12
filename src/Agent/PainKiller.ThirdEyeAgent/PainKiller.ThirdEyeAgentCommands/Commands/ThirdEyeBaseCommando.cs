@@ -11,15 +11,15 @@ public abstract class ThirdEyeBaseCommando : CommandBase<PowerCommandsConfigurat
     {
         var gitHub = configuration.ThirdEyeAgent.Host.Contains("github.com");
         var accessToken = Configuration.Secret.DecryptSecret(ConfigurationGlobals.GetAccessTokenName(gitHub));
-        ObjectStorageManager.Initialize(configuration.ThirdEyeAgent.Host);
-        Storage = ObjectStorageManager.Service;
+        ObjectStorageService.Initialize(configuration.ThirdEyeAgent.Host);
+        Storage = ObjectStorageService.Service;
         GitManager = gitHub ? new GitHubManager(configuration.ThirdEyeAgent.Host, accessToken, configuration.ThirdEyeAgent.OrganizationName, this) : new AdsManager(Configuration.ThirdEyeAgent.Host, accessToken, this);
         PresentationManager = new PresentationManager(this);
         CveStorageService.Initialize(configuration.ThirdEyeAgent.Nvd.PathToUpdates);
         CveStorage = CveStorageService.Service;
     }
     protected ICveStorageService CveStorage { get; init; } 
-    protected IObjectStorageManager Storage { get; }
+    protected IObjectStorageService Storage { get; }
     protected IGitManager GitManager { get; } 
     protected IFileAnalyzeManager AnalyzeManager { get; } = new FileAnalyzeManager();
     protected PresentationManager PresentationManager { get; }

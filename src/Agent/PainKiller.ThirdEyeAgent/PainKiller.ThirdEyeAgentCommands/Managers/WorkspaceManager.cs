@@ -3,7 +3,7 @@ using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Extensions;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
-public class WorkspaceManager(IGitManager gitManager, IObjectStorageManager storage, IFileAnalyzeManager analyzeManager, IConsoleWriter writer, ThirdEyeConfiguration configuration)
+public class WorkspaceManager(IGitManager gitManager, IObjectStorageService storage, IFileAnalyzeManager analyzeManager, IConsoleWriter writer, ThirdEyeConfiguration configuration)
 {
     public List<Workspace> InitializeOrganization()
     {

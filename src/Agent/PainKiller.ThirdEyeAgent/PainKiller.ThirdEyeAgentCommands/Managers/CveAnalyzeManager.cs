@@ -26,7 +26,6 @@ public class CveAnalyzeManager(IConsoleWriter writer)
         }
         return vulnerableComponents;
     }
-
     public List<ComponentCve> GetVulnerabilities(List<CveEntry> cveEntries, List<Software> softwareItems, CvssSeverity threshold)
     {
         var vulnerableComponents = new List<ComponentCve>();

@@ -2,7 +2,7 @@
 
 namespace PainKiller.ThirdEyeAgentCommands.Contracts;
 
-public interface IObjectStorageManager
+public interface IObjectStorageService
 {
     List<Team> GetTeams();
     List<Workspace> GetWorkspaces();
