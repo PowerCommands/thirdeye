@@ -21,7 +21,7 @@ public class PresentationManager(IConsoleWriter writer)
         }
     }
 
-    public void DisplayOrganization(string organizationName, List<Workspace> workspaces, List<Repository> repositories, List<Team> teams, List<Project> projects)
+    public void DisplayOrganization(string organizationName, List<Workspace> workspaces, List<Repository> repositories, List<Team> teams, List<Project> projects, bool skipEmpty = false)
     {
         writer.WriteHeadLine($"\n🏠 {organizationName}");
         foreach (var workspace in workspaces)
@@ -39,14 +39,17 @@ public class PresentationManager(IConsoleWriter writer)
                 }
             }
 
-            var projectRepos = repositories.Where(r => r.WorkspaceId == workspace.Id);
+            var projectRepos = repositories.Where(r => r.WorkspaceId == workspace.Id).ToList();
+            if(projectRepos.Count == 0) continue;
             writer.WriteHeadLine("  │   ├── Repos");
             foreach (var repository in projectRepos)
             {
+                var repoProjects = projects.Where(dp => dp.RepositoryId == repository.RepositoryId).ToList();
+                if (repoProjects.Count == 0) continue;
                 writer.WriteHeadLine($"  │   ├── 📁 {repository.Name}");
-                var repoProjects = projects.Where(dp => dp.RepositoryId == repository.RepositoryId);
                 foreach (var project in repoProjects)
                 {
+                    if(project.Components.Count == 0) continue;
                     writer.WriteHeadLine($"  │   │   ├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
                     foreach (var component in project.Components)
                     {
@@ -113,7 +116,6 @@ public class PresentationManager(IConsoleWriter writer)
         var textLength = component.CveEntries.Select(c => $"{c.Id.PadRight(padLength)} {c.CvssScore.GetDisplaySeverity()}").Max(t => t.Length);
         var displayTextLength = Console.WindowWidth - textLength -10;
         var list = ListService.ListDialog("Choose a CVE to view details about it.", component.CveEntries.Select(c => $"{c.Id} {c.CvssScore.GetDisplaySeverity()} {c.Description.Truncate(displayTextLength)}").ToList());
-        if(list.Count <= 0) return new CveEntry{Id = "-"};
         if (list.Count == 0) return null;
         var selected = component.CveEntries[list.First().Key];
         return selected;

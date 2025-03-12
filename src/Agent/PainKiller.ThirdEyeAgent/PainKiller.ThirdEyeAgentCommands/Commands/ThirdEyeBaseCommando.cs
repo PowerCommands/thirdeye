@@ -30,6 +30,6 @@ public abstract class ThirdEyeBaseCommando : CommandBase<PowerCommandsConfigurat
         var repos = new List<Repository>();
         var teams = Storage.GetTeams();
         foreach (var projectRepos in workspaces.Select(project => Storage.GetRepositories().Where(r => r.WorkspaceId == project.Id))) repos.AddRange(projectRepos);
-        PresentationManager.DisplayOrganization(Configuration.ThirdEyeAgent.OrganizationName, workspaces, repos, teams, projects);
+        PresentationManager.DisplayOrganization(Configuration.ThirdEyeAgent.OrganizationName, workspaces, repos, teams, projects, skipEmpty: true);
     }
 }

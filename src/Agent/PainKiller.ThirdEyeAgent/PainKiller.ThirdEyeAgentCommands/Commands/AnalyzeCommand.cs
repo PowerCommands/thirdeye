@@ -29,6 +29,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
 
             var filteredThirdPartyComponents = FilterService.Service.GetThirdPartyComponents(selectedRepository).ToList();
 
+            ConsoleService.Service.Clear();
             WriteLine("");
             WriteHeadLine("Analyze begins, loading CVEs...");
             if(CveStorage.LoadedCveCount == 0) CveStorage.ReLoad();
