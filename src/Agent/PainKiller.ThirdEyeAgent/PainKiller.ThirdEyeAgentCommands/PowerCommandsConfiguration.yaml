@@ -9,11 +9,11 @@ configuration:
   backupPath: ..\..\..\..\..\
   thirdEyeAgent:
     host: https://klingsten.visualstudio.com/
-    organizationName: Klingsten
+    organizationName: Klingsten    
     workspaces: 
     - "*"
     teams: 
-    - "*"
+    - "*"     
     nvd:
       url: https://services.nvd.nist.gov/rest/json/cves/2.0
       timeoutSeconds: 120

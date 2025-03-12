@@ -6,4 +6,5 @@ public class Repository
     public Guid WorkspaceId { get; set; }
     public Guid RepositoryId { get; set; }
     public Branch? MainBranch { get; set; } = new();
+    public bool IsGit { get; set; }
 }

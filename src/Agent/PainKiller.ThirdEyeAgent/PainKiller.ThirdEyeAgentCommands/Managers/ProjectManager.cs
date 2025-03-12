@@ -22,6 +22,7 @@ public static class ProjectManager
     }
     private static string ExtractVersion(Item file)
     {
+        if (string.IsNullOrEmpty(file.Content)) return "-";
         try
         {
             if (file.Path.EndsWith("package.json", StringComparison.OrdinalIgnoreCase))
@@ -48,6 +49,7 @@ public static class ProjectManager
     }
     private static string ExtractFramework(Item file)
     {
+        if (string.IsNullOrEmpty(file.Content)) return "-";
         try
         {
             if (file.Path.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) || file.Path.EndsWith(".vbproj", StringComparison.OrdinalIgnoreCase))
@@ -67,6 +69,7 @@ public static class ProjectManager
 
     private static string ExtractSdk(Item file)
     {
+        if (string.IsNullOrEmpty(file.Content)) return "-";
         try
         {
             if (file.Path.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) || file.Path.EndsWith(".vbproj", StringComparison.OrdinalIgnoreCase))

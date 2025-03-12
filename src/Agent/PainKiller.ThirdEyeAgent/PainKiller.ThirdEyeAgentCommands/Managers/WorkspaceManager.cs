@@ -16,23 +16,17 @@ public class WorkspaceManager(IGitManager gitManager, IObjectStorageService stor
         writer.WriteSuccessLine($"Fetched {teams.Count} Teams and persisted to storage.");
 
         var allRepositories = new List<Repository>();
-        var removeWorkspaces = new List<Workspace>();           
-        var removeRepositories = new List<Repository>();    
         var allDistinctComponents = new List<ThirdPartyComponent>();
         var allProjects = new List<Project>();
 
         var workspaceIterationCount = 0;
         foreach (var workspace in workspaces)
         {
-            workspaceIterationCount++;
             writer.WriteLine($"Synchronosing workspace {workspace.Name} ({workspaceIterationCount} of {workspaces.Count})");
             Console.CursorTop -= 1;
             var repositories = gitManager.GetRepositories(workspace.Id).ToList();
-            if (repositories.Count == 0)
-            {
-                removeWorkspaces.Add(workspace);
-                continue;
-            }
+            if (repositories.Count == 0) continue;
+            workspaceIterationCount++;
             allRepositories.AddRange(repositories);
             var repositoryIterationCount = 0;
             foreach (var repository in repositories)
@@ -41,13 +35,6 @@ public class WorkspaceManager(IGitManager gitManager, IObjectStorageService stor
                 writer.WriteLine($"Synchronosing repo {repository.Name} ({repositoryIterationCount} of {repositories.Count})");
                 Console.CursorTop -= 1;
                 var files = gitManager.GetAllFilesInRepository(repository.RepositoryId).ToList();
-                if (files.Count == 0)
-                {
-                    writer.WriteLine($"Repo {repository.Name} has no files and will be removed.");
-                    Console.CursorTop -= 1;
-                    removeRepositories.Add(repository);
-                    continue;
-                }
                 writer.WriteLine($"Found {files.Count} files, that now will be analyzed to find projects and components...");
                 Console.CursorTop -= 1;
                 var analyzeRepo = analyzeManager.AnalyzeRepo(files, workspace.Id, repository.RepositoryId);
@@ -59,10 +46,8 @@ public class WorkspaceManager(IGitManager gitManager, IObjectStorageService stor
         writer.WriteSuccessLine($"Extracted {allDistinctComponents.Count} distinct components and persisted them to storage.");
         storage.SaveProjects(allProjects);
         writer.WriteSuccessLine($"Extracted {allProjects.Count} projects and persisted them to storage.");
-        foreach (var repo in removeRepositories) allRepositories.Remove(repo);
         storage.SaveRepositories(allRepositories);
         writer.WriteSuccessLine($"Fetched {allRepositories.Count} repositories and persisted them to storage.");
-        foreach (var project in removeWorkspaces) workspaces.Remove(project);
         storage.SaveWorkspace(workspaces);
         writer.WriteSuccessLine($"{workspaces.Count} workspaces persisted to storage.\n");
         return workspaces;

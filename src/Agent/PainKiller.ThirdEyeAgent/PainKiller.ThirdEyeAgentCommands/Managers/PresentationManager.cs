@@ -21,6 +21,17 @@ public class PresentationManager(IConsoleWriter writer)
         }
     }
 
+    public void DisplayProject(Project project)
+    {
+        writer.WriteHeadLine($"\n📁 {project.Name} {project.Framework} {project.Sdk}");
+        
+        writer.WriteHeadLine($"├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
+        foreach (var component in project.Components)
+        {
+            writer.WriteHeadLine($"│  ├── {component.Name} {component.Version}");
+        }
+    }
+
     public void DisplayOrganization(string organizationName, List<Workspace> workspaces, List<Repository> repositories, List<Team> teams, List<Project> projects, bool skipEmpty = false)
     {
         writer.WriteHeadLine($"\n🏠 {organizationName}");

@@ -9,6 +9,8 @@ public class CsProjExtractor : IComponentExtractor
     public bool CanHandle(Item file) => file.Path.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase);
     public List<ThirdPartyComponent> ExtractComponents(Item file)
     {
+        if (string.IsNullOrEmpty(file.Content)) 
+            return new List<ThirdPartyComponent>();
         var components = new List<ThirdPartyComponent>();
         var xmlDoc = new XmlDocument();
         try

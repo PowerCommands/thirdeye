@@ -138,7 +138,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
             return new List<Item>();
         }
     }
-    public string GetContent(Item item, Guid repositoryId)
+    private string GetContent(Item item, Guid repositoryId)
     {
         var gitClient = _connection.GetClient<GitHttpClient>();
         var stream = gitClient.GetItemTextAsync(repositoryId, item.Path).Result;

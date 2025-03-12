@@ -14,12 +14,11 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             if (Options.Count > 0)
             {
                 Init();
-                var viewResult = DialogService.YesNoDialog("Do you want to view your workspaces?");
-                if(!viewResult) return Ok();
+                PauseService.Pause(3);
             }
             
             DisableLog();
-            var workspaces =  Storage.GetWorkspaces().GetFilteredProjects(Configuration.ThirdEyeAgent.Workspaces);
+            var workspaces =  Storage.GetWorkspaces().GetFilteredWorkspaces(Configuration.ThirdEyeAgent.Workspaces);
             var (key, _) = ListService.ListDialog("Choose workspace", workspaces.Select(p => $"{p.Name} {p.Id}").ToList()).FirstOrDefault();
             var selectedWorkspace = workspaces[key];
             WriteSuccessLine($"\n{selectedWorkspace.Name}");

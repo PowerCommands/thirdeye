@@ -111,7 +111,7 @@ public class GitHubManager : IGitManager
         }
         return new List<Item>();
     }
-    public string GetContent(Item item, Guid repositoryId)
+    private string GetContent(Item item, Guid repositoryId)
     {
         var repoName = GetRepositoryNameFromId(repositoryId);
         if (string.IsNullOrEmpty(repoName)) return "";

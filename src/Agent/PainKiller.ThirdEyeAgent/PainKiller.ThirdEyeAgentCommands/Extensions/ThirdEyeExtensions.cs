@@ -5,7 +5,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Extensions;
 
 public static class ThirdEyeExtensions
 {
-    public static List<Workspace> GetFilteredProjects(this IEnumerable<Workspace> projects, string[] projectNames) => projects.Where(p => projectNames.Contains(p.Name) || projectNames.First() == "*").ToList();
+    public static List<Workspace> GetFilteredWorkspaces(this IEnumerable<Workspace> workspaces, string[] workspaceNames) => workspaces.Where(p => workspaceNames.Contains(p.Name) || workspaceNames.First() == "*").ToList();
     public static Guid ToGuid(this long value)
     {
         var bytes = new byte[16];

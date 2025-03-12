@@ -10,7 +10,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
         public override RunResult Run()
         {
             DisableLog();
-            var workspaces = Storage.GetWorkspaces().GetFilteredProjects(Configuration.ThirdEyeAgent.Workspaces);
+            var workspaces = Storage.GetWorkspaces().GetFilteredWorkspaces(Configuration.ThirdEyeAgent.Workspaces);
             var repositories = Storage.GetRepositories();
             var teams = Storage.GetTeams();
             var projects = Storage.GetProjects();

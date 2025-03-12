@@ -1,4 +1,5 @@
-﻿using PainKiller.ThirdEyeAgentCommands.Extensions;
+﻿using System.Reflection;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
@@ -10,20 +11,46 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
         public override RunResult Run()
         {
             DisableLog();
-            var workspaces =  Storage.GetWorkspaces().GetFilteredProjects(Configuration.ThirdEyeAgent.Workspaces);
-            var (key, _) = ListService.ListDialog("Choose workspace", workspaces.Select(p => $"{p.Name} {p.Id}").ToList()).FirstOrDefault();
-            var selectedProject = workspaces[key];
-            WriteSuccessLine($"\n{selectedProject.Name}");
-            var repositories = Storage.GetRepositories().Where(r => r.WorkspaceId == selectedProject.Id).ToList();
-            if(repositories.Count == 0)
+            var filter = Input.SingleArgument;
+            var allProjects = Storage.GetProjects();
+
+            List<Project> filtered;
+            var inputBuffer = filter;
+            while (true)
             {
-                WriteLine("No repositories found for this workspace.");
-                return Ok();
+                Console.Clear();
+                Console.WriteLine("➡ Type to filter results, press ENTER to select, BACKSPACE to delete, ESC to exit:");
+                Console.Title = inputBuffer;
+                filtered = allProjects.Where(p => p.Name.ToLower().Contains(inputBuffer)).ToList();
+                if (filtered.Count == 0) Console.WriteLine("No matching result... (Press ESC to exit)");
+                else
+                {
+                    foreach (var p in filtered) Console.WriteLine($"{p.Name}");
+                }
+                Console.Write("\nPress enter to continue with all matching items. ");
+                var key = Console.ReadKey(intercept: true);
+
+                if (key.Key == ConsoleKey.Escape) return Ok();
+                if (key.Key == ConsoleKey.Enter && filtered.Count > 0) break;
+                if (key.Key == ConsoleKey.Backspace)
+                {
+                    if (inputBuffer.Length > 0) inputBuffer = inputBuffer.Substring(0, inputBuffer.Length - 1);
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    inputBuffer += key.KeyChar;
+                }
             }
-            var (key2, _) = ListService.ListDialog("Choose repository", repositories.Select(r => $"{r.Name} {r.RepositoryId}").ToList()).FirstOrDefault();
-            var selectedRepo = repositories[key2];
-            var projects = Storage.GetProjects().Where(p => p.RepositoryId == selectedRepo.RepositoryId).ToList();
-            PresentationManager.DisplayRepository(selectedRepo.Name, projects);
+            Console.Title = $"{ConfigurationGlobals.ApplicationName} {ReflectionService.Service.GetVersion(Assembly.GetExecutingAssembly())}";
+            if (filtered.Count > 0)
+            {
+                var selected = ListService.ListDialog("Choose a project to view details.", filtered.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
+                if (selected.Count <= 0) return Ok();
+                var project = filtered[selected.First().Key];
+                
+                WriteLine("");
+                PresentationManager.DisplayProject(project);
+            }
             EnableLog();
             return Ok();
         }

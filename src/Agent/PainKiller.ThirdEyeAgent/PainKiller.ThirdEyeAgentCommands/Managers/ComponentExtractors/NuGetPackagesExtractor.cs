@@ -10,6 +10,8 @@ public class NuGetPackagesExtractor : IComponentExtractor
 
     public List<ThirdPartyComponent> ExtractComponents(Item file)
     {
+        if (string.IsNullOrEmpty(file.Content)) 
+            return new List<ThirdPartyComponent>();
         var components = new List<ThirdPartyComponent>();
         var xmlDoc = new XmlDocument();
 
