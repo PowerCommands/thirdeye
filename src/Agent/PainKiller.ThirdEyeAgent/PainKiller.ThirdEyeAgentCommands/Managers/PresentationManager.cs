@@ -166,7 +166,11 @@ public class PresentationManager(IConsoleWriter writer)
                     writer.WriteHeadLine($"│  │   ├── {product}");
                 }
             }
+            writer.WriteHeadLine($"│  ├── References:");
+            foreach (var cveReference in cve.cve.references)
+            {
+                writer.WriteHeadLine($"│  │   ├── {cveReference.source} {cveReference.url}");
+            }
         }
     }
-
 }
