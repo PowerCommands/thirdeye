@@ -19,7 +19,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             {
                 var apiKey = Configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
                 var nvdFetcher = new CveFetcherManager(CveStorage, Configuration.ThirdEyeAgent, apiKey,this);
-                var cve = nvdFetcher.FetchAllCves().Result;
+                var cve = nvdFetcher.FetchAllCvesAsync().Result;
                 WriteSuccessLine($"{cve.Count} updated in database");
                 WriteSeparatorLine();
                 var checkSum = CveStorage.CreateUpdateFile();

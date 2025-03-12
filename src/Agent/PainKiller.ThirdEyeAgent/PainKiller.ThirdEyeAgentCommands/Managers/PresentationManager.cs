@@ -117,4 +117,56 @@ public class PresentationManager(IConsoleWriter writer)
         var selected = component.CveEntries[list.First().Key];
         return selected;
     }
+    public void DisplayCveDetails(CveDetailResponse cveDetails)
+    {
+        if (cveDetails?.vulnerabilities == null || cveDetails.vulnerabilities.Length == 0)
+        {
+            writer.WriteHeadLine("🔒 No CVEs found.");
+            return;
+        }
+
+        writer.WriteHeadLine($"🔒 {cveDetails.vulnerabilities.Length} CVEs found");
+
+        foreach (var cve in cveDetails.vulnerabilities)
+        {
+            var cveId = cve.cve.id ?? "Unknown ID";
+            var description = cve.cve.descriptions?.FirstOrDefault()?.value ?? "No description available";
+
+            // Justerad hantering av CVSS-score och severity
+            var cvssMetric = cve.cve.metrics?.cvssMetricV2?.FirstOrDefault();
+            var cvssScore = cvssMetric?.cvssData?.baseScore.ToString() ?? "N/A";
+            var severity = cvssMetric?.baseSeverity ?? "N/A";
+
+            writer.WriteHeadLine($"├── {cveId} {description}");
+            writer.WriteHeadLine($"│  ├── CVSS Score: {cvssScore}");
+            writer.WriteHeadLine($"│  ├── Severity: {severity}");
+            writer.WriteHeadLine($"│  ├── Affected Products:");
+
+            
+
+            // Justerad hantering av affected products
+            var affectedProducts = cve.cve.configurations?
+                .Where(c => c.nodes != null)
+                .SelectMany(c => c.nodes)
+                .Where(n => n.cpeMatch != null)
+                .SelectMany(n => n.cpeMatch)
+                .Where(m => m.vulnerable)
+                .Select(m => m.criteria)
+                .Distinct()
+                .ToList();
+
+            if (affectedProducts == null || affectedProducts.Count == 0)
+            {
+                writer.WriteHeadLine($"│  │   ├── No affected products listed.");
+            }
+            else
+            {
+                foreach (var product in affectedProducts)
+                {
+                    writer.WriteHeadLine($"│  │   ├── {product}");
+                }
+            }
+        }
+    }
+
 }

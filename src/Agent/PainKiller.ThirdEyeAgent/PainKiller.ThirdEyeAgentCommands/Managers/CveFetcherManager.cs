@@ -1,7 +1,9 @@
 ﻿using System.Net;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using PainKiller.ThirdEyeAgentCommands.Contracts;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
+using PainKiller.ThirdEyeAgentCommands.Services;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
@@ -10,7 +12,7 @@ public class CveFetcherManager(ICveStorageService storage, ThirdEyeConfiguration
     private readonly HttpClient _client = new();
     private readonly string _baseUrl = configuration.Nvd.Url;
 
-    public async Task<List<CveEntry>> FetchAllCves()
+    public async Task<List<CveEntry>> FetchAllCvesAsync()
     {
         storage.ReLoad();
         writer.WriteSuccessLine($"NVD storage last updated: {storage.LastUpdated.ToShortDateString()}");
@@ -99,5 +101,31 @@ public class CveFetcherManager(ICveStorageService storage, ThirdEyeConfiguration
         }
         storage.AppendEntries(result, writer);
         return result;
+    }
+    public async Task<CveDetailResponse> FetchCveDetailsAsync(string cveId)
+    {
+        if (string.IsNullOrWhiteSpace(cveId))
+            throw new ArgumentException("CVE ID cannot be null or empty", nameof(cveId));
+        var cache = CveCacheObjectsService.Service.Get(cveId);
+        if (cache != null)
+        {
+            PowerCommandServices.Service.Logger.Log(LogLevel.Information, $"CVE {cveId} fetched from local cache.");
+            return cache;
+        }
+        var url = $"{_baseUrl}?cveId={cveId}";
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Add("apiKey", apiKey);
+        HttpResponseMessage response = await _client.SendAsync(request);
+
+        if (!response.IsSuccessStatusCode)
+            throw new Exception($"Failed to fetch CVE details. Status Code: {response.StatusCode}");
+
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        var retVal = JsonSerializer.Deserialize<CveDetailResponse>(jsonResponse, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+        if(retVal != null) CveCacheObjectsService.Service.Store(retVal);
+        return retVal ?? new CveDetailResponse();
     }
 }
