@@ -21,6 +21,7 @@ public class FilterService
         return StorageService.GetTeams().Where(t => teamNames.Any(name => t.Name.ToLower().Contains(name.ToLower()))).ToList();
     }
     public IEnumerable<Repository> GetRepositories(Guid workspaceId) => StorageService.GetRepositories().Where(r => r.WorkspaceId == workspaceId);
+    public IEnumerable<Project> GetProjects(Guid repositoryId) => StorageService.GetProjects().Where(p => p.RepositoryId == repositoryId);
     public IEnumerable<ThirdPartyComponent> GetThirdPartyComponents(Repository repository)
     {
         var retVal = new List<ThirdPartyComponent>();

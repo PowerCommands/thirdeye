@@ -3,6 +3,7 @@ using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
 using PainKiller.ThirdEyeAgentCommands.Enums;
 using PainKiller.ThirdEyeAgentCommands.Extensions;
+using PainKiller.ThirdEyeAgentCommands.Services;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
@@ -20,6 +21,35 @@ public class PresentationManager(IConsoleWriter writer)
             }
         }
     }
+    public void DisplayTeam(Team team)
+    {
+        writer.WriteHeadLine($"👨‍👩‍👧‍👦{ team.Name.Trim()}");
+        writer.WriteHeadLine("  │   ├── Members");
+        foreach (var member in team.Members)
+        {
+            writer.WriteHeadLine($"  │   ├── 👤 {member.Name}");
+        }
+        var workspaces = FilterService.Service.GetWorkspaces(["*"], team);
+        var repos = new List<Repository>();
+        foreach (var workspace in workspaces) repos.AddRange(FilterService.Service.GetRepositories(workspace.Id));
+        var projects = new List<Project>();
+        foreach(var repo in repos) projects.AddRange(FilterService.Service.GetProjects(repo.RepositoryId));
+        ListService.ShowSelectFromFilteredList("  │   ├── Projects", projects, (p,s) => p.Name.ToLower().Contains(s.ToLower()), SelectedProjects, writer);
+    }
+
+    private void SelectedProjects(List<Project> projects)
+    {
+        foreach (var project in projects)
+        {
+            writer.WriteHeadLine($"  │   ├── 📁 {project.Name} {project.Framework} {project.Sdk}");
+        
+            writer.WriteHeadLine($"  ├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
+            foreach (var component in project.Components)
+            {
+                writer.WriteHeadLine($"  │   │   ├── {component.Name} {component.Version}");
+            }
+        }
+    }
 
     public void DisplayProject(Project project)
     {
@@ -31,7 +61,6 @@ public class PresentationManager(IConsoleWriter writer)
             writer.WriteHeadLine($"│  ├── {component.Name} {component.Version}");
         }
     }
-
     public void DisplayOrganization(string organizationName, List<Workspace> workspaces, List<Repository> repositories, List<Team> teams, List<Project> projects, bool skipEmpty = false)
     {
         writer.WriteHeadLine($"\n🏠 {organizationName}");
@@ -52,24 +81,29 @@ public class PresentationManager(IConsoleWriter writer)
 
             var projectRepos = repositories.Where(r => r.WorkspaceId == workspace.Id).ToList();
             if(projectRepos.Count == 0) continue;
-            writer.WriteHeadLine("  │   ├── Repos");
-            foreach (var repository in projectRepos)
+            ListService.ShowSelectFromFilteredList("  │   ├── Repos", projectRepos, (p, s) => p.Name.ToLower().Contains(s), ListFilteredProjectRepos, writer);
+        }
+    }
+
+    private void ListFilteredProjectRepos(List<Repository> projectRepos)
+    {
+        foreach (var repository in projectRepos)
+        {
+            var repoProjects = ObjectStorageService.Service.GetProjects().Where(dp => dp.RepositoryId == repository.RepositoryId).ToList();
+            if (repoProjects.Count == 0) continue;
+            writer.WriteHeadLine($"  │   ├── 📁 {repository.Name}");
+            foreach (var project in repoProjects)
             {
-                var repoProjects = projects.Where(dp => dp.RepositoryId == repository.RepositoryId).ToList();
-                if (repoProjects.Count == 0) continue;
-                writer.WriteHeadLine($"  │   ├── 📁 {repository.Name}");
-                foreach (var project in repoProjects)
+                if(project.Components.Count == 0) continue;
+                writer.WriteHeadLine($"  │   │   ├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
+                foreach (var component in project.Components)
                 {
-                    if(project.Components.Count == 0) continue;
-                    writer.WriteHeadLine($"  │   │   ├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
-                    foreach (var component in project.Components)
-                    {
-                        writer.WriteHeadLine($"  │   │   ├────── {component.Name} {component.Version}");
-                    }
+                    writer.WriteHeadLine($"  │   │   ├────── {component.Name} {component.Version}");
                 }
             }
         }
     }
+
     public List<ComponentCve> DisplayVulnerableComponents(List<ComponentCve> cve)
     {
         

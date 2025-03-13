@@ -4,6 +4,44 @@
     {
         private const int TopMargin = 6;
         private static readonly List<ListDialogItem> SelectedItems = new();
+        public static List<T> ShowSelectFromFilteredList<T>(string headline, List<T> items, Func<T, string,  bool> match, Action<List<T>> presentation, IConsoleWriter writer, string initialSearch = "") where T : class, new()
+        {
+            var inputBuffer = initialSearch;
+            List<T> filteredItems;
+    
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("➡ Type to filter results, press ENTER to select, BACKSPACE to delete, ESC to exit:");
+                Console.Title = inputBuffer;
+
+                filteredItems = items.Where(item => match(item, inputBuffer)).ToList();
+                if (filteredItems.Count == 0)
+                {
+                    Console.WriteLine("No matching result... (Press ESC to exit)");
+                }
+                else
+                {
+                    writer.WriteHeadLine(headline);
+                    presentation.Invoke(filteredItems); // **Rätt placerat!**
+                }
+                Console.Write("\nPress enter to continue with all matching items. ");
+                var key = Console.ReadKey(intercept: true);
+
+                if (key.Key == ConsoleKey.Escape) return filteredItems;
+                if (key.Key == ConsoleKey.Enter && filteredItems.Count > 0) break;
+                if (key.Key == ConsoleKey.Backspace && inputBuffer.Length > 0)
+                {
+                    inputBuffer = inputBuffer[..^1]; // Modernare sätt att ta bort sista tecknet
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    inputBuffer += key.KeyChar;
+                }
+            }
+            return filteredItems;
+        }
+        
         public static Dictionary<int, string> ListDialog(string header, List<string> items, bool multiSelect = false, bool autoSelectIfOnlyOneItem = true, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Blue, bool clearConsole = true)
         {
             SelectedItems.Clear();
