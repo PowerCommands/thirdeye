@@ -1,4 +1,6 @@
-﻿namespace PainKiller.ThirdEyeAgentCommands.Commands
+﻿using PainKiller.ThirdEyeAgentCommands.BaseClasses;
+
+namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
     [PowerCommandDesign( description: "Text connection to server",
                   disableProxyOutput: true,

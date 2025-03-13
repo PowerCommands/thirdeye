@@ -1,4 +1,5 @@
-﻿using PainKiller.ThirdEyeAgentCommands.Contracts;
+﻿using PainKiller.ThirdEyeAgentCommands.BaseClasses;
+using PainKiller.ThirdEyeAgentCommands.Contracts;
 using PainKiller.ThirdEyeAgentCommands.Data;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
@@ -6,12 +7,13 @@ namespace PainKiller.ThirdEyeAgentCommands.Services;
 public class ObjectStorageService : IObjectStorageService
 {
     private readonly string _storagePath;
-    private TeamObjects _teamObjects;
-    private WorkspaceObjects _workspaceObjects;
-    private RepositoryObjects _repositoryObjects;
-    private ThirdPartyComponentObjects _thirdPartyComponentObjects;
-    private ProjectObjects _projectObjects;
-    private readonly CveComponentObjects _cveComponentObjects;
+    
+    private readonly ObjectStorageBase<TeamObjects, Team> _teamStorage;
+    private readonly ObjectStorageBase<WorkspaceObjects, Workspace> _workspaceStorage;
+    private readonly ObjectStorageBase<RepositoryObjects, Repository> _repositoryStorage;
+    private readonly ObjectStorageBase<ThirdPartyComponentObjects, ThirdPartyComponent> _componentStorage;
+    private readonly ObjectStorageBase<ProjectObjects, Project> _projectStorage;
+    private readonly ObjectStorageBase<CveComponentObjects, ComponentCve> _cveStorage;
 
     private static Lazy<IObjectStorageService>? _lazy;
     public static void Initialize(string host)
@@ -34,117 +36,34 @@ public class ObjectStorageService : IObjectStorageService
     {
         _storagePath = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, host.Replace("https://","").Replace("http://","").Replace("/",""));
         if(!Directory.Exists(_storagePath)) Directory.CreateDirectory(_storagePath);
-        _teamObjects = StorageService<TeamObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(TeamObjects)}.json"));
-        _workspaceObjects = StorageService<WorkspaceObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(WorkspaceObjects)}.json"));
-        _repositoryObjects = StorageService<RepositoryObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
-        _thirdPartyComponentObjects = StorageService<ThirdPartyComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
-        _projectObjects = StorageService<ProjectObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
-        _cveComponentObjects = StorageService<CveComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(CveComponentObjects)}.json"));
+        _teamStorage = new ObjectStorageBase<TeamObjects, Team>(_storagePath);
+        _workspaceStorage = new ObjectStorageBase<WorkspaceObjects, Workspace>(_storagePath);
+        _repositoryStorage = new ObjectStorageBase<RepositoryObjects, Repository>(_storagePath);
+        _componentStorage = new ObjectStorageBase<ThirdPartyComponentObjects, ThirdPartyComponent>(_storagePath);
+        _projectStorage = new ObjectStorageBase<ProjectObjects, Project>(_storagePath);
+        _cveStorage = new ObjectStorageBase<CveComponentObjects, ComponentCve>(_storagePath);
     }
-    public List<Team> GetTeams() => _teamObjects.Teams;
-    public List<Workspace> GetWorkspaces() => _workspaceObjects.Workspaces;
-    public List<Repository> GetRepositories() => _repositoryObjects.Repositories;
-    public List<ThirdPartyComponent> GetThirdPartyComponents() => _thirdPartyComponentObjects.Components;
-    public List<Project> GetProjects() => _projectObjects.Projects;
-    public List<ComponentCve> GetComponentCves() => _cveComponentObjects.ComponentCve;
-    public void SaveTeams(List<Team> teams)
+    public List<Team> GetTeams() => _teamStorage.GetItems();
+    public List<Workspace> GetWorkspaces() => _workspaceStorage.GetItems();
+    public List<Repository> GetRepositories() => _repositoryStorage.GetItems();
+    public List<ThirdPartyComponent> GetThirdPartyComponents() => _componentStorage.GetItems();
+    public List<Project> GetProjects() => _projectStorage.GetItems();
+    public List<ComponentCve> GetComponentCves() => _cveStorage.GetItems();
+    public void SaveTeams(List<Team> teams) => _teamStorage.SaveItems(teams);
+    public void SaveWorkspace(List<Workspace> workspaces) => _workspaceStorage.SaveItems(workspaces);
+    public void InsertOrUpdateWorkspace(Workspace workspace) => _workspaceStorage.InsertOrUpdate(workspace, w => w.Id == workspace.Id);
+    public bool RemoveWorkspace(Guid workspaceId) => _workspaceStorage.Remove(w => w.Id == workspaceId);
+    public void SaveRepositories(List<Repository> repositories) => _repositoryStorage.SaveItems(repositories);
+    public string InsertOrUpdateRepository(Repository repository)
     {
-        _teamObjects.Teams = teams;
-        _teamObjects.LastUpdated = DateTime.Now;
-        StorageService<TeamObjects>.Service.StoreObject(_teamObjects, Path.Combine(_storagePath, $"{nameof(TeamObjects)}.json"));
-    }
-    public void SaveWorkspace(List<Workspace> workspaces)
-    {
-        _workspaceObjects.Workspaces = workspaces;
-        _workspaceObjects.LastUpdated = DateTime.Now;
-        StorageService<WorkspaceObjects>.Service.StoreObject(_workspaceObjects, Path.Combine(_storagePath, $"{nameof(WorkspaceObjects)}.json"));
-    }
-    public void InsertOrUpdateWorkspace(Workspace workspace)
-    {
-        var existing = _workspaceObjects.Workspaces.FirstOrDefault(p => p.Id == workspace.Id);
-        if (existing != null)
-        {
-            _workspaceObjects.Workspaces.Remove(existing);
-            _workspaceObjects.Workspaces.Add(workspace);
-            _workspaceObjects.LastUpdated = DateTime.Now;
-            StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
-        }
-        _workspaceObjects.Workspaces.Add(workspace);
-        _workspaceObjects.LastUpdated = DateTime.Now;
-        StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
-    }
-    public bool RemoveWorkspace(Guid workspaceId)
-    {
-        var existing = _workspaceObjects.Workspaces.FirstOrDefault(p => p.Id == workspaceId);
-        if (existing == null) return false;
-        _workspaceObjects.Workspaces.Remove(existing);
-        _workspaceObjects.LastUpdated = DateTime.Now;
-        StorageService<WorkspaceObjects>.Service.StoreObject(_workspaceObjects, Path.Combine(_storagePath, $"{nameof(WorkspaceObjects)}.json"));
-        return true;
-    }
-    public void SaveRepositories(List<Repository> repositories)
-    {
-        _repositoryObjects.Repositories = repositories;
-        _repositoryObjects.LastUpdated = DateTime.Now;
-        StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
-    }
-    public string UpdateOrInsertRepository(Repository repository)
-    {
-        var existing = _repositoryObjects.Repositories.FirstOrDefault(r => r.RepositoryId == repository.RepositoryId);
-        if (existing != null)
-        {
-            _repositoryObjects.Repositories.Remove(existing);
-            existing.Name = repository.Name;
-            existing.Url = repository.Url;
-            existing.MainBranch = repository.MainBranch;
-            existing.WorkspaceId = repository.WorkspaceId;
-            _repositoryObjects.Repositories.Add(existing);
-            _repositoryObjects.LastUpdated = DateTime.Now;
-            StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
-            return existing.MainBranch?.CommitId ?? "";
-        }
-        _repositoryObjects.Repositories.Add(repository);
-        _repositoryObjects.LastUpdated = DateTime.Now;
-        StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
+        _repositoryStorage.InsertOrUpdate(repository, r => r.RepositoryId == repository.RepositoryId);
         return repository.MainBranch?.CommitId ?? "";
     }
-    public bool RemoveRepository(Guid repositoryId)
-    {
-        var existing = _repositoryObjects.Repositories.FirstOrDefault(r => r.RepositoryId == repositoryId);
-        if (existing == null) return false;
-        _repositoryObjects.Repositories.Remove(existing);
-        _repositoryObjects.LastUpdated = DateTime.Now;
-        StorageService<RepositoryObjects>.Service.StoreObject(_repositoryObjects, Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
-        return true;
-    }
-    public void SaveThirdPartyComponents(List<ThirdPartyComponent> components)
-    {
-        _thirdPartyComponentObjects.Components = components;
-        _thirdPartyComponentObjects.LastUpdated = DateTime.Now;
-        StorageService<ThirdPartyComponentObjects>.Service.StoreObject(_thirdPartyComponentObjects, Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
-    }
-    public bool InsertComponent(ThirdPartyComponent component)
-    {
-        if (_thirdPartyComponentObjects.Components.Any(c => c.CommitId == component.CommitId && c.Name == component.Name && c.Version == component.Version && c.Path == component.Path)) return false;
-        _thirdPartyComponentObjects.Components.Add(component);
-        _thirdPartyComponentObjects.LastUpdated = DateTime.Now;
-        StorageService<ThirdPartyComponentObjects>.Service.StoreObject(_thirdPartyComponentObjects, Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
-        return true;
-    }
-    public void SaveProjects(List<Project> projects)
-    {
-        _projectObjects.Projects = projects;
-        _projectObjects.LastUpdated = DateTime.Now;
-        StorageService<ProjectObjects>.Service.StoreObject(_projectObjects, Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
-    }
-    public bool InsertProject(Project project)
-    {
-        if (_projectObjects.Projects.Any(p => p.WorkspaceId == project.WorkspaceId && p.RepositoryId == project.RepositoryId && p.Path == project.Path)) return false;
-        _projectObjects.Projects.Add(project);
-        _projectObjects.LastUpdated = DateTime.Now;
-        StorageService<ProjectObjects>.Service.StoreObject(_projectObjects, Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
-        return true;
-    }
+    public bool RemoveRepository(Guid repositoryId) => _repositoryStorage.Remove(r => r.RepositoryId == repositoryId);
+    public void SaveThirdPartyComponents(List<ThirdPartyComponent> components) => _componentStorage.SaveItems(components);
+    public bool InsertComponent(ThirdPartyComponent component) => _componentStorage.Insert(component, c => c.CommitId == component.CommitId && c.Version == component.Version && c.Path == component.Path);
+    public void SaveProjects(List<Project> projects) => _projectStorage.SaveItems(projects);
+    public bool InsertProject(Project project) => _projectStorage.Insert(project, p => p.WorkspaceId == project.WorkspaceId && p.RepositoryId == project.RepositoryId && p.Path == project.Path);
     public int InsertProjects(IEnumerable<Project> projects)
     {
         var insertedCounter = 0;
@@ -155,27 +74,13 @@ public class ObjectStorageService : IObjectStorageService
         }
         return insertedCounter;
     }
-    public void InsertOrUpdateCve(ComponentCve componentCve)
-    {
-        var existing = _cveComponentObjects.ComponentCve.FirstOrDefault(c => c.Name == componentCve.Name && c.Version == componentCve.Version);
-        if (existing != null)
-        {
-            _cveComponentObjects.ComponentCve.Remove(existing);
-            _cveComponentObjects.ComponentCve.Add(componentCve);
-            _cveComponentObjects.LastUpdated = DateTime.Now;
-            StorageService<CveComponentObjects>.Service.StoreObject(_cveComponentObjects, Path.Combine(_storagePath, $"{nameof(CveComponentObjects)}.json"));
-        }
-        _cveComponentObjects.ComponentCve.Add(componentCve);
-        _cveComponentObjects.LastUpdated = DateTime.Now;
-        StorageService<CveComponentObjects>.Service.StoreObject(_cveComponentObjects, Path.Combine(_storagePath, $"{nameof(CveComponentObjects)}.json"));
-    }
+    public void InsertOrUpdateCve(ComponentCve componentCve) => _cveStorage.InsertOrUpdate(componentCve, cve => cve.Name == componentCve.Name && cve.Version == componentCve.Version);
     public void ReLoad()
     {
-        _teamObjects = StorageService<TeamObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(TeamObjects)}.json"));
-        _workspaceObjects = StorageService<WorkspaceObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(WorkspaceObjects)}.json"));
-        _repositoryObjects = StorageService<RepositoryObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(RepositoryObjects)}.json"));
-        _thirdPartyComponentObjects = StorageService<ThirdPartyComponentObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ThirdPartyComponentObjects)}.json"));
-        _projectObjects = StorageService<ProjectObjects>.Service.GetObject(Path.Combine(_storagePath, $"{nameof(ProjectObjects)}.json"));
+        _teamStorage.ReLoad();
+        _workspaceStorage.ReLoad();
+        _repositoryStorage.ReLoad();
+        _componentStorage.ReLoad();
+        _projectStorage.ReLoad();
     }
-
 }

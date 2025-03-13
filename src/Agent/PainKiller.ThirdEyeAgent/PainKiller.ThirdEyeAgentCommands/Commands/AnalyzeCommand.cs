@@ -1,4 +1,5 @@
-﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+﻿using PainKiller.ThirdEyeAgentCommands.BaseClasses;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Enums;
 using PainKiller.ThirdEyeAgentCommands.Extensions;
 using PainKiller.ThirdEyeAgentCommands.Managers;

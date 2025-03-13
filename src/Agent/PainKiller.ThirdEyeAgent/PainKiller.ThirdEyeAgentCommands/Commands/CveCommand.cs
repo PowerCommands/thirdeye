@@ -1,4 +1,5 @@
-﻿using PainKiller.ThirdEyeAgentCommands.Managers;
+﻿using PainKiller.ThirdEyeAgentCommands.BaseClasses;
+using PainKiller.ThirdEyeAgentCommands.Managers;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {

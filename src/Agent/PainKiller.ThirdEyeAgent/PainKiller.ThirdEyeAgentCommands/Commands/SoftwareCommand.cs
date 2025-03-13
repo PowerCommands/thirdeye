@@ -32,7 +32,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                 {
                     if(string.IsNullOrEmpty(line)) continue;
                     var software = new Software(line);
-                    softwareObject.Softwares.Add(software);
+                    softwareObject.Items.Add(software);
                 }
                 softwareObject.LastUpdated = DateTime.Now;
                 StorageService<SoftwareObjects>.Service.StoreObject(softwareObject);
@@ -43,7 +43,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
         }
         public void DisplaySoftware(string filter)
         {
-            var softwareItems = StorageService<SoftwareObjects>.Service.GetObject().Softwares;
+            var softwareItems = StorageService<SoftwareObjects>.Service.GetObject().Items;
             List<Software> filteredSoftware;
             var inputBuffer = filter;
             while (true)
@@ -96,7 +96,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
 
             var analyzer = new CveAnalyzeManager(this);
             var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
-            var components = analyzer.GetVulnerabilities(cveStorage.GetCveEntries(), software.Softwares,threshold);
+            var components = analyzer.GetVulnerabilities(cveStorage.GetCveEntries(), software.Items,threshold);
             var selectedComponentCves = presentationManager.DisplayVulnerableComponents(components);
             var selected = ListService.ListDialog("Choose a software to view details.", selectedComponentCves.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
             if (selected.Count <= 0) return Ok();

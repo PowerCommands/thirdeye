@@ -1,9 +1,10 @@
-﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+﻿using PainKiller.ThirdEyeAgentCommands.Contracts;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
 namespace PainKiller.ThirdEyeAgentCommands.Data;
 
-public class CveComponentObjects
+public class CveComponentObjects : IDataObjects<ComponentCve>
 {
     public DateTime LastUpdated { get; set; }
-    public List<ComponentCve> ComponentCve { get; set; } = [];
+    public List<ComponentCve> Items { get; set; } = [];
 }

@@ -74,7 +74,7 @@ public class WorkspaceManager(IGitManager gitManager, IObjectStorageService stor
                     writer.WriteLine($"Repo {repo.Name} is up to date.");
                     continue;
                 }
-                storage.UpdateOrInsertRepository(repo);
+                storage.InsertOrUpdateRepository(repo);
                 writer.WriteLine($"Repo {repo.Name} has been updated.");
                 var files = gitManager.GetAllFilesInRepository(repo.RepositoryId).ToList();
                 if (files.Count == 0)

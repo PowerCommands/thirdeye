@@ -3,8 +3,8 @@ using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
 namespace PainKiller.ThirdEyeAgentCommands.Data;
 
-public class SoftwareObjects : IDataObjects<Software>
+public class FindingObjects : IDataObjects<Finding>
 {
     public DateTime LastUpdated { get; set; }
-    public List<Software> Items { get; set; } = [];
+    public List<Finding> Items { get; set; } = [];
 }

@@ -15,7 +15,7 @@ public interface IObjectStorageService
     void SaveTeams(List<Team> teams);
     void SaveWorkspace(List<Workspace> workspaces);
     void SaveRepositories(List<Repository> repositories);
-    string UpdateOrInsertRepository(Repository repository);
+    string InsertOrUpdateRepository(Repository repository);
     bool RemoveRepository(Guid repositoryId);
     void SaveThirdPartyComponents(List<ThirdPartyComponent> components);
     bool InsertComponent(ThirdPartyComponent component);

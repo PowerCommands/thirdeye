@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using PainKiller.ThirdEyeAgentCommands.BaseClasses;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands

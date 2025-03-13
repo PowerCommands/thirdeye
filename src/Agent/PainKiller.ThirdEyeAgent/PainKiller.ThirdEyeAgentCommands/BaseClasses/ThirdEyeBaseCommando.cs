@@ -3,7 +3,7 @@ using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Managers;
 using PainKiller.ThirdEyeAgentCommands.Services;
 
-namespace PainKiller.ThirdEyeAgentCommands.Commands;
+namespace PainKiller.ThirdEyeAgentCommands.BaseClasses;
 
 public abstract class ThirdEyeBaseCommando : CommandBase<PowerCommandsConfiguration>
 {
