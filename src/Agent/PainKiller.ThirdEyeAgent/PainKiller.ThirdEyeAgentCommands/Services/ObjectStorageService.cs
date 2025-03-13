@@ -6,14 +6,14 @@ using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 namespace PainKiller.ThirdEyeAgentCommands.Services;
 public class ObjectStorageService : IObjectStorageService
 {
-    private readonly string _storagePath;
-    
     private readonly ObjectStorageBase<TeamObjects, Team> _teamStorage;
     private readonly ObjectStorageBase<WorkspaceObjects, Workspace> _workspaceStorage;
     private readonly ObjectStorageBase<RepositoryObjects, Repository> _repositoryStorage;
     private readonly ObjectStorageBase<ThirdPartyComponentObjects, ThirdPartyComponent> _componentStorage;
     private readonly ObjectStorageBase<ProjectObjects, Project> _projectStorage;
     private readonly ObjectStorageBase<CveComponentObjects, ComponentCve> _cveStorage;
+    private readonly ObjectStorageBase<FindingObjects, Finding> _findings;
+
 
     private static Lazy<IObjectStorageService>? _lazy;
     public static void Initialize(string host)
@@ -34,21 +34,25 @@ public class ObjectStorageService : IObjectStorageService
     }
     private ObjectStorageService(string host)
     {
-        _storagePath = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, host.Replace("https://","").Replace("http://","").Replace("/",""));
-        if(!Directory.Exists(_storagePath)) Directory.CreateDirectory(_storagePath);
-        _teamStorage = new ObjectStorageBase<TeamObjects, Team>(_storagePath);
-        _workspaceStorage = new ObjectStorageBase<WorkspaceObjects, Workspace>(_storagePath);
-        _repositoryStorage = new ObjectStorageBase<RepositoryObjects, Repository>(_storagePath);
-        _componentStorage = new ObjectStorageBase<ThirdPartyComponentObjects, ThirdPartyComponent>(_storagePath);
-        _projectStorage = new ObjectStorageBase<ProjectObjects, Project>(_storagePath);
-        _cveStorage = new ObjectStorageBase<CveComponentObjects, ComponentCve>(_storagePath);
+        var storagePath = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, host.Replace("https://","").Replace("http://","").Replace("/",""));
+        if(!Directory.Exists(storagePath)) Directory.CreateDirectory(storagePath);
+        _teamStorage = new ObjectStorageBase<TeamObjects, Team>(storagePath);
+        _workspaceStorage = new ObjectStorageBase<WorkspaceObjects, Workspace>(storagePath);
+        _repositoryStorage = new ObjectStorageBase<RepositoryObjects, Repository>(storagePath);
+        _componentStorage = new ObjectStorageBase<ThirdPartyComponentObjects, ThirdPartyComponent>(storagePath);
+        _projectStorage = new ObjectStorageBase<ProjectObjects, Project>(storagePath);
+        _cveStorage = new ObjectStorageBase<CveComponentObjects, ComponentCve>(storagePath);
+        _findings = new ObjectStorageBase<FindingObjects, Finding>(storagePath);
     }
+
     public List<Team> GetTeams() => _teamStorage.GetItems();
     public List<Workspace> GetWorkspaces() => _workspaceStorage.GetItems();
     public List<Repository> GetRepositories() => _repositoryStorage.GetItems();
     public List<ThirdPartyComponent> GetThirdPartyComponents() => _componentStorage.GetItems();
     public List<Project> GetProjects() => _projectStorage.GetItems();
     public List<ComponentCve> GetComponentCves() => _cveStorage.GetItems();
+    public List<Finding> GetFindings() => _findings.GetItems();
+
     public void SaveTeams(List<Team> teams) => _teamStorage.SaveItems(teams);
     public void SaveWorkspace(List<Workspace> workspaces) => _workspaceStorage.SaveItems(workspaces);
     public void InsertOrUpdateWorkspace(Workspace workspace) => _workspaceStorage.InsertOrUpdate(workspace, w => w.Id == workspace.Id);

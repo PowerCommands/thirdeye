@@ -14,7 +14,6 @@ public class FilterService
         if (workspaceNames.First() == "*") return StorageService.GetWorkspaces();
         return StorageService.GetWorkspaces().Where(w => workspaceNames.Any(name => w.Name.ToLower().Contains(name.ToLower())) && team.WorkspaceIds.Contains(w.Id)).ToList();
     }
-
     public IEnumerable<Team> GetTeams(List<string> teamNames)
     {
         if (teamNames.Count == 0) return [];
@@ -22,6 +21,11 @@ public class FilterService
         return StorageService.GetTeams().Where(t => teamNames.Any(name => t.Name.ToLower().Contains(name.ToLower()))).ToList();
     }
     public IEnumerable<Repository> GetRepositories(Guid workspaceId) => StorageService.GetRepositories().Where(r => r.WorkspaceId == workspaceId);
-    public IEnumerable<ThirdPartyComponent> GetThirdPartyComponents(Repository repository) => StorageService.GetThirdPartyComponents().Where(c => c.CommitId == repository.MainBranch?.CommitId).ToList();
-
+    public IEnumerable<ThirdPartyComponent> GetThirdPartyComponents(Repository repository)
+    {
+        var retVal = new List<ThirdPartyComponent>();
+        var projects = StorageService.GetProjects().Where(p => p.RepositoryId == repository.RepositoryId);
+        foreach (var project in projects) retVal.AddRange(project.Components);
+        return retVal;
+    }
 }

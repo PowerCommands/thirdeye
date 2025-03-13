@@ -1,4 +1,5 @@
-﻿using PainKiller.ThirdEyeAgentCommands.BaseClasses;
+﻿using PainKiller.PowerCommands.Shared.Extensions;
+using PainKiller.ThirdEyeAgentCommands.BaseClasses;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Enums;
 using PainKiller.ThirdEyeAgentCommands.Extensions;
@@ -12,7 +13,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                              example: "//Check for vulnerabilities in your components|analyze")]
     public class AnalyzeCommand(string identifier, PowerCommandsConfiguration configuration) : ThirdEyeBaseCommando(identifier, configuration)
     {
-        private List<Repository> _analyzedRepositories = [];
+        private readonly List<Repository> _analyzedRepositories = [];
         public override RunResult Run()
         {
             ConsoleService.Service.Clear();
@@ -64,7 +65,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             if (componentCve != null)
             {
                 var apiKey = Configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
-                var cveFetcher = new CveFetcherManager(CveStorage, configuration.ThirdEyeAgent.Nvd, apiKey, this);
+                var cveFetcher = new CveFetcherManager(CveStorage, Configuration.ThirdEyeAgent.Nvd, apiKey, this);
                 var cve = cveFetcher.FetchCveDetailsAsync(componentCve.Id).Result;
                 if (cve != null)
                 {

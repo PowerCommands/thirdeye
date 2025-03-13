@@ -11,5 +11,6 @@ public class Finding
     public FindingStatus Status { get; set; } = FindingStatus.New;
     public List<string> AffectedTeams { get; set; } = [];
     public List<Project> AffectedProjects { get; set; } = [];
+    public List<Mitigation> Mitigations{ get; set; } = [];
     public CveEntry Cve { get; set; } = new();
 }

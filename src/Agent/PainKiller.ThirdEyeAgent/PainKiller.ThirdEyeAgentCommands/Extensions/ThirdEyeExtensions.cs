@@ -56,5 +56,4 @@ public static class ThirdEyeExtensions
     {
         return score.GetSeverity() >= threshold;
     }
-    public static string ToCheck(this bool val, string trueCheck = "✅", string falseCheck = "") => val ? trueCheck : falseCheck;
 }
