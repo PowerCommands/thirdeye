@@ -1,4 +1,5 @@
-﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+﻿using System.Runtime.CompilerServices;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Enums;
 
 namespace PainKiller.ThirdEyeAgentCommands.Extensions;
@@ -55,4 +56,5 @@ public static class ThirdEyeExtensions
     {
         return score.GetSeverity() >= threshold;
     }
+    public static string ToCheck(this bool val, string trueCheck = "✅", string falseCheck = "") => val ? trueCheck : falseCheck;
 }
