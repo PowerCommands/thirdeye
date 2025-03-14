@@ -1,24 +1,32 @@
 ﻿using PainKiller.ThirdEyeAgentCommands.BaseClasses;
 using PainKiller.ThirdEyeAgentCommands.Extensions;
 using PainKiller.ThirdEyeAgentCommands.Managers;
+using PainKiller.ThirdEyeAgentCommands.Managers.Workflows;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
     [PowerCommandDesign( description: "Handle workspaces (Projects in ADS)",
                   disableProxyOutput: true,
-                             options: "init|update",
+                             options: "analyze|init|update",
                              example: "//List all your configured workspaces|workspace")]
     public class WorkspaceCommand(string identifier, PowerCommandsConfiguration configuration) : ThirdEyeBaseCommando(identifier, configuration)
     {
         public override RunResult Run()
         {
+            DisableLog();
             if (Options.Count > 0)
             {
-                Init();
-                PauseService.Pause(3);
+                if(HasOption("init")) Init();
+                else if(HasOption("update")) Update();
+                else if (HasOption("analyze")) Analyze();
+                else WriteFailureLine("Unkown option.");
+                
+                Storage.ReLoad();
+                IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
+                var viewWorkspace = DialogService.YesNoDialog("Do you want to view your workspaces?");
+                if (!viewWorkspace) return Ok();
             }
-            
-            DisableLog();
+
             var workspaces =  Storage.GetWorkspaces().GetFilteredWorkspaces(Configuration.ThirdEyeAgent.Workspaces);
             var (key, _) = ListService.ListDialog("Choose workspace", workspaces.Select(p => $"{p.Name} {p.Id}").ToList()).FirstOrDefault();
             var selectedWorkspace = workspaces[key];
@@ -39,10 +47,18 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
         private void Init()
         {
             var workspaceManager = new WorkspaceManager(GitManager, Storage, AnalyzeManager, this, Configuration.ThirdEyeAgent);
-            if(HasOption("init")) workspaceManager.InitializeOrganization();
-            else if(HasOption("update")) workspaceManager.UpdateOrganization();
-            Storage.ReLoad();
-            IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
+            workspaceManager.InitializeOrganization();
+        }
+
+        private void Update()
+        {
+            var workspaceManager = new WorkspaceManager(GitManager, Storage, AnalyzeManager, this, Configuration.ThirdEyeAgent);
+            workspaceManager.UpdateOrganization();
+        }
+        private void Analyze()
+        {
+            var workflow = new AnalyzeWorkspaceWorkflow(this, Configuration);
+            workflow.Run();
         }
     }
 }

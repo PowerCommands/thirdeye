@@ -14,20 +14,6 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var selectedTeam = teams[key];
             
             PresentationManager.DisplayTeam(selectedTeam);
-
-            
-            //var workspaces = FilterService.Service.GetWorkspaces(Configuration.ThirdEyeAgent.Workspaces.ToList(), selectedTeam).ToList();
-            //var selectedWorkspaces = ListService.ListDialog("Chose Workspace", workspaces.Select(w => w.Name).ToList());
-            //if (selectedWorkspaces.Count <= 0) return Ok();
-            //var selectedWorkspace = workspaces[selectedWorkspaces.First().Key];
-            //var doAnalyze = true;
-            
-            //while (doAnalyze)
-            //{
-            //    Analyse(selectedWorkspace);
-            //    doAnalyze =DialogService.YesNoDialog("Chose another repo (y) or quit? (not y)");
-            //}
-
             return Ok();
         }
     }

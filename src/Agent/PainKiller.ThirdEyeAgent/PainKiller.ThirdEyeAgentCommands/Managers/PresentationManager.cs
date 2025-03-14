@@ -23,34 +23,10 @@ public class PresentationManager(IConsoleWriter writer)
     }
     public void DisplayTeam(Team team)
     {
-        writer.WriteHeadLine($"👨‍👩‍👧‍👦{ team.Name.Trim()}");
+        writer.WriteHeadLine($"👨‍👩‍👧‍👦{team.Name.Trim()}");
         writer.WriteHeadLine("  │   ├── Members");
-        foreach (var member in team.Members)
-        {
-            writer.WriteHeadLine($"  │   ├── 👤 {member.Name}");
-        }
-        var workspaces = FilterService.Service.GetWorkspaces(["*"], team);
-        var repos = new List<Repository>();
-        foreach (var workspace in workspaces) repos.AddRange(FilterService.Service.GetRepositories(workspace.Id));
-        var projects = new List<Project>();
-        foreach(var repo in repos) projects.AddRange(FilterService.Service.GetProjects(repo.RepositoryId));
-        ListService.ShowSelectFromFilteredList("  │   ├── Projects", projects, (p,s) => p.Name.ToLower().Contains(s.ToLower()), SelectedProjects, writer);
+        foreach (var member in team.Members) writer.WriteHeadLine($"  │   ├── 👤 {member.Name}");
     }
-
-    private void SelectedProjects(List<Project> projects)
-    {
-        foreach (var project in projects)
-        {
-            writer.WriteHeadLine($"  │   ├── 📁 {project.Name} {project.Framework} {project.Sdk}");
-        
-            writer.WriteHeadLine($"  ├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
-            foreach (var component in project.Components)
-            {
-                writer.WriteHeadLine($"  │   │   ├── {component.Name} {component.Version}");
-            }
-        }
-    }
-
     public void DisplayProject(Project project)
     {
         writer.WriteHeadLine($"\n📁 {project.Name} {project.Framework} {project.Sdk}");
@@ -104,13 +80,13 @@ public class PresentationManager(IConsoleWriter writer)
                 writer.WriteHeadLine($"  │   │   ├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
                 foreach (var component in components)
                 {
+                    if(_thirdPartyComponentFilter == null) continue;
                     if (component.Name != _thirdPartyComponentFilter.Name || component.Version != _thirdPartyComponentFilter.Version) continue;
                     writer.WriteHeadLine($"  │   │   ├────── {component.Name} {component.Version}");
                 }
             }
         }
     }
-
     public List<ComponentCve> DisplayVulnerableComponents(List<ComponentCve> cve)
     {
         
