@@ -6,7 +6,7 @@ using PainKiller.ThirdEyeAgentCommands.Services;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers.Workflows;
 
-public class AnalyzeSoftwareWorkflow(IConsoleWriter writer, PowerCommandsConfiguration configuration) : AnalyzeWorkflowBase(writer, configuration)
+public class AnalyzeSoftwareWorkflow(IConsoleWriter writer2, PowerCommandsConfiguration configuration) : AnalyzeWorkflowBase(writer2, configuration)
 {
     public override void Run(params string[] args)
     {
@@ -18,7 +18,7 @@ public class AnalyzeSoftwareWorkflow(IConsoleWriter writer, PowerCommandsConfigu
     public override List<ComponentCve> GetVulnerableComponents(Repository? repository, string fileName = "")
     {
         var software = StorageService<SoftwareObjects>.Service.GetObject().Items.Select(c => new ThirdPartyComponent { Name = c.Name, Version = c.Version }).ToList();
-        var analyzer = new CveAnalyzeManager(writer);
+        var analyzer = new CveAnalyzeManager(writer2);
         var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
         
         var components = string.IsNullOrEmpty(fileName) ?  analyzer.GetVulnerabilities(CveStorageService.Service.GetCveEntries(), software, threshold) : analyzer.GetVulnerabilities(fileName);

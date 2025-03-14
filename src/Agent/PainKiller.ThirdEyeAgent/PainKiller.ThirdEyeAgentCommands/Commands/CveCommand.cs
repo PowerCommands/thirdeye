@@ -16,7 +16,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var nvdFetcher = new CveFetcherManager(CveStorage, Configuration.ThirdEyeAgent.Nvd, apiKey,this);
             var response = nvdFetcher.FetchCveDetailsAsync(cveId).Result;
             WriteHeadLine(cveId);
-            PresentationManager.DisplayCveDetails(response);
+            if(response != null) PresentationManager.DisplayCveDetails(response);
             return Ok();
         }
     }

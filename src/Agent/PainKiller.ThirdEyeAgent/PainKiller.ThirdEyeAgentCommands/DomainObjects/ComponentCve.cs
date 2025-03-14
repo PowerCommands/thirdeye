@@ -17,4 +17,5 @@ public class ComponentCve
             return parts.Length > 0 ? parts.Aggregate(0, (acc, p) => acc * 1000 + p) : 0;
         }
     }
+    public bool IsSoftware { get; set; }
 }

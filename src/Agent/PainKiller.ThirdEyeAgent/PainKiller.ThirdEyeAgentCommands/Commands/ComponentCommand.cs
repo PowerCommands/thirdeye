@@ -5,11 +5,11 @@ using PainKiller.ThirdEyeAgentCommands.Managers.Workflows;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
-    [PowerCommandDesign(description: "Search for components",
+    [PowerCommandDesign(description: "Search for components, analyze them for vulnerabilities.",
                            arguments: "<search arguments>",
                              options: "analyze",
                   disableProxyOutput: true,
-                             example: "//Search components|component <search1> <search2>...")]
+                             example: "//Search components|component <search1> <search2>...|//Analyze all components|component --analyze|//Analyze with filter|component <search> --analyze")]
     public class ComponentCommand(string identifier, PowerCommandsConfiguration config) : ThirdEyeBaseCommando(identifier, config)
     {
         public override RunResult Run()
@@ -59,7 +59,6 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             }
             return Ok();
         }
-
         private RunResult Analyze(string filter)
         {
             var workflow = new AnalyzeComponentWorkflow(this, Configuration);
