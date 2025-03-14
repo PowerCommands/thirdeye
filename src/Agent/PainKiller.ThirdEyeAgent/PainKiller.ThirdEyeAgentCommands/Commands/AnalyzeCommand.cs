@@ -27,7 +27,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             
             while (doAnalyze)
             {
-                Analyse(selectedWorkspace);
+                Analyze(selectedWorkspace);
                 doAnalyze =DialogService.YesNoDialog("Chose another repo (y) or quit? (not y)");
             }
             return Ok();

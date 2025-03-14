@@ -61,8 +61,9 @@ public class PresentationManager(IConsoleWriter writer)
             writer.WriteHeadLine($"│  ├── {component.Name} {component.Version}");
         }
     }
-    public void DisplayOrganization(string organizationName, List<Workspace> workspaces, List<Repository> repositories, List<Team> teams, List<Project> projects, bool skipEmpty = false)
+    public void DisplayOrganization(string organizationName, List<Workspace> workspaces, List<Repository> repositories, List<Team> teams, List<Project> projects, ThirdPartyComponent? filter, bool skipEmpty = false)
     {
+        _thirdPartyComponentFilter = filter;
         writer.WriteHeadLine($"\n🏠 {organizationName}");
         foreach (var workspace in workspaces)
         {
@@ -78,13 +79,13 @@ public class PresentationManager(IConsoleWriter writer)
                     writer.WriteHeadLine($"  │   │   ├── 👤 {member.Name}");
                 }
             }
-
             var projectRepos = repositories.Where(r => r.WorkspaceId == workspace.Id).ToList();
             if(projectRepos.Count == 0) continue;
             ListService.ShowSelectFromFilteredList("  │   ├── Repos", projectRepos, (p, s) => p.Name.ToLower().Contains(s), ListFilteredProjectRepos, writer);
         }
     }
 
+    private ThirdPartyComponent? _thirdPartyComponentFilter;
     private void ListFilteredProjectRepos(List<Repository> projectRepos)
     {
         foreach (var repository in projectRepos)
@@ -94,10 +95,16 @@ public class PresentationManager(IConsoleWriter writer)
             writer.WriteHeadLine($"  │   ├── 📁 {repository.Name}");
             foreach (var project in repoProjects)
             {
+                var components = project.Components;
+                if (_thirdPartyComponentFilter != null)
+                {
+                    if(!components.Any(c => c.Name == _thirdPartyComponentFilter.Name && c.Version == _thirdPartyComponentFilter.Version)) continue;
+                }
                 if(project.Components.Count == 0) continue;
                 writer.WriteHeadLine($"  │   │   ├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
-                foreach (var component in project.Components)
+                foreach (var component in components)
                 {
+                    if (component.Name != _thirdPartyComponentFilter.Name || component.Version != _thirdPartyComponentFilter.Version) continue;
                     writer.WriteHeadLine($"  │   │   ├────── {component.Name} {component.Version}");
                 }
             }

@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Enums;
 
 namespace PainKiller.ThirdEyeAgentCommands.Extensions;

@@ -32,11 +32,17 @@ public abstract class ThirdEyeBaseCommando : CommandBase<PowerCommandsConfigurat
         var workspaces = Storage.GetWorkspaces().Where(p => projects.Any(dp => dp.WorkspaceId == p.Id)).ToList();
         var repos = new List<Repository>();
         var teams = Storage.GetTeams();
-        foreach (var projectRepos in workspaces.Select(project => Storage.GetRepositories().Where(r => r.WorkspaceId == project.Id))) repos.AddRange(projectRepos);
-        PresentationManager.DisplayOrganization(Configuration.ThirdEyeAgent.OrganizationName, workspaces, repos, teams, projects, skipEmpty: true);
+        foreach (var projectRepos in workspaces.Select(project => Storage.GetRepositories().Where(r => r.WorkspaceId == project.Id)))
+        {
+            foreach (var projectRepo in projectRepos)
+            {
+                if(projects.Any(p => p.RepositoryId == projectRepo.RepositoryId))
+                    repos.Add(projectRepo);
+            }
+        }
+        PresentationManager.DisplayOrganization(Configuration.ThirdEyeAgent.OrganizationName, workspaces, repos, teams, projects, component, skipEmpty: true);
     }
-
-    protected void Analyse(Workspace selectedWorkspace)
+    protected void Analyze(Workspace selectedWorkspace)
     {
         var repositories = FilterService.Service.GetRepositories(selectedWorkspace.Id).ToList();
         var selectedRepositories = ListService.ListDialog("Chose Repository", repositories.Select(r => $"{r.Name} {_analyzedRepositories.Any(re => re.RepositoryId == r.RepositoryId).ToCheck()}").ToList());

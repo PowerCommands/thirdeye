@@ -15,7 +15,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var repositories = Storage.GetRepositories();
             var teams = Storage.GetTeams();
             var projects = Storage.GetProjects();
-            PresentationManager.DisplayOrganization(Configuration.ThirdEyeAgent.OrganizationName, workspaces, repositories, teams, projects);
+            PresentationManager.DisplayOrganization(Configuration.ThirdEyeAgent.OrganizationName, workspaces, repositories, teams, projects, null);
             EnableLog();
             return Ok();
         }
