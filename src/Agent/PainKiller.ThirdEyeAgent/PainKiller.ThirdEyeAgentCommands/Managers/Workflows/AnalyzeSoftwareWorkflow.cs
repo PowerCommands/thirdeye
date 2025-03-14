@@ -15,13 +15,13 @@ public class AnalyzeSoftwareWorkflow(IConsoleWriter writer, PowerCommandsConfigu
         ViewCveDetails(VulnerableComponents);
     }
 
-    public override List<ComponentCve> GetVulnerableComponents(Repository? repository, string name = "")
+    public override List<ComponentCve> GetVulnerableComponents(Repository? repository, string fileName = "")
     {
         var software = StorageService<SoftwareObjects>.Service.GetObject().Items.Select(c => new ThirdPartyComponent { Name = c.Name, Version = c.Version }).ToList();
         var analyzer = new CveAnalyzeManager(writer);
         var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
         
-        var components = analyzer.GetVulnerabilities(CveStorageService.Service.GetCveEntries(), software, threshold);
+        var components = string.IsNullOrEmpty(fileName) ?  analyzer.GetVulnerabilities(CveStorageService.Service.GetCveEntries(), software, threshold) : analyzer.GetVulnerabilities(fileName);
         
         VulnerableComponents = PresentationManager.DisplayVulnerableComponents(components);
         return VulnerableComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder).ToList();

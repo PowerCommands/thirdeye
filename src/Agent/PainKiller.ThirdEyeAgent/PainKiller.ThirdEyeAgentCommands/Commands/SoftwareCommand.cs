@@ -2,10 +2,7 @@
 using PainKiller.PowerCommands.Core.Commands;
 using PainKiller.ThirdEyeAgentCommands.Data;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
-using PainKiller.ThirdEyeAgentCommands.Enums;
-using PainKiller.ThirdEyeAgentCommands.Managers;
 using PainKiller.ThirdEyeAgentCommands.Managers.Workflows;
-using PainKiller.ThirdEyeAgentCommands.Services;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
@@ -13,21 +10,21 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                            arguments: "filename",
                              options: "analyze",
                   disableProxyOutput: true,
-                             example: "//Show all stored software|software|//Upload a file|software myFile.txt")]
+                             example: "//Show all stored software|software|//Upload a file|software myFile.txt|//Analyze all softwares|software --analyze|//Show a previous analyze|analyze myFile.txt --analyze")]
     [PowerCommandsToolbar(["[Enter] = Show all software","Filename = Upload new software file","(use cd command and tab to select a file or just enter the filename)"])]
     [PowerCommandPrivacy]
     public class SoftwareCommand(string identifier, PowerCommandsConfiguration configuration) : CdCommand(identifier, configuration)
     {
         public override RunResult Run()
         {
-            if (HasOption("analyze")) return Analyze();
+            var fileName = string.Join(' ', Input.Arguments);
+            if (HasOption("analyze")) return Analyze(fileName);
 
             var filter = string.Join(' ', Input.Arguments);
-            var filename = string.Join(' ', Input.Arguments);
-            if (File.Exists(filename))
+            if (File.Exists(fileName))
             {
                 filter = "";
-                var data = File.ReadAllLines(filename);
+                var data = File.ReadAllLines(fileName);
                 var softwareObject = new SoftwareObjects();
                 foreach (var line in data)
                 {
@@ -37,7 +34,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                 }
                 softwareObject.LastUpdated = DateTime.Now;
                 StorageService<SoftwareObjects>.Service.StoreObject(softwareObject);
-                WriteSuccessLine($"software in {filename} has been stored in database.");
+                WriteSuccessLine($"software in {fileName} has been stored in database.");
             }
             DisplaySoftware(filter);
             return Ok();
@@ -83,40 +80,10 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                 WriteCodeExample(component.Name, component.Version);
             }
         }
-
-        private RunResult Analyze()
+        private RunResult Analyze(string fileName)
         {
             var workflow = new AnalyzeSoftwareWorkflow(this, configuration);
-            workflow.Run();
-            //var cveStorage = CveStorageService.Service;
-            //var software = StorageService<SoftwareObjects>.Service.GetObject();
-            //var presentationManager = new PresentationManager(this);
-
-            //ConsoleService.Service.Clear();
-            //WriteHeadLine("Analyze begins, loading CVEs...");
-            //if(cveStorage.LoadedCveCount == 0) cveStorage.ReLoad();
-            //IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
-
-            //var analyzer = new CveAnalyzeManager(this);
-            //var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
-            
-            
-            
-            //var components = analyzer.GetVulnerabilities(cveStorage.GetCveEntries(), software.Items,threshold);
-            //var selectedComponentCves = presentationManager.DisplayVulnerableComponents(components);
-            
-            
-            //var selected = ListService.ListDialog("Choose a software to view details.", selectedComponentCves.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
-            //if (selected.Count <= 0) return Ok();
-            //var component = selectedComponentCves[selected.First().Key];
-            //var componentCve = presentationManager.DisplayVulnerableComponent(component);
-            //if (componentCve != null)
-            //{
-            //    var apiKey = Configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
-            //    var cveFetcher = new CveFetcherManager(cveStorage, configuration.ThirdEyeAgent.Nvd, apiKey, this);
-            //    var cve = cveFetcher.FetchCveDetailsAsync(componentCve.Id).Result;
-            //    if(cve != null) presentationManager.DisplayCveDetails(cve);
-            //}
+            workflow.Run(fileName);
             return Ok();
         }
     }

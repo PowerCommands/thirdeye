@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using PainKiller.ThirdEyeAgentCommands.Data;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
 using PainKiller.ThirdEyeAgentCommands.Enums;
@@ -35,6 +36,10 @@ public class CveAnalyzeManager(IConsoleWriter writer)
         });
         Console.ForegroundColor = fColor;
         Console.BackgroundColor = bColor;
-        return vulnerableComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder).ToList();
+        var retVal = vulnerableComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder).ToList();
+        var storeObjects = new CveComponentObjects { Items = retVal, LastUpdated = DateTime.Now };
+        StorageService<CveComponentObjects>.Service.StoreObject(storeObjects, Path.Combine(ConfigurationGlobals.ApplicationDataFolder, $"{nameof(ComponentCve).FormatFileTimestamp()}.json"));
+        return retVal;
     }
+    public List<ComponentCve> GetVulnerabilities(string fileName) => StorageService<CveComponentObjects>.Service.GetObject(fileName).Items;
 }
