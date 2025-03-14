@@ -20,7 +20,9 @@ public class AnalyzeSoftwareWorkflow(IConsoleWriter writer, PowerCommandsConfigu
         var software = StorageService<SoftwareObjects>.Service.GetObject().Items.Select(c => new ThirdPartyComponent { Name = c.Name, Version = c.Version }).ToList();
         var analyzer = new CveAnalyzeManager(writer);
         var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
+        
         var components = analyzer.GetVulnerabilities(CveStorageService.Service.GetCveEntries(), software, threshold);
+        
         VulnerableComponents = PresentationManager.DisplayVulnerableComponents(components);
         return VulnerableComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder).ToList();
     }

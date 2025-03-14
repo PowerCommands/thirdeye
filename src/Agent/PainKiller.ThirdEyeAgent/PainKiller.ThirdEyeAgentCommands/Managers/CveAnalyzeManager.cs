@@ -1,4 +1,5 @@
-﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+﻿using System.Collections.Concurrent;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
 using PainKiller.ThirdEyeAgentCommands.Enums;
 using PainKiller.ThirdEyeAgentCommands.Extensions;
@@ -9,40 +10,31 @@ public class CveAnalyzeManager(IConsoleWriter writer)
 {
     public List<ComponentCve> GetVulnerabilities(List<CveEntry> cveEntries, List<ThirdPartyComponent> components, CvssSeverity threshold)
     {
-        var vulnerableComponents = new List<ComponentCve>();
-        foreach (var component in components)
+        var vulnerableComponents = new ConcurrentBag<ComponentCve>();
+        var fColor = Console.ForegroundColor;
+        var bColor = Console.BackgroundColor;
+
+        Parallel.ForEach(components, component =>
         {
             writer.WriteCodeExample("Analyze", $"{component.Name} {component.Version}");
-            Console.CursorTop -= 1;
 
             var entries = cveEntries.Where(cv => cv.IsAffectedProduct(component.Name, component.Version)).ToList();
             if (entries.Count > 0)
             {
                 var thresholdEntries = entries.Where(e => e.CvssScore.IsEqualOrHigher(threshold)).ToList();
-                if(thresholdEntries.Count == 0) continue;
-                var componentCve = new ComponentCve { Name = component.Name, Version = component.Version, CveEntries = thresholdEntries };
-                vulnerableComponents.Add(componentCve);
+                if (thresholdEntries.Count > 0)
+                {
+                    vulnerableComponents.Add(new ComponentCve 
+                    { 
+                        Name = component.Name, 
+                        Version = component.Version, 
+                        CveEntries = thresholdEntries 
+                    });
+                }
             }
-        }
-        return vulnerableComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder).ToList();
-    }
-    public List<ComponentCve> GetVulnerabilities(List<CveEntry> cveEntries, List<Software> softwareItems, CvssSeverity threshold)
-    {
-        var vulnerableComponents = new List<ComponentCve>();
-        foreach (var software in softwareItems)
-        {
-            writer.WriteCodeExample("Analyze", $"{software.Name} {software.Version}");
-            Console.CursorTop -= 1;
-
-            var entries = cveEntries.Where(cv => cv.IsAffectedProduct(software.Name, software.Version)).ToList();
-            if (entries.Count > 0)
-            {
-                var thresholdEntries = entries.Where(e => e.CvssScore.IsEqualOrHigher(threshold)).ToList();
-                if(thresholdEntries.Count == 0) continue;
-                var componentCve = new ComponentCve { Name = software.Name, Version = software.Version, CveEntries = thresholdEntries };
-                vulnerableComponents.Add(componentCve);
-            }
-        }
+        });
+        Console.ForegroundColor = fColor;
+        Console.BackgroundColor = bColor;
         return vulnerableComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder).ToList();
     }
 }

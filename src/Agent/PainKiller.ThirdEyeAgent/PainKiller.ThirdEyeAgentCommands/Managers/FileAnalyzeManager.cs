@@ -35,9 +35,9 @@ public class FileAnalyzeManager : IFileAnalyzeManager
         return relevantExtensions.Any(extension => path.EndsWith(extension, StringComparison.OrdinalIgnoreCase));
     }
     private List<Item> GetRelevantFiles(IEnumerable<Item> files) => files.Where(file => !file.IsFolder && IsRelevantFile(file.Path)).ToList();
-    public  Analyze AnalyzeRepo(List<Item> repoItems, Guid workspaceId, Guid repositoryId)
+    public  FileAnalyze AnalyzeRepo(List<Item> repoItems, Guid workspaceId, Guid repositoryId)
     {
-        var retVal = new Analyze();
+        var retVal = new FileAnalyze();
         if(repoItems.Count == 0) return retVal;
         var projects = ProjectManager.IdentifyProjects(repoItems);
         var components = new List<ThirdPartyComponent>();
