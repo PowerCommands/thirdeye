@@ -4,6 +4,7 @@ using PainKiller.ThirdEyeAgentCommands.Data;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Enums;
 using PainKiller.ThirdEyeAgentCommands.Managers;
+using PainKiller.ThirdEyeAgentCommands.Managers.Workflows;
 using PainKiller.ThirdEyeAgentCommands.Services;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
@@ -85,30 +86,37 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
 
         private RunResult Analyze()
         {
-            var cveStorage = CveStorageService.Service;
-            var software = StorageService<SoftwareObjects>.Service.GetObject();
-            var presentationManager = new PresentationManager(this);
+            var workflow = new AnalyzeSoftwareWorkflow(this, configuration);
+            workflow.Run();
+            //var cveStorage = CveStorageService.Service;
+            //var software = StorageService<SoftwareObjects>.Service.GetObject();
+            //var presentationManager = new PresentationManager(this);
 
-            ConsoleService.Service.Clear();
-            WriteHeadLine("Analyze begins, loading CVEs...");
-            if(cveStorage.LoadedCveCount == 0) cveStorage.ReLoad();
-            IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
+            //ConsoleService.Service.Clear();
+            //WriteHeadLine("Analyze begins, loading CVEs...");
+            //if(cveStorage.LoadedCveCount == 0) cveStorage.ReLoad();
+            //IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
 
-            var analyzer = new CveAnalyzeManager(this);
-            var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
-            var components = analyzer.GetVulnerabilities(cveStorage.GetCveEntries(), software.Items,threshold);
-            var selectedComponentCves = presentationManager.DisplayVulnerableComponents(components);
-            var selected = ListService.ListDialog("Choose a software to view details.", selectedComponentCves.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
-            if (selected.Count <= 0) return Ok();
-            var component = selectedComponentCves[selected.First().Key];
-            var componentCve = presentationManager.DisplayVulnerableComponent(component);
-            if (componentCve != null)
-            {
-                var apiKey = Configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
-                var cveFetcher = new CveFetcherManager(cveStorage, configuration.ThirdEyeAgent.Nvd, apiKey, this);
-                var cve = cveFetcher.FetchCveDetailsAsync(componentCve.Id).Result;
-                if(cve != null) presentationManager.DisplayCveDetails(cve);
-            }
+            //var analyzer = new CveAnalyzeManager(this);
+            //var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
+            
+            
+            
+            //var components = analyzer.GetVulnerabilities(cveStorage.GetCveEntries(), software.Items,threshold);
+            //var selectedComponentCves = presentationManager.DisplayVulnerableComponents(components);
+            
+            
+            //var selected = ListService.ListDialog("Choose a software to view details.", selectedComponentCves.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
+            //if (selected.Count <= 0) return Ok();
+            //var component = selectedComponentCves[selected.First().Key];
+            //var componentCve = presentationManager.DisplayVulnerableComponent(component);
+            //if (componentCve != null)
+            //{
+            //    var apiKey = Configuration.Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
+            //    var cveFetcher = new CveFetcherManager(cveStorage, configuration.ThirdEyeAgent.Nvd, apiKey, this);
+            //    var cve = cveFetcher.FetchCveDetailsAsync(componentCve.Id).Result;
+            //    if(cve != null) presentationManager.DisplayCveDetails(cve);
+            //}
             return Ok();
         }
     }
