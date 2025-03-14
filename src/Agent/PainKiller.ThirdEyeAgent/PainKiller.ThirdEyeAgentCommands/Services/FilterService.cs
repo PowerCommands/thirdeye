@@ -27,6 +27,6 @@ public class FilterService
         var retVal = new List<ThirdPartyComponent>();
         var projects = StorageService.GetProjects().Where(p => p.RepositoryId == repository.RepositoryId);
         foreach (var project in projects) retVal.AddRange(project.Components);
-        return retVal;
+        return retVal.OrderBy(r => r.VersionOrder);
     }
 }

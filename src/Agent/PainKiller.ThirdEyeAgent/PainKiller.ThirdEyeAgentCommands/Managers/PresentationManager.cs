@@ -131,7 +131,7 @@ public class PresentationManager(IConsoleWriter writer)
             else
             {
                 writer.WriteHeadLine("\n🔒 Vulnerabilities");
-                foreach (var componentCve in filteredComponents)
+                foreach (var componentCve in filteredComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder))
                 {
                     writer.WriteHeadLine($"├── {componentCve.Name} {componentCve.Version}");
                     foreach (var cveEntry in componentCve.CveEntries)
@@ -196,10 +196,7 @@ public class PresentationManager(IConsoleWriter writer)
             writer.WriteHeadLine($"│  ├── CVSS Score: {cvssScore}");
             writer.WriteHeadLine($"│  ├── Severity: {severity}");
             writer.WriteHeadLine($"│  ├── Affected Products:");
-
             
-
-            // Justerad hantering av affected products
             var affectedProducts = cve.cve.configurations?
                 .Where(c => c.nodes != null)
                 .SelectMany(c => c.nodes)

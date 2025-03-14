@@ -24,7 +24,7 @@ public class CveAnalyzeManager(IConsoleWriter writer)
                 vulnerableComponents.Add(componentCve);
             }
         }
-        return vulnerableComponents;
+        return vulnerableComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder).ToList();
     }
     public List<ComponentCve> GetVulnerabilities(List<CveEntry> cveEntries, List<Software> softwareItems, CvssSeverity threshold)
     {
@@ -43,6 +43,6 @@ public class CveAnalyzeManager(IConsoleWriter writer)
                 vulnerableComponents.Add(componentCve);
             }
         }
-        return vulnerableComponents;
+        return vulnerableComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder).ToList();
     }
 }
