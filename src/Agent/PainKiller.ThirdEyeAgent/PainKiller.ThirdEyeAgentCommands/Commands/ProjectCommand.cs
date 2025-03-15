@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using PainKiller.ThirdEyeAgentCommands.BaseClasses;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+using PainKiller.ThirdEyeAgentCommands.Managers.Workflows;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
@@ -51,6 +52,12 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                 
                 WriteLine("");
                 PresentationManager.DisplayProject(project);
+                var analyzeProjectQuery = DialogService.YesNoDialog($"Do you want to analyze {project.Name} for vulnerabilities?");
+                if (analyzeProjectQuery)
+                {
+                    var analyzer = new AnalyzeProjectWorkflow(this, Configuration);
+                    analyzer.Run(project.Name);
+                }
             }
             EnableLog();
             return Ok();

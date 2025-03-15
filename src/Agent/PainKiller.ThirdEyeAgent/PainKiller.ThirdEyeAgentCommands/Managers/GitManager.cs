@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using PainKiller.PowerCommands.Shared.Extensions;
 using PainKiller.ThirdEyeAgentCommands.Contracts;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects.Github;
 using PainKiller.ThirdEyeAgentCommands.Extensions;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
@@ -15,12 +16,16 @@ public class GitHubManager : IGitManager
     private readonly string _serverUrl;
     private readonly string _accessToken;
     private readonly string _organizationName;
+    private readonly string[] _ignoredRepositories;
+    private readonly string[] _ignoredProjects;
     private readonly IConsoleWriter _writer;
-    public GitHubManager(string serverUrl, string accessToken, string organizationName, IConsoleWriter writer)
+    public GitHubManager(string serverUrl, string accessToken, string organizationName, string[] ignoredRepositories, string[] ignoredProjects, IConsoleWriter writer)
     {
         _serverUrl = serverUrl;
         _accessToken = accessToken;
         _organizationName = organizationName;
+        _ignoredRepositories = ignoredRepositories;
+        _ignoredProjects = ignoredProjects;
         _writer = writer;
         _client = new HttpClient();
         _client.DefaultRequestHeaders.Clear();
@@ -75,9 +80,14 @@ public class GitHubManager : IGitManager
     public IEnumerable<Repository> GetRepositories(Guid projectId)
     {
         var response = _client.GetStringAsync("https://api.github.com/user/repos").Result;
-        var repositories = JsonSerializer.Deserialize<List<GitHubRepo>>(response);
-
-        return  repositories?.Select(repo => new Repository { Name = repo.Name, RepositoryId = repo.Id.ToGuid(), Url = repo.HtmlUrl, WorkspaceId = projectId, MainBranch = new Branch{CommitId = GetCommitIdFromTree(repo.Name) }}) ?? new List<Repository>();
+        var repositories = JsonSerializer.Deserialize<List<GitHubRepo>>(response) ?? [];
+        var retVal = new List<Repository>();
+        foreach (var gitHubRepo in repositories)
+        {
+            if(_ignoredRepositories.FirstOrDefault() != "*" && _ignoredRepositories.Any(r => string.Equals(r, gitHubRepo.Name, StringComparison.CurrentCultureIgnoreCase))) continue;
+            retVal.Add(new Repository { Name = gitHubRepo.Name, RepositoryId = gitHubRepo.Id.ToGuid(), Url = gitHubRepo.HtmlUrl, WorkspaceId = projectId, MainBranch = new Branch{CommitId = GetCommitIdFromTree(gitHubRepo.Name) }});
+        }
+        return retVal;
     }
     private string GetCommitIdFromTree(string repoName)
     {

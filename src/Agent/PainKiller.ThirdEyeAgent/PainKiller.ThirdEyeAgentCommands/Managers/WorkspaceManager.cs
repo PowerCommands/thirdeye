@@ -39,7 +39,11 @@ public class WorkspaceManager(IGitManager gitManager, IObjectStorageService stor
                 Console.CursorTop -= 1;
                 var analyzeRepo = analyzeManager.AnalyzeRepo(files, workspace.Id, repository.RepositoryId);
                 foreach (var thirdPartyComponent in analyzeRepo.ThirdPartyComponents.Where(thirdPartyComponent => !allDistinctComponents.Any(c => c.Name == thirdPartyComponent.Name && c.Version == thirdPartyComponent.Version))) allDistinctComponents.Add(thirdPartyComponent);
-                allProjects.AddRange(analyzeRepo.Projects);
+                foreach (var analyzeRepoProject in analyzeRepo.Projects)
+                {
+                    if(configuration.Ignores.Projects.FirstOrDefault() != "*" && configuration.Ignores.Projects.Any(r => string.Equals(r, analyzeRepoProject.Name, StringComparison.CurrentCultureIgnoreCase))) continue;
+                    allProjects.Add(analyzeRepoProject);
+                }
             }
         }
         storage.SaveThirdPartyComponents(allDistinctComponents);

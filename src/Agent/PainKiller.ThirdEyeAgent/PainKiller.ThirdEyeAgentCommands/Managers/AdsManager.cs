@@ -7,7 +7,7 @@ using PainKiller.ThirdEyeAgentCommands.Contracts;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
 namespace PainKiller.ThirdEyeAgentCommands.Managers;
-public class AdsManager(string serverUrl, string accessToken, IConsoleWriter writer) : IGitManager
+public class AdsManager(string serverUrl, string accessToken, string[] ignoredRepositories, string[] ignoredProjects ,IConsoleWriter writer) : IGitManager
 {
     private readonly VssConnection _connection = new(new Uri(serverUrl), new VssBasicCredential(string.Empty, accessToken));
     public void Connect()
@@ -89,6 +89,7 @@ public class AdsManager(string serverUrl, string accessToken, IConsoleWriter wri
             var repos = new List<Repository>();
             foreach (var gitRepository in gitRepos)
             {
+                if(ignoredRepositories.FirstOrDefault() != "*" && ignoredRepositories.Any(r => string.Equals(r, gitRepository.Name, StringComparison.CurrentCultureIgnoreCase))) continue;
                 var mainBranch = GetMainBranch(gitRepository.Id);
                 var repo = new Repository { Name = gitRepository.Name, WorkspaceId = projectId, RepositoryId = gitRepository.Id, Url = gitRepository.Url, MainBranch = mainBranch };
                 repos.Add(repo);

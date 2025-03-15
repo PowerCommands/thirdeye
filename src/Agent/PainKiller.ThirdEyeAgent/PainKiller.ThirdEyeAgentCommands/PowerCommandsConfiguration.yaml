@@ -14,6 +14,11 @@ configuration:
     - "*"
     teams: 
     - "*"     
+    ignores:
+      repositories:
+      - "GlitchFinder"
+      projects:
+      - "*"
     nvd:
       url: https://services.nvd.nist.gov/rest/json/cves/2.0
       timeoutSeconds: 120

@@ -22,10 +22,10 @@ public class FilterService
     }
     public IEnumerable<Repository> GetRepositories(Guid workspaceId) => StorageService.GetRepositories().Where(r => r.WorkspaceId == workspaceId);
     public IEnumerable<Project> GetProjects(Guid repositoryId) => StorageService.GetProjects().Where(p => p.RepositoryId == repositoryId);
-    public IEnumerable<ThirdPartyComponent> GetThirdPartyComponents(Repository repository)
+    public IEnumerable<ThirdPartyComponent> GetThirdPartyComponents(Repository repository, string projectName = "")
     {
         var retVal = new List<ThirdPartyComponent>();
-        var projects = StorageService.GetProjects().Where(p => p.RepositoryId == repository.RepositoryId);
+        var projects = StorageService.GetProjects().Where(p => p.RepositoryId == repository.RepositoryId && p.Name.ToLower().Contains(projectName));
         foreach (var project in projects) retVal.AddRange(project.Components);
         return retVal.OrderBy(r => r.VersionOrder);
     }

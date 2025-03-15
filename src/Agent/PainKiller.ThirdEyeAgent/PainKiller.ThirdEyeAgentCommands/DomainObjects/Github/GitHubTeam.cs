@@ -1,4 +1,4 @@
-﻿namespace PainKiller.ThirdEyeAgentCommands.DomainObjects;
+﻿namespace PainKiller.ThirdEyeAgentCommands.DomainObjects.Github;
 
 public class GitHubTeam
 {

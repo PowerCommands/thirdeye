@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace PainKiller.ThirdEyeAgentCommands.DomainObjects;
+namespace PainKiller.ThirdEyeAgentCommands.DomainObjects.Github;
 
 public class GitHubTreeItem
 {
