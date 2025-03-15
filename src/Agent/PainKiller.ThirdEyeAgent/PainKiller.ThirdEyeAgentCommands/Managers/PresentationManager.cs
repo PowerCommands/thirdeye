@@ -102,22 +102,29 @@ public class PresentationManager(IConsoleWriter writer)
             Console.WriteLine("➡ Type to filter results, press ENTER to select, BACKSPACE to delete, ESC to exit:");
             Console.Title = inputBuffer;
             filteredComponents = allComponents.Where(c => c.Name.ToLower().Contains(inputBuffer)).ToList();
-            
+            var showOnlyVulnerabilityCount = (filteredComponents.Count > 25);
             if (filteredComponents.Count == 0) Console.WriteLine("No matching result... (Press ESC to exit)");
             else
             {
                 writer.WriteHeadLine("\n🔒 Vulnerabilities");
                 foreach (var componentCve in filteredComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder))
                 {
-                    writer.WriteHeadLine($"├── {componentCve.Name} {componentCve.Version}");
-                    foreach (var cveEntry in componentCve.CveEntries)
+                    if (showOnlyVulnerabilityCount)
                     {
-                        var displayTextLength = Console.WindowWidth - ($"│  ├── {cveEntry.Id.PadRight(padLength)} {cveEntry.CvssScore.GetDisplaySeverity()} ".Length) -10;
-                        var severity = cveEntry.CvssScore.GetSeverity();
-                        if (severity == CvssSeverity.Medium) writer.WriteHeadLine($"│  ├── {cveEntry.Id.PadRight(padLength)} {cveEntry.CvssScore.GetDisplaySeverity()} {cveEntry.Description.Truncate(displayTextLength)}");
-                        else if (severity == CvssSeverity.Critical) writer.WriteFailureLine($"│  ├── {cveEntry.Id.PadRight(padLength)} {cveEntry.CvssScore.GetDisplaySeverity()} {cveEntry.Description.Truncate(displayTextLength)}");
-                        else if (severity == CvssSeverity.High) writer.WriteFailureLine($"│  ├── {cveEntry.Id.PadRight(padLength)} {cveEntry.CvssScore.GetDisplaySeverity()} {cveEntry.Description.Truncate(displayTextLength)}");
-                        else writer.WriteLine($"│  ├── {cveEntry.Id.PadRight(padLength)} {cveEntry.CvssScore.GetDisplaySeverity()} {cveEntry.Description.Truncate(displayTextLength)}");
+                        writer.WriteHeadLine($"├── {componentCve.Name} {componentCve.Version} ({componentCve.CveEntries.Count})");
+                    }
+                    else
+                    {
+                        writer.WriteHeadLine($"├── {componentCve.Name} {componentCve.Version} (Top 50 shown)");
+                        foreach (var cveEntry in componentCve.CveEntries.OrderByDescending(c => c.CvssScore).Take(50))
+                        {
+                            var displayTextLength = Console.WindowWidth - ($"│  ├── {cveEntry.Id.PadRight(padLength)} {cveEntry.CvssScore.GetDisplaySeverity()} ".Length) - 10;
+                            var severity = cveEntry.CvssScore.GetSeverity();
+                            if (severity == CvssSeverity.Medium) writer.WriteHeadLine($"│  ├── {cveEntry.Id.PadRight(padLength)} {cveEntry.CvssScore.GetDisplaySeverity()} {cveEntry.Description.Truncate(displayTextLength)}");
+                            else if (severity == CvssSeverity.Critical) writer.WriteFailureLine($"│  ├── {cveEntry.Id.PadRight(padLength)} {cveEntry.CvssScore.GetDisplaySeverity()} {cveEntry.Description.Truncate(displayTextLength)}");
+                            else if (severity == CvssSeverity.High) writer.WriteFailureLine($"│  ├── {cveEntry.Id.PadRight(padLength)} {cveEntry.CvssScore.GetDisplaySeverity()} {cveEntry.Description.Truncate(displayTextLength)}");
+                            else writer.WriteLine($"│  ├── {cveEntry.Id.PadRight(padLength)} {cveEntry.CvssScore.GetDisplaySeverity()} {cveEntry.Description.Truncate(displayTextLength)}");
+                        }
                     }
                 }
             }
