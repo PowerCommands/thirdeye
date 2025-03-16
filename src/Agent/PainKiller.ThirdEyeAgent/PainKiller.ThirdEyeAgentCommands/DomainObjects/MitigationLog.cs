@@ -1,6 +1,6 @@
 ﻿namespace PainKiller.ThirdEyeAgentCommands.DomainObjects;
 
-public class Mitigation
+public class MitigationLog
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public DateTime Created { get; set; }

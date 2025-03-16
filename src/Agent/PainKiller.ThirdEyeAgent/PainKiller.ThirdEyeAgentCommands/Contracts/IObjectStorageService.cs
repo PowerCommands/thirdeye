@@ -13,6 +13,7 @@ public interface IObjectStorageService
     List<Finding> GetFindings();
     bool RemoveWorkspace(Guid workspaceId);
     void InsertOrUpdateWorkspace(Workspace workspace);
+    void InsertFinding(Finding finding);
     void SaveTeams(List<Team> teams);
     void SaveWorkspace(List<Workspace> workspaces);
     void SaveRepositories(List<Repository> repositories);

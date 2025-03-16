@@ -55,6 +55,15 @@ public static class ThirdEyeExtensions
     {
         return score.GetSeverity() >= threshold;
     }
+    public static int ToVersionOrder(this ComponentCve cve)
+    {
+        var parts = cve.Version.Split('.').Select(p => int.TryParse(p, out var num) ? num : 0).ToArray();
+        return parts.Length > 0 ? parts.Aggregate(0, (acc, p) => acc * 1000 + p) : 0;
+    }
 
-
+    public static int ToVersionOrder(this string version)
+    {
+        var parts = version.Split('.').Select(p => int.TryParse(p, out var num) ? num : 0).ToArray();
+        return parts.Length > 0 ? parts.Aggregate(0, (acc, p) => acc * 1000 + p) : 0;
+    }
 }

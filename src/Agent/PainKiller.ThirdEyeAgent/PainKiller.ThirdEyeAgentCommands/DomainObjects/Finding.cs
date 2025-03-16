@@ -6,11 +6,12 @@ namespace PainKiller.ThirdEyeAgentCommands.DomainObjects;
 public class Finding
 {
     public string Id => Cve.Id;
+    public string Description { get; set; } = "";
     public DateTime Created { get; set; }
     public DateTime Updated { get; set; } = DateTime.Now;
     public FindingStatus Status { get; set; } = FindingStatus.New;
-    public List<string> AffectedTeams { get; set; } = [];
     public List<Project> AffectedProjects { get; set; } = [];
-    public List<Mitigation> Mitigations{ get; set; } = [];
+    protected List<ComponentCve> VulnerableComponents = [];
+    public List<MitigationLog> Mitigations{ get; set; } = [];
     public CveEntry Cve { get; set; } = new();
 }

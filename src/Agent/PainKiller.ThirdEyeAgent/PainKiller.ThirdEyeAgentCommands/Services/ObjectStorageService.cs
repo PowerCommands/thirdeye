@@ -12,7 +12,7 @@ public class ObjectStorageService : IObjectStorageService
     private readonly ObjectStorageBase<ThirdPartyComponentObjects, ThirdPartyComponent> _componentStorage;
     private readonly ObjectStorageBase<ProjectObjects, Project> _projectStorage;
     private readonly ObjectStorageBase<CveComponentObjects, ComponentCve> _cveStorage;
-    private readonly ObjectStorageBase<FindingObjects, Finding> _findings;
+    private readonly ObjectStorageBase<FindingObjects, Finding> _findingsStorage;
 
 
     private static Lazy<IObjectStorageService>? _lazy;
@@ -42,7 +42,7 @@ public class ObjectStorageService : IObjectStorageService
         _componentStorage = new ObjectStorageBase<ThirdPartyComponentObjects, ThirdPartyComponent>(storagePath);
         _projectStorage = new ObjectStorageBase<ProjectObjects, Project>(storagePath);
         _cveStorage = new ObjectStorageBase<CveComponentObjects, ComponentCve>(storagePath);
-        _findings = new ObjectStorageBase<FindingObjects, Finding>(storagePath);
+        _findingsStorage = new ObjectStorageBase<FindingObjects, Finding>(storagePath);
     }
 
     public List<Team> GetTeams() => _teamStorage.GetItems();
@@ -51,11 +51,12 @@ public class ObjectStorageService : IObjectStorageService
     public List<ThirdPartyComponent> GetThirdPartyComponents() => _componentStorage.GetItems();
     public List<Project> GetProjects() => _projectStorage.GetItems();
     public List<ComponentCve> GetComponentCves() => _cveStorage.GetItems();
-    public List<Finding> GetFindings() => _findings.GetItems();
+    public List<Finding> GetFindings() => _findingsStorage.GetItems();
 
     public void SaveTeams(List<Team> teams) => _teamStorage.SaveItems(teams);
     public void SaveWorkspace(List<Workspace> workspaces) => _workspaceStorage.SaveItems(workspaces);
     public void InsertOrUpdateWorkspace(Workspace workspace) => _workspaceStorage.InsertOrUpdate(workspace, w => w.Id == workspace.Id);
+    public void InsertFinding(Finding finding) => _findingsStorage.Insert(finding, f => f.Id == finding.Id);
     public bool RemoveWorkspace(Guid workspaceId) => _workspaceStorage.Remove(w => w.Id == workspaceId);
     public void SaveRepositories(List<Repository> repositories) => _repositoryStorage.SaveItems(repositories);
     public string InsertOrUpdateRepository(Repository repository)

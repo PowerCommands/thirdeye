@@ -34,6 +34,9 @@ public class ObjectStorageBase<T, TItem>
             StorageService<T>.Service.StoreObject(_dataObject, Path.Combine(_storagePath, $"{typeof(T).Name}.json"));
             return true;
         }
+        _dataObject.LastUpdated = DateTime.Now;
+        _dataObject.Items.Add(item);
+        StorageService<T>.Service.StoreObject(_dataObject, Path.Combine(_storagePath, $"{typeof(T).Name}.json"));
         return false;
     }
     public void InsertOrUpdate(TItem item, Func<TItem, bool> match)

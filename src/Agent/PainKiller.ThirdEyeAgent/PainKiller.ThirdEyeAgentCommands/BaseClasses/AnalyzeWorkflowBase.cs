@@ -1,6 +1,8 @@
 ﻿using PainKiller.PowerCommands.Shared.Extensions;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
 using PainKiller.ThirdEyeAgentCommands.Enums;
+using PainKiller.ThirdEyeAgentCommands.Extensions;
 using PainKiller.ThirdEyeAgentCommands.Managers;
 using PainKiller.ThirdEyeAgentCommands.Services;
 
@@ -14,6 +16,7 @@ public class AnalyzeWorkflowBase(IConsoleWriter writer, PowerCommandsConfigurati
     protected Workspace? Workspace;
     protected Repository? Repository;
     protected List<ComponentCve> VulnerableComponents = [];
+    protected CveEntry? CveEntry;
     public virtual void Run(params string[] args)
     {
 
@@ -64,19 +67,18 @@ public class AnalyzeWorkflowBase(IConsoleWriter writer, PowerCommandsConfigurati
         VulnerableComponents = PresentationManager.DisplayVulnerableComponents(components);
         return VulnerableComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder).ToList();
     }
-
     public virtual ComponentCve? ViewCveDetails(List<ComponentCve> componentCves)
     {
         var selected = ListService.ListDialog("Choose a component to view details.", componentCves.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
         if (selected.Count <= 0) return null;
         var component = componentCves[selected.First().Key];
-        var componentCve = PresentationManager.DisplayVulnerableComponent(component);
+        CveEntry = PresentationManager.DisplayVulnerableComponent(component);
         
-        if (componentCve == null) return null;
+        if (CveEntry == null) return null;
         
         var apiKey = configuration. Secret.DecryptSecret(ConfigurationGlobals.NvdApiKeyName);
         var cveFetcher = new CveFetcherManager(CveStorageService.Service, configuration.ThirdEyeAgent.Nvd, apiKey, writer);
-        var cve = cveFetcher.FetchCveDetailsAsync(componentCve.Id).Result;
+        var cve = cveFetcher.FetchCveDetailsAsync(CveEntry.Id).Result;
         if (cve == null) return null;
         PresentationManager.DisplayCveDetails(cve);
         return component;
@@ -96,5 +98,16 @@ public class AnalyzeWorkflowBase(IConsoleWriter writer, PowerCommandsConfigurati
             }
         }
         PresentationManager.DisplayOrganization(configuration.ThirdEyeAgent.OrganizationName, workspaces, repos, teams, projects, component, skipEmpty: true);
+    }
+    public virtual void SaveFinding(ComponentCve cve, CveEntry cveEntry)
+    {
+        var affectedVersion = cve.VersionOrder;
+        var versionCorrect = DialogService.YesNoDialog($"Is the affected version {cve.Version} of component {cve.Name} correct?");
+        if (!versionCorrect) affectedVersion = DialogService.QuestionAnswerDialog("Input the correct version:").ToVersionOrder();
+        var isLowerVersionsAffected = DialogService.YesNoDialog("Is lover version also affected?");
+        var description = DialogService.QuestionAnswerDialog("Describe your finding");
+        var projects = ObjectStorageService.Service.GetProjects().Where(p => p.Components.Any(c => c.Name == cve.Name && (cve.VersionOrder == affectedVersion || (cve.VersionOrder < affectedVersion && isLowerVersionsAffected)))).ToList();
+        var finding = new Finding { AffectedProjects = projects, Created = DateTime.Now, Cve = cveEntry, Description = description, Status = FindingStatus.New, Updated = DateTime.Now };
+        ObjectStorageService.Service.InsertFinding(finding);
     }
 }

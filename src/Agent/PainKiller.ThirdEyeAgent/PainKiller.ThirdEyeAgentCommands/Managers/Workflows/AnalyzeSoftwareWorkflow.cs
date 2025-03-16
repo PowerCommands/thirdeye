@@ -1,4 +1,5 @@
-﻿using PainKiller.ThirdEyeAgentCommands.BaseClasses;
+﻿using System.ComponentModel;
+using PainKiller.ThirdEyeAgentCommands.BaseClasses;
 using PainKiller.ThirdEyeAgentCommands.Data;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Enums;
@@ -12,7 +13,8 @@ public class AnalyzeSoftwareWorkflow(IConsoleWriter writer, PowerCommandsConfigu
     {
         Load();
         GetVulnerableComponents(null, $"{args.FirstOrDefault() ?? ""}");
-        ViewCveDetails(VulnerableComponents);
+        var componentCve = ViewCveDetails(VulnerableComponents);
+        if (componentCve != null && CveEntry != null) SaveFinding(componentCve,  CveEntry);
     }
     public override List<ComponentCve> GetVulnerableComponents(Repository? repository, string fileName = "")
     {

@@ -21,6 +21,8 @@ public class AnalyzeRepositoryWorkflow(IConsoleWriter writer, PowerCommandsConfi
         var component = ViewCveDetails(VulnerableComponents);
         if (component != null)
         {
+            if (CveEntry != null) SaveFinding(component,  CveEntry);
+
             var viewWorkspace = DialogService.YesNoDialog("Do you want to view where the vulnerable components is used?");
             if(viewWorkspace) WorkspaceSearch(new ThirdPartyComponent{Name = component.Name, Version = component.Version}, true);
         }
