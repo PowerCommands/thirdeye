@@ -56,7 +56,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                 if (analyzeProjectQuery)
                 {
                     var analyzer = new AnalyzeProjectWorkflow(this, Configuration);
-                    analyzer.Run(project.Name);
+                    analyzer.Run(project.Path);
                 }
             }
             EnableLog();
