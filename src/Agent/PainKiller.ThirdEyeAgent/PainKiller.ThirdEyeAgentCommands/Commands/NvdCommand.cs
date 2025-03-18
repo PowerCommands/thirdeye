@@ -3,7 +3,7 @@ using PainKiller.ThirdEyeAgentCommands.Managers;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
-    [PowerCommandDesign( description: "Manage your CVEs from National Vulnerability Database (NVD).",
+    [PowerCommandDesign( description: "Manage your CVEs from National Vulnerability Database (NVD), request an API key from https://nvd.nist.gov/developers/request-an-api-key.",
                   disableProxyOutput: true,
                              options: "!api-key|fetch|push-update-file",
                              example: "//Update your cve:s from the last page you collected.|nvd")]

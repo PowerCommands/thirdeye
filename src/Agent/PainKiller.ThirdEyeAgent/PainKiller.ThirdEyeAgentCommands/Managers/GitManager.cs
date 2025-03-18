@@ -43,7 +43,7 @@ public class GitHubManager : IGitManager
         if (response.IsSuccessStatusCode)
         {
             var result = response.Content.ReadAsStringAsync().Result;
-            _writer.WriteSuccess($"Connected to GitHub {result}");
+            _writer.WriteSuccess($"Connected to GitHub");
         }
         else
         {

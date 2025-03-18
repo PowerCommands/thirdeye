@@ -11,7 +11,6 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                              options: "analyze",
                   disableProxyOutput: true,
                              example: "//Show all stored software|software|//Upload a file|software myFile.txt|//Analyze all softwares|software --analyze|//Show a previous analyze|analyze myFile.txt --analyze")]
-    [PowerCommandsToolbar(["[Enter] = Show all software","Filename = Upload new software file","(use cd command and tab to select a file or just enter the filename)"])]
     [PowerCommandPrivacy]
     public class SoftwareCommand(string identifier, PowerCommandsConfiguration configuration) : CdCommand(identifier, configuration)
     {

@@ -14,9 +14,9 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
         {
             DisableLog();
             var findings = Storage.GetFindings().OrderByDescending(f => f.Updated).ToList();
-            var showAllFindings = ListService.ShowSelectFromFilteredList("Filter findings", findings, (f, s) => f.Cve.Id.ToLower().Contains(s.ToLower()), PresentationManager.DisplayFindings, this);
+            var showAllFindings = ListService.ShowSelectFromFilteredList("Filter findings", findings, (f, s) => f.Cve.Id.ToLower().Contains(s.ToLower()) || f.Description.ToLower().Contains(s), PresentationManager.DisplayFindings, this);
             
-            var selectedFindings = ListService.ListDialog("Choose finding", showAllFindings.OrderByDescending(fi => fi.Cve.CvssScore).ThenByDescending(fi => fi.Updated).Select(f => $"{f.Cve.Id} {f.Status} {f.Description}").ToList());
+            var selectedFindings = ListService.ListDialog("Choose finding", showAllFindings.OrderByDescending(fi => fi.Cve.CvssScore).ThenByDescending(fi => fi.Updated).Select(f => $"{f.Cve.Id} {f.Status} {f.Description}").ToList(), autoSelectIfOnlyOneItem: false);
             if (selectedFindings.Count == 0) return Ok();
             var selectedFinding = findings[selectedFindings.First().Key];
 

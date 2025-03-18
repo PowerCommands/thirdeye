@@ -14,13 +14,11 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
         public override RunResult Run()
         {
             DisableLog();
-            if (Options.Count > 0)
+            if (Options.Where(o => !string.IsNullOrEmpty(o.Value)).ToList().Count > 0)
             {
                 if(HasOption("init")) Init();
                 else if(HasOption("update")) Update();
                 else if (HasOption("analyze")) Analyze();
-                else WriteFailureLine("Unkown option.");
-                
                 Storage.ReLoad();
                 IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
                 var viewWorkspace = DialogService.YesNoDialog("Do you want to view your workspaces?");
