@@ -9,6 +9,47 @@ namespace PainKiller.ThirdEyeAgentCommands.Managers;
 
 public class PresentationManager(IConsoleWriter writer)
 {
+    public void DisplayFindings(IEnumerable<Finding> findings)
+    {
+        foreach (var finding in findings)
+        {
+            writer.WriteHeadLine($"\n⚠️ {finding.Cve.Id} - {finding.Status} {finding.Cve.Description.Truncate(100)}");
+            writer.WriteHeadLine($"   📄 {finding.Description}");
+            writer.WriteHeadLine($"   📅 Created: {finding.Created}");
+            writer.WriteHeadLine($"   📅 Created: {finding.Created}");
+        
+            writer.WriteHeadLine($"   🔍 Affected Projects: {finding.AffectedProjects.Count}");
+            if (finding.Mitigations.Any())
+            {
+                writer.WriteHeadLine($"   🛡️ Mitigations: {finding.Mitigations.Count}");
+
+            }
+        }
+    }
+    public void DisplayFinding(Finding finding)
+    {
+        writer.WriteHeadLine($"\n⚠️ {finding.Cve.Id} - {finding.Status}");
+        writer.WriteHeadLine($"   📄 {finding.Description}");
+        writer.WriteHeadLine($"   📅 Created: {finding.Created}");
+        writer.WriteHeadLine($"   📅 Updated: {finding.Updated}");
+    
+        if (finding.Mitigations.Any())
+        {
+            writer.WriteHeadLine("   🛡️ Mitigations:");
+            foreach (var mitigation in finding.Mitigations)
+            {
+                writer.WriteHeadLine($"   ├── ✅ {mitigation.Name}");
+                writer.WriteHeadLine($"   │  📅 Created: {mitigation.Created}");
+                writer.WriteHeadLine($"   │  📝 {mitigation.Description}");
+            }
+        }
+        else
+        {
+            writer.WriteHeadLine("   ❌ No mitigations found.");
+        }
+    }
+
+
     public void DisplayRepository(string name, IEnumerable<Project> projects)
     {
         writer.WriteHeadLine($"\n📁 {name}");

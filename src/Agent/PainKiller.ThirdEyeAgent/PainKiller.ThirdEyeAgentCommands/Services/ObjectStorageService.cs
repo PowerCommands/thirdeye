@@ -56,6 +56,7 @@ public class ObjectStorageService : IObjectStorageService
     public void SaveTeams(List<Team> teams) => _teamStorage.SaveItems(teams);
     public void SaveWorkspace(List<Workspace> workspaces) => _workspaceStorage.SaveItems(workspaces);
     public void InsertOrUpdateWorkspace(Workspace workspace) => _workspaceStorage.InsertOrUpdate(workspace, w => w.Id == workspace.Id);
+    public void InsertOrUpdateFinding(Finding finding) => _findingsStorage.InsertOrUpdate(finding, f => f.Id == finding.Id);
     public void InsertFinding(Finding finding) => _findingsStorage.Insert(finding, f => f.Id == finding.Id);
     public bool RemoveWorkspace(Guid workspaceId) => _workspaceStorage.Remove(w => w.Id == workspaceId);
     public void SaveRepositories(List<Repository> repositories) => _repositoryStorage.SaveItems(repositories);
@@ -65,6 +66,7 @@ public class ObjectStorageService : IObjectStorageService
         return repository.MainBranch?.CommitId ?? "";
     }
     public bool RemoveRepository(Guid repositoryId) => _repositoryStorage.Remove(r => r.RepositoryId == repositoryId);
+    public bool RemoveFinding(string findingId) => _findingsStorage.Remove(f => f.Id == findingId);
     public void SaveThirdPartyComponents(List<ThirdPartyComponent> components) => _componentStorage.SaveItems(components);
     public bool InsertComponent(ThirdPartyComponent component) => _componentStorage.Insert(component, c => c.CommitId == component.CommitId && c.Version == component.Version && c.Path == component.Path);
     public void SaveProjects(List<Project> projects) => _projectStorage.SaveItems(projects);

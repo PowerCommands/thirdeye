@@ -19,11 +19,13 @@ public interface IObjectStorageService
     void SaveRepositories(List<Repository> repositories);
     string InsertOrUpdateRepository(Repository repository);
     bool RemoveRepository(Guid repositoryId);
+    bool RemoveFinding(string findingId);
     void SaveThirdPartyComponents(List<ThirdPartyComponent> components);
     bool InsertComponent(ThirdPartyComponent component);
     void SaveProjects(List<Project> projects);
     bool InsertProject(Project project);
     int InsertProjects(IEnumerable<Project> projects);
     void InsertOrUpdateCve(ComponentCve componentCve);
+    void InsertOrUpdateFinding(Finding finding);
     void ReLoad();
 }
