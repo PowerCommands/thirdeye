@@ -11,6 +11,9 @@ public class CveAnalyzeManager(IConsoleWriter writer)
 {
     public List<ComponentCve> GetVulnerabilities(List<CveEntry> cveEntries, List<ThirdPartyComponent> components, CvssSeverity threshold)
     {
+        var cacheFile = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, $"{components.GenerateSignature(threshold)}.json");
+        if(File.Exists(cacheFile)) return StorageService<CveComponentObjects>.Service.GetObject(Path.Combine(ConfigurationGlobals.ApplicationDataFolder, $"{components.GenerateSignature(threshold)}.json")).Items;
+        
         var vulnerableComponents = new ConcurrentBag<ComponentCve>();
         var fColor = Console.ForegroundColor;
         var bColor = Console.BackgroundColor;
@@ -38,7 +41,7 @@ public class CveAnalyzeManager(IConsoleWriter writer)
         Console.BackgroundColor = bColor;
         var retVal = vulnerableComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder).ToList();
         var storeObjects = new CveComponentObjects { Items = retVal, LastUpdated = DateTime.Now };
-        StorageService<CveComponentObjects>.Service.StoreObject(storeObjects, Path.Combine(ConfigurationGlobals.ApplicationDataFolder, $"{nameof(ComponentCve).FormatFileTimestamp()}.json"));
+        StorageService<CveComponentObjects>.Service.StoreObject(storeObjects, Path.Combine(ConfigurationGlobals.ApplicationDataFolder, $"{components.GenerateSignature(threshold)}.json"));
         return retVal;
     }
     public List<ComponentCve> GetVulnerabilities(string fileName) => StorageService<CveComponentObjects>.Service.GetObject(fileName).Items;

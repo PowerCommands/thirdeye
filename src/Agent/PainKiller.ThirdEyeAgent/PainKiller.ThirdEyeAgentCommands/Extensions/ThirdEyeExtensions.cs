@@ -1,4 +1,6 @@
-﻿using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+﻿using System.Security.Cryptography;
+using System.Text;
+using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Enums;
 
 namespace PainKiller.ThirdEyeAgentCommands.Extensions;
@@ -65,5 +67,22 @@ public static class ThirdEyeExtensions
     {
         var parts = version.Split('.').Select(p => int.TryParse(p, out var num) ? num : 0).ToArray();
         return parts.Length > 0 ? parts.Aggregate(0, (acc, p) => acc * 1000 + p) : 0;
+    }
+    public static string GenerateSignature(this IEnumerable<ThirdPartyComponent> components, CvssSeverity severity)
+    {
+        var orderedComponents = components
+            .OrderBy(c => c.Name)
+            .ThenBy(c => c.VersionOrder)
+            .Select(c => $"{c.Name}-{c.Version}")
+            .ToList();
+
+        var inputString = string.Join("|", orderedComponents) + $"|Severity:{(int)severity}";
+        return ComputeSha256Hash(inputString);
+    }
+    private static string ComputeSha256Hash(string rawData)
+    {
+        using SHA256 sha256Hash = SHA256.Create();
+        byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+        return BitConverter.ToString(bytes).Replace("-", "").ToLower();
     }
 }
