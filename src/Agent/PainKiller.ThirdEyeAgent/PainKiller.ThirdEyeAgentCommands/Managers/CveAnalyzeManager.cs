@@ -12,8 +12,12 @@ public class CveAnalyzeManager(IConsoleWriter writer)
     public List<ComponentCve> GetVulnerabilities(List<CveEntry> cveEntries, List<ThirdPartyComponent> components, CvssSeverity threshold)
     {
         var cacheFile = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, $"{components.GenerateSignature(threshold)}.json");
-        if(File.Exists(cacheFile)) return StorageService<CveComponentObjects>.Service.GetObject(Path.Combine(ConfigurationGlobals.ApplicationDataFolder, $"{components.GenerateSignature(threshold)}.json")).Items;
-        
+        if (File.Exists(cacheFile))
+        {
+            var useCache = DialogService.YesNoDialog("This analyze has been runned before, would you like to use that result?");
+            if(useCache) return StorageService<CveComponentObjects>.Service.GetObject(Path.Combine(ConfigurationGlobals.ApplicationDataFolder, $"{components.GenerateSignature(threshold)}.json")).Items;
+            else File.Delete(cacheFile);
+        }
         var vulnerableComponents = new ConcurrentBag<ComponentCve>();
         var fColor = Console.ForegroundColor;
         var bColor = Console.BackgroundColor;
