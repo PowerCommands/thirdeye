@@ -42,6 +42,30 @@ public static class ThirdEyeExtensions
         if (score >= 0.1) return CvssSeverity.Low;
         return CvssSeverity.None;
     }
+    public static float GetScore(this CvssSeverity severity)
+    {
+        return severity switch
+        {
+            CvssSeverity.Critical => 9.0f,
+            CvssSeverity.High => 7.0f,
+            CvssSeverity.Medium => 4.0f,
+            CvssSeverity.Low => 0.1f,
+            _ => 0.0f,
+        };
+    }
+    public static float GetScoreFromString(this string severity)
+    {
+        if (string.IsNullOrWhiteSpace(severity)) return 0.0f;
+    
+        return severity.ToLower() switch
+        {
+            "critical" => 9.0f,
+            "high" => 7.0f,
+            "medium" => 4.0f,
+            "low" => 0.1f,
+            _ => 0.0f,
+        };
+    }
     public static string GetDisplaySeverity(this float score)
     {
         return score.GetSeverity() switch

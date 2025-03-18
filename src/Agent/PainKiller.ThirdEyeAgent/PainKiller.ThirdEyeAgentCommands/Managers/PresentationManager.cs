@@ -191,7 +191,7 @@ public class PresentationManager(IConsoleWriter writer)
         writer.WriteHeadLine($"├── {component.Name} {component.Version}");
         var textLength = component.CveEntries.Select(c => $"{c.Id.PadRight(padLength)} {c.CvssScore.GetDisplaySeverity()}").Max(t => t.Length);
         var displayTextLength = Console.WindowWidth - textLength -10;
-        var list = ListService.ListDialog("Choose a CVE to view details about it.", component.CveEntries.Select(c => $"{c.Id} {c.CvssScore.GetDisplaySeverity()} {c.Description.Truncate(displayTextLength)}").ToList());
+        var list = ListService.ListDialog("Choose a CVE to view details about it.", component.CveEntries.OrderByDescending(cv => cv.CvssScore).ThenByDescending(cv => cv.Severity.GetScoreFromString()).Select(c => $"{c.Id} {c.CvssScore.GetDisplaySeverity()} {c.Description.Truncate(displayTextLength)}").ToList());
         if (list.Count == 0) return null;
         var selected = component.CveEntries[list.First().Key];
         return selected;
