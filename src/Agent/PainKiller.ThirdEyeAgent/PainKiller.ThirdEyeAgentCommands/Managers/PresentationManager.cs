@@ -32,6 +32,7 @@ public class PresentationManager(IConsoleWriter writer)
         writer.WriteHeadLine($"   📄 {finding.Description}");
         writer.WriteHeadLine($"   📅 Created: {finding.Created}");
         writer.WriteHeadLine($"   📅 Updated: {finding.Updated}");
+        writer.WriteHeadLine($"   🔍 Affected Projects: {finding.AffectedProjects.Count}");
     
         if (finding.Mitigations.Any())
         {

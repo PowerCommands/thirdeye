@@ -1,12 +1,11 @@
-﻿using PainKiller.PowerCommands.Shared.Extensions;
-using PainKiller.ThirdEyeAgentCommands.BaseClasses;
+﻿using PainKiller.ThirdEyeAgentCommands.BaseClasses;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
-    [PowerCommandDesign( description: "Information about the stored Third Eye stored data.",
+    [PowerCommandDesign( description: "Information about configuration.",
                   disableProxyOutput: true,
                              example: "//Show db information|db")]
-    public class DbCommand(string identifier, PowerCommandsConfiguration configuration) :ThirdEyeBaseCommando(identifier, configuration)
+    public class ConfigCommand(string identifier, PowerCommandsConfiguration configuration) :ThirdEyeBaseCommando(identifier, configuration)
     {
         public override RunResult Run()
         {
@@ -21,36 +20,29 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
    ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░       ░▒▓████████▓▒░  ░▒▓█▓▒░   ░▒▓████████▓▒░ 
                                                                                                         ", ConsoleColor.DarkMagenta);
 
-            var dir = new DirectoryInfo(ConfigurationGlobals.ApplicationDataFolder);
-            WriteHeadLine("📁 App directory");
-            foreach (var file in dir.GetFiles())
-            {
-                WriteLine($"├──📄 {file.Name} {file.Length.GetDisplayFormattedFileSize()}");
-            }
-            foreach (var hostDirectory in dir.GetDirectories())
-            {
-                if(hostDirectory.Name == "nvd") continue;
-                WriteHeadLine($"├──📁 {hostDirectory.Name}");
-                foreach (var file in hostDirectory.GetFiles())
-                {
-                    WriteLine($"│   ├──📄 {file.Name} {file.Length.GetDisplayFormattedFileSize()}");
-                }
-            }
-            var nvdDir = new DirectoryInfo(Path.Combine(ConfigurationGlobals.ApplicationDataFolder, "nvd"));
-            WriteHeadLine("📁 NVD  files");
-            foreach (var file in nvdDir.GetFiles())
-            {
-                WriteLine($"├──📄 {file.Name} {file.Length.GetDisplayFormattedFileSize()}");
-            }
-            var nvdUpdateDir = new DirectoryInfo(Configuration.ThirdEyeAgent.Nvd.PathToUpdates.Replace(ConfigurationGlobals.RoamingDirectoryPlaceholder, ConfigurationGlobals.ApplicationDataFolder));
-            WriteHeadLine("📁 Update  files");
-            foreach (var file in nvdUpdateDir.GetFiles())
-            {
-                WriteLine($"├──📄 {file.Name} {file.Length.GetDisplayFormattedFileSize()}");
-            }
-            Environment.CurrentDirectory = ConfigurationGlobals.ApplicationDataFolder;
-            ShellService.Service.OpenDirectory(ConfigurationGlobals.ApplicationDataFolder);
+            WriteHeadLine("⚙️ Configuration");
+            WriteCodeExample($"├── Host: ", Configuration.ThirdEyeAgent.Host);
+            WriteCodeExample($"├── Organization: ", Configuration.ThirdEyeAgent.OrganizationName);
+            foreach (var team in Configuration.ThirdEyeAgent.Teams) WriteCodeExample($"├──👨 Team", team);
+            foreach (var workspace in Configuration.ThirdEyeAgent.Workspaces) WriteCodeExample($"├──📦 Workspace", workspace);
+            foreach (var project in Configuration.ThirdEyeAgent.Ignores.Projects) WriteCodeExample($"├──📁 Ignore project", project);
+            foreach (var repository in Configuration.ThirdEyeAgent.Ignores.Repositories) WriteCodeExample($"├──📁 Ignore repo", repository);
+            
+            WriteHeadLine("👾 NVD");
+            WriteCodeExample($"├── Url: ", Configuration.ThirdEyeAgent.Nvd.Url);
+            WriteCodeExample($"├── PathToUpdates: ", Configuration.ThirdEyeAgent.Nvd.PathToUpdates);
+            WriteCodeExample($"├── DelayIntervalSeconds: ", $"{Configuration.ThirdEyeAgent.Nvd.DelayIntervalSeconds}");
+            WriteCodeExample($"├── PageSize: ", $"{Configuration.ThirdEyeAgent.Nvd.PageSize}");
+            WriteCodeExample($"├── TimeoutSeconds: ", $"{Configuration.ThirdEyeAgent.Nvd.TimeoutSeconds}");
+
+            var authorizationToken = EnvironmentService.Service.GetEnvironmentVariable(ConfigurationGlobals.GetAccessTokenName(false));
+            var gitToken = EnvironmentService.Service.GetEnvironmentVariable(ConfigurationGlobals.GetAccessTokenName(true));
+            var nvdApiKey = EnvironmentService.Service.GetEnvironmentVariable(ConfigurationGlobals.NvdApiKeyName);
+            if(!string.IsNullOrEmpty(authorizationToken)) WriteSuccessLine("Authorization token found: ✅");
+            if (!string.IsNullOrEmpty(gitToken)) WriteSuccessLine($"{"Git token found:", -26} ✅");
+            if (!string.IsNullOrEmpty(nvdApiKey)) WriteSuccessLine($"{"NVD API key found:", -26} ✅");
             IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
+
             return Ok();
         }
     }
