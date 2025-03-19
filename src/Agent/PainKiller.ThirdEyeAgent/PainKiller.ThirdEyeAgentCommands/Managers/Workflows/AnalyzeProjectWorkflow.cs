@@ -10,12 +10,12 @@ public class AnalyzeProjectWorkflow(IConsoleWriter writer2, PowerCommandsConfigu
     public override void Run(params string[] args)
     {
         Load();
-        var projectPath = args.First();
-        VulnerableComponents = GetVulnerableComponents(projectPath);
+        var projectName = args.First();
+        VulnerableComponents = GetVulnerableComponents(projectName);
         UpdateInfoPanel();
         if (VulnerableComponents.Count == 0)
         {
-            writer2.WriteSuccessLine($"No vulnerabilities found in {projectPath}!");
+            writer2.WriteSuccessLine($"No vulnerabilities found in {projectName}!");
             return;
         }
         var component = ViewCveDetails(VulnerableComponents);
@@ -27,9 +27,9 @@ public class AnalyzeProjectWorkflow(IConsoleWriter writer2, PowerCommandsConfigu
             if(viewWorkspace) WorkspaceSearch(new ThirdPartyComponent{Name = component.Name, Version = component.Version}, true);
         }
     }
-    public List<ComponentCve> GetVulnerableComponents(string projectPath = "")
+    public List<ComponentCve> GetVulnerableComponents(string projectName = "")
     {
-        var filteredThirdPartyComponents = FilterService.Service.GetThirdPartyComponents(projectPath).ToList();
+        var filteredThirdPartyComponents = FilterService.Service.GetThirdPartyComponents(projectName).ToList();
         var analyzer = new CveAnalyzeManager(writer2);
         var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
         var components = analyzer.GetVulnerabilities(CveStorageService.Service.GetCveEntries(), filteredThirdPartyComponents, threshold);

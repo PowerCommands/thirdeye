@@ -29,10 +29,10 @@ public class FilterService
         foreach (var project in projects) retVal.AddRange(project.Components);
         return retVal.OrderBy(r => r.VersionOrder);
     }
-    public IEnumerable<ThirdPartyComponent> GetThirdPartyComponents(string projectPath = "")
+    public IEnumerable<ThirdPartyComponent> GetThirdPartyComponents(string projectName = "")
     {
         var retVal = new List<ThirdPartyComponent>();
-        var projects = StorageService.GetProjects().Where(p => p.Path == projectPath);
+        var projects = StorageService.GetProjects().Where(p => p.Name.ToLower().Contains(projectName.ToLower()));
         foreach (var project in projects) retVal.AddRange(project.Components);
         return retVal.OrderBy(r => r.VersionOrder);
 
