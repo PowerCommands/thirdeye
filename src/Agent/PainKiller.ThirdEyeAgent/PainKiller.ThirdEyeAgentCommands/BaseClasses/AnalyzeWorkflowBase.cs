@@ -101,6 +101,10 @@ public class AnalyzeWorkflowBase(IConsoleWriter writer, PowerCommandsConfigurati
     }
     public virtual void SaveFinding(ComponentCve cve, CveEntry cveEntry)
     {
+        writer.WriteCodeExample(cveEntry.Id, $"{cve.Name} {cve.Version} CVEs: {cve.CveEntries.Count}" );
+        var storeFinding = DialogService.YesNoDialog("Do you want to safe this finding to work with it later?");
+        if(!storeFinding) return;
+
         var affectedVersion = cve.VersionOrder;
         var versionCorrect = DialogService.YesNoDialog($"Is the affected version {cve.Version} of component {cve.Name} correct?");
         if (!versionCorrect) affectedVersion = DialogService.QuestionAnswerDialog("Input the correct version:").ToVersionOrder();

@@ -55,13 +55,20 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                 var component = filteredComponents[selected.First().Key];
                 WriteLine("");
                 WriteCodeExample(component.Name, component.Version);
+                var analyzeComponent = DialogService.YesNoDialog("Do you want to analyze this component?");
+                if (analyzeComponent)
+                {
+                    var workflow = new AnalyzeComponentWorkflow(this, Configuration, component);
+                    workflow.Run(Input.SingleArgument);
+                    return Ok();
+                }
                 ProjectSearch(component, detailedSearch: true);
             }
             return Ok();
         }
         private RunResult Analyze(string filter)
         {
-            var workflow = new AnalyzeComponentWorkflow(this, Configuration);
+            var workflow = new AnalyzeComponentWorkflow(this, Configuration, new ThirdPartyComponent{Name = "*"});
             workflow.Run(Input.SingleArgument);
             return Ok();
         }
