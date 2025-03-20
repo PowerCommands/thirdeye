@@ -7,4 +7,5 @@ public class NvdConfiguration
     public int PageSize { get; set; } = 2000;
     public int DelayIntervalSeconds { get; set; } = 10;
     public string PathToUpdates { get; set; } = "";
+    public int LatestCount { get; set; } = 100;
 }

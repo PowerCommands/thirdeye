@@ -1,4 +1,6 @@
 ﻿using PainKiller.ThirdEyeAgentCommands.BaseClasses;
+using PainKiller.ThirdEyeAgentCommands.Enums;
+using PainKiller.ThirdEyeAgentCommands.Extensions;
 using PainKiller.ThirdEyeAgentCommands.Managers;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
@@ -25,8 +27,8 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                 WriteSeparatorLine();
                 var checkSum = CveStorage.CreateUpdateFile();
                 WriteSuccessLine($"A new update file created with Checksum: {checkSum}");
-            
                 IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
+                DisplayLatest();
                 return Ok();
             }
             if(HasOption("push-update-file")){
@@ -38,6 +40,13 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             CveStorage.Update(this);
             IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
             return Ok();
+        }
+
+        public void DisplayLatest()
+        {
+            CveStorage.ReLoad();
+            var latest = CveStorage.GetCveEntries().Where(cv => cv.CvssScore.IsEqualOrHigher(CvssSeverity.Critical)).OrderByDescending(cv => cv.FetchedIndex).Take(Configuration.ThirdEyeAgent.Nvd.LatestCount).ToList();
+            PresentationManager.DisplayCveEntries(latest);
         }
         private void SetupApiKey()
         {

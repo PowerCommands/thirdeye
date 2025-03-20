@@ -26,6 +26,7 @@ configuration:
       pageSize: 2000
       delayIntervalSeconds: 2
       pathToUpdates: $ROAMING$\nvd\updates
+      latestCount: 100
   infoPanel:
     use: true
     autoAdjustOnResize: true

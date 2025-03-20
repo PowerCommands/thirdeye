@@ -250,4 +250,35 @@ public class PresentationManager(IConsoleWriter writer)
             }
         }
     }
+
+    public void DisplayCveEntries(List<CveEntry> cveEntries)
+    {
+        Console.Clear();
+        if (cveEntries.Count == 0) return;
+        var takeCount = Console.WindowHeight - 6;
+        Console.WriteLine($"🔒 {takeCount} CVEs displayed (adjusted to console height)");
+        Console.WriteLine($"{"CVE ID",-15} | {"CVSS",-5} | {"Severity",-10} | Description");
+        Console.WriteLine(new string('-', 80));
+
+        foreach (var cve in cveEntries.OrderByDescending(cv => cv.CvssScore).Take(takeCount))
+        {
+            var cveId = string.IsNullOrEmpty(cve.Id) ? "Unknown" : cve.Id;
+            var description = string.IsNullOrEmpty(cve.Description) ? "No description" : cve.Description;
+            var cvssScore = cve.CvssScore > 0 ? cve.CvssScore.ToString("F1") : "N/A";
+            var severity = string.IsNullOrEmpty(cve.Severity) ? "N/A" : cve.Severity;
+
+            var originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = cve.CvssScore >= 9.0 ? ConsoleColor.Red : severity.ToLower() switch
+            {
+                "high" => ConsoleColor.DarkYellow,
+                "medium" => ConsoleColor.Yellow,
+                "low" => ConsoleColor.White,
+                "info" => ConsoleColor.Cyan,
+                _ => ConsoleColor.Gray
+            };
+
+            Console.WriteLine($"{cveId,-15} | {cvssScore,-5} | {severity,-10} | {description.Truncate(Console.WindowWidth - 50)}");
+            Console.ForegroundColor = originalColor;
+        }
+    }
 }
