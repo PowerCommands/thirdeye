@@ -62,13 +62,13 @@ public static class DialogService
         var selectedFile = selectedIndex.Count > 0 ? selectedIndex.First().Value : "";
         return string.IsNullOrEmpty(selectedFile) ? "" : Path.Combine(startPath, selectedFile);
     }
-    public static string SelectDirectoryDialog(string startPath = "", string filter = "")
+    public static string SelectDirectoryDialog(string startPath = "", string filter = "", bool autoSelect = false)
     {
         if (string.IsNullOrEmpty(startPath)) startPath = Environment.CurrentDirectory;
         var dir = new DirectoryInfo(startPath);
         var directories = dir.GetDirectories(filter).Select(d => d.Name).ToList();
             
-        var selectedIndex = ListService.ListDialog("Select a file", directories);
+        var selectedIndex = ListService.ListDialog("Select a file", directories, autoSelectIfOnlyOneItem: autoSelect);
         var selectedDir = selectedIndex.Count > 0 ? selectedIndex.First().Value : "";
         return string.IsNullOrEmpty(selectedDir) ? "" : Path.Combine(startPath, selectedDir);
     }
