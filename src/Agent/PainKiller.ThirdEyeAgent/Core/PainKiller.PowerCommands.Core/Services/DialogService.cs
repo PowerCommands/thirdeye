@@ -66,7 +66,7 @@ public static class DialogService
     {
         if (string.IsNullOrEmpty(startPath)) startPath = Environment.CurrentDirectory;
         var dir = new DirectoryInfo(startPath);
-        var directories = dir.GetDirectories(filter).Select(d => d.Name).ToList();
+        var directories = dir.GetDirectories($"*{filter}*").Select(d => d.Name).ToList();
             
         var selectedIndex = ListService.ListDialog("Select a file", directories, autoSelectIfOnlyOneItem: autoSelect);
         var selectedDir = selectedIndex.Count > 0 ? selectedIndex.First().Value : "";

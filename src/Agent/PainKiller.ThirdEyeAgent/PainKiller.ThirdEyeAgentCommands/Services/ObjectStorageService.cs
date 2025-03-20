@@ -35,6 +35,7 @@ public class ObjectStorageService : IObjectStorageService
     private ObjectStorageService(string host)
     {
         var storagePath = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, host.Replace("https://","").Replace("http://","").Replace("/",""));
+        StoragePath = storagePath;
         if(!Directory.Exists(storagePath)) Directory.CreateDirectory(storagePath);
         _teamStorage = new ObjectStorageBase<TeamObjects, Team>(storagePath);
         _workspaceStorage = new ObjectStorageBase<WorkspaceObjects, Workspace>(storagePath);
@@ -44,7 +45,7 @@ public class ObjectStorageService : IObjectStorageService
         _cveStorage = new ObjectStorageBase<CveComponentObjects, ComponentCve>(storagePath);
         _findingsStorage = new ObjectStorageBase<FindingObjects, Finding>(storagePath);
     }
-
+    public string StoragePath { get; private set; }
     public List<Team> GetTeams() => _teamStorage.GetItems();
     public List<Workspace> GetWorkspaces() => _workspaceStorage.GetItems();
     public List<Repository> GetRepositories() => _repositoryStorage.GetItems();

@@ -58,9 +58,11 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             }
             IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
 
-            var openDir = DialogService.YesNoDialog("Will you like me to open the main data directory for you?");
+            var openDir = DialogService.YesNoDialog("Will you like me to open the main data directories for you?");
             if (openDir)
             {
+                ShellService.Service.OpenDirectory(Configuration.ThirdEyeAgent.BackupPath.GetReplacedPlaceHolderPath());
+                ShellService.Service.OpenDirectory(Configuration.ThirdEyeAgent.Nvd.PathToUpdates.GetReplacedPlaceHolderPath());
                 Environment.CurrentDirectory = ConfigurationGlobals.ApplicationDataFolder;
                 ShellService.Service.OpenDirectory(ConfigurationGlobals.ApplicationDataFolder);
             }

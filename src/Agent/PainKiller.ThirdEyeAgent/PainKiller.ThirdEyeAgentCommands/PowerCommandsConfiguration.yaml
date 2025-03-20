@@ -10,7 +10,7 @@ configuration:
   thirdEyeAgent:
     host: https://github.com/PowerCommands
     organizationName: PowerCommands
-    backupPath: $ROAMING$\nvd\backups
+    backupPath: $ROAMING$\backups
     workspaces: 
     - "*"
     teams: 
