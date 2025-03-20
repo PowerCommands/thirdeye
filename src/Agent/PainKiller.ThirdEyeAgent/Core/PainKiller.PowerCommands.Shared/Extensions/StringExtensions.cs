@@ -64,6 +64,22 @@ namespace PainKiller.PowerCommands.Shared.Extensions
             var length = fileInfo.Length;
             return length.GetDisplayFormattedFileSize();
         }
+
+        public static long GetDirectorySize(this DirectoryInfo dir)
+        {
+            if (!dir.Exists) return 0;
+
+            long size = 0;
+
+            // Summerar filstorlekar
+            FileInfo[] files = dir.GetFiles("*", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                size += file.Length;
+            }
+
+            return size;
+        }
         public static string GetDisplayTimeSinceLastUpdate(this DateTime lastUpdated)
         {
             var timeDifference = DateTime.Now - lastUpdated;

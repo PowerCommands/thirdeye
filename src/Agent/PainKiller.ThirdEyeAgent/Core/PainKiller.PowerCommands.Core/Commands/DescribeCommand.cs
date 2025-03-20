@@ -150,7 +150,7 @@
                 var localFileExist = db.Docs.Any(d => d.Uri == SelectedItem.Uri);
                 if (!localFileExist)
                 {
-                    var localFilePath = SelectedItem.Uri.Replace(ConfigurationGlobals.RoamingDirectoryPlaceholder, ConfigurationGlobals.ApplicationDataFolder);
+                    var localFilePath = SelectedItem.Uri.GetReplacedPlaceHolderPath();
                     if (File.Exists(localFilePath)) File.Delete(localFilePath);
                     WriteSuccessLine($"\nFile [{localFilePath}] deleted.");
                 }

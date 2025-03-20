@@ -72,6 +72,6 @@ namespace PainKiller.PowerCommands.Core.Services
             }
             processAdd!.WaitForExit(waitForExit ? InfiniteWait : ImmediateReturn);
         }
-        private string ReplaceCmdArguments(string input) => input.Replace(ConfigurationGlobals.UserNamePlaceholder, Environment.UserName, StringComparison.CurrentCultureIgnoreCase).Replace(ConfigurationGlobals.RoamingDirectoryPlaceholder, ConfigurationGlobals.ApplicationDataFolder, StringComparison.CurrentCultureIgnoreCase);
+        private string ReplaceCmdArguments(string input) => input.GetReplacedPlaceHolderPath();
     }
 }

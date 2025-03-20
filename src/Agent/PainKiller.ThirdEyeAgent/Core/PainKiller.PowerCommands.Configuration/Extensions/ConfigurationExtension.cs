@@ -16,6 +16,7 @@ namespace PainKiller.PowerCommands.Configuration.Extensions
             if (paths.Length == 2) return Path.Combine(ReplaceTags(paths[0], configuration.Name), ReplaceTags(paths[1], configuration.Name));
             return Path.Combine(ReplaceTags(paths[0], configuration.Name), ReplaceTags(paths[1], configuration.Name), ReplaceTags(paths[2], configuration.Name));
         }
+        public static string GetReplacedPlaceHolderPath(this string uriWithPlaceHolder) => uriWithPlaceHolder.Replace(ConfigurationGlobals.RoamingDirectoryPlaceholder, ConfigurationGlobals.ApplicationDataFolder).Replace(ConfigurationGlobals.UserNamePlaceholder, Environment.UserName, StringComparison.CurrentCultureIgnoreCase);
         private static string ReplaceTags(string raw, string name) => raw.Replace("{appdata}", AppContext.BaseDirectory).Replace("{name}", name);
         public static string GetYaml<T>(this T configuration) where T : new()
         {
