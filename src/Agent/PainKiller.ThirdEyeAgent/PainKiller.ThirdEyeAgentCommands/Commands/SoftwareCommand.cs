@@ -48,7 +48,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine($"{Emo.Right.Icon()} Type to filter results, press ENTER {Emo.Enter.Icon()} to select, BACKSPACE {Emo.Backspace.Icon()} to delete, ESC {Emo.Escape.Icon()} to exit:");
+                Console.WriteLine($"{Emo.Right.Icon()} Type to filter results, press ENTER {Emo.Enter.Icon()} to select, BACKSPACE {Emo.Backspace.Icon()}  to delete, ESC {Emo.Escape.Icon()} to exit:");
                 Console.Title = inputBuffer;
                 filteredSoftware = softwareItems.Where(c => c.Name.ToLower().Contains(inputBuffer) || c.Version.ToLower().Contains(inputBuffer) || c.MetaInformation.ToLower().Contains(inputBuffer)).ToList();
                 if (filteredSoftware.Count == 0) Console.WriteLine($"No matching result... (Press Escape {Emo.Escape.Icon()} to exit)");

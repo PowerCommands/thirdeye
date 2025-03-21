@@ -14,7 +14,7 @@ namespace PainKiller.PowerCommands.Core.Services
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine($"{Emo.Right.Icon()} Type to filter results, press ENTER {Emo.Enter.Icon()} to select, BACKSPACE {Emo.Backspace.Icon()} to delete, ESC {Emo.Escape.Icon()} to exit:");
+                Console.WriteLine($"{Emo.Right.Icon()} Type to filter results, press ENTER {Emo.Enter.Icon()} to select, BACKSPACE {Emo.Backspace.Icon()}  to delete, ESC {Emo.Escape.Icon()} to exit:");
                 Console.Title = inputBuffer;
 
                 filteredItems = items.Where(item => match(item, inputBuffer)).ToList();
@@ -44,7 +44,6 @@ namespace PainKiller.PowerCommands.Core.Services
             }
             return filteredItems;
         }
-        
         public static Dictionary<int, string> ListDialog(string header, List<string> items, bool multiSelect = false, bool autoSelectIfOnlyOneItem = true, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Blue, bool clearConsole = true)
         {
             SelectedItems.Clear();
