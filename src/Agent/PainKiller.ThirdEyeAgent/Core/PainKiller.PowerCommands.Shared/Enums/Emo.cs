@@ -1,0 +1,66 @@
+﻿using System.ComponentModel;
+
+namespace PainKiller.PowerCommands.Shared.Enums;
+public enum Emo
+{
+    /// ⚙️
+    [Description("⚙️")] Settings,
+    /// 📦
+    [Description("📦")] Package,
+    /// 📁
+    [Description("📁")] Directory,
+    /// 📄
+    [Description("📄")] File,
+    /// 👤
+    [Description("👤")] Member,
+    /// 👥
+    [Description("👥")] Team,
+    /// 🗂️
+    [Description("🗂️")] Workspace,
+    /// 📂
+    [Description("📂")] Repository,
+    /// 🌿
+    [Description("🌿")] Branch,
+    /// ℹ️
+    [Description("ℹ️")] Info,
+    /// ⚠️
+    [Description("⚠️")] Warning,
+    /// ❌
+    [Description("❌")] Error,
+    /// ✅
+    [Description("✅")] Success,
+    /// 🔍
+    [Description("🔍")] Search,
+    /// 🛡️
+    [Description("🛡️")] Shield,
+    /// 🐞
+    [Description("🐞")] Bug,
+    /// 🔒
+    [Description("🔒")] Lock,
+    /// ⏰
+    [Description("⏰")] Clock,
+    /// 🚀
+    [Description("🚀")] Rocket,
+    /// 🔥
+    [Description("🔥")] Fire,
+    /// ⭐
+    [Description("⭐")] Star,
+    /// ⚗️
+    [Description("⚗️")] Filter,
+    /// ➡️
+    [Description("➡️")] Right,
+    /// ⬅️
+    [Description("⬅️")] Left,
+    /// ⬆️
+    [Description("➡️")] Up,
+    /// ⬇️
+    [Description("⬅️")] Down,
+    /// ⏎
+    [Description("⏎")] Enter,
+    /// ⎋
+    [Description("⎋")] Escape,
+    /// ⌫
+    [Description("⌫")] Backspace,
+    /// ❓
+    [Description("❓")] Question
+}

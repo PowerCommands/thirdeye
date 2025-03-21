@@ -1,4 +1,6 @@
-﻿using PainKiller.ThirdEyeAgentCommands.BaseClasses;
+﻿using PainKiller.PowerCommands.Shared.Enums;
+using PainKiller.PowerCommands.Shared.Extensions;
+using PainKiller.ThirdEyeAgentCommands.BaseClasses;
 
 namespace PainKiller.ThirdEyeAgentCommands.Commands
 {
@@ -20,15 +22,15 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
    ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░       ░▒▓████████▓▒░  ░▒▓█▓▒░   ░▒▓████████▓▒░ 
                                                                                                         ", ConsoleColor.DarkMagenta);
 
-            WriteHeadLine("⚙️ Configuration");
+            WriteHeadLine($"{Emo.Settings.Icon()} Configuration");
             WriteCodeExample($"├── Host: ", Configuration.ThirdEyeAgent.Host);
             WriteCodeExample($"├── Organization: ", Configuration.ThirdEyeAgent.OrganizationName);
-            foreach (var team in Configuration.ThirdEyeAgent.Teams) WriteCodeExample($"├──👨 Team", team);
-            foreach (var workspace in Configuration.ThirdEyeAgent.Workspaces) WriteCodeExample($"├──📦 Workspace", workspace);
-            foreach (var project in Configuration.ThirdEyeAgent.Ignores.Projects) WriteCodeExample($"├──📁 Ignore project", project);
-            foreach (var repository in Configuration.ThirdEyeAgent.Ignores.Repositories) WriteCodeExample($"├──📁 Ignore repo", repository);
+            foreach (var team in Configuration.ThirdEyeAgent.Teams) WriteCodeExample($"├──{Emo.Team.Icon()} Team", team);
+            foreach (var workspace in Configuration.ThirdEyeAgent.Workspaces) WriteCodeExample($"├──{Emo.Workspace.Icon()} Workspace", workspace);
+            foreach (var project in Configuration.ThirdEyeAgent.Ignores.Projects) WriteCodeExample($"├──{Emo.Directory.Icon()} Ignore project", project);
+            foreach (var repository in Configuration.ThirdEyeAgent.Ignores.Repositories) WriteCodeExample($"├──{Emo.Repository.Icon()} Ignore repo", repository);
             
-            WriteHeadLine("👾 NVD");
+            WriteHeadLine($"{Emo.Bug.Icon()} NVD");
             WriteCodeExample($"├── Url: ", Configuration.ThirdEyeAgent.Nvd.Url);
             WriteCodeExample($"├── Path to updates: ", Configuration.ThirdEyeAgent.Nvd.PathToUpdates);
             WriteCodeExample($"├── Path to backups: ", Configuration.ThirdEyeAgent.BackupPath);
@@ -39,9 +41,9 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var authorizationToken = EnvironmentService.Service.GetEnvironmentVariable(ConfigurationGlobals.GetAccessTokenName(false));
             var gitToken = EnvironmentService.Service.GetEnvironmentVariable(ConfigurationGlobals.GetAccessTokenName(true));
             var nvdApiKey = EnvironmentService.Service.GetEnvironmentVariable(ConfigurationGlobals.NvdApiKeyName);
-            if(!string.IsNullOrEmpty(authorizationToken)) WriteSuccessLine("Authorization token found: ✅");
-            if (!string.IsNullOrEmpty(gitToken)) WriteSuccessLine($"{"Git token found:", -26} ✅");
-            if (!string.IsNullOrEmpty(nvdApiKey)) WriteSuccessLine($"{"NVD API key found:", -26} ✅");
+            if(!string.IsNullOrEmpty(authorizationToken)) WriteSuccessLine("Authorization token found:");
+            if (!string.IsNullOrEmpty(gitToken)) WriteSuccessLine($"{"Git token found:", -26}");
+            if (!string.IsNullOrEmpty(nvdApiKey)) WriteSuccessLine($"{"NVD API key found:", -26}");
             IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
 
             return Ok();

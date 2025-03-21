@@ -4,9 +4,16 @@ using PainKiller.PowerCommands.Shared.Extensions;
 namespace PainKiller.PowerCommands.Core.Services;
 public static class DialogService
 {
-    public static bool YesNoDialog(string question, string yesValue = "y", string noValue = "n")
+    /// <summary>
+    /// Displays a dialog where you suppose to answer yes or no to confirm something.
+    /// </summary>
+    /// <param name="question">The question to guide the user, without the ? character.</param>
+    /// <param name="yesValue"></param>
+    /// <param name="noValue"></param>
+    /// <returns></returns>
+    public static bool YesNoDialog(string question = "Confirm action", string yesValue = "y", string noValue = "n")
     {
-        WriteHeader($"\n{question}"); ;
+        WriteHeader($"\n{question.Replace("?","")} {Emo.Question.Icon()}"); ;
         Console.WriteLine($"({yesValue}/{noValue}):");
 
         var response = Console.ReadLine();

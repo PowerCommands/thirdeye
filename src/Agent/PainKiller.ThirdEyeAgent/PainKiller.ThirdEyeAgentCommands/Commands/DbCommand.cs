@@ -1,4 +1,5 @@
 ﻿using PainKiller.PowerCommands.Configuration.Extensions;
+using PainKiller.PowerCommands.Shared.Enums;
 using PainKiller.PowerCommands.Shared.Extensions;
 using PainKiller.ThirdEyeAgentCommands.BaseClasses;
 
@@ -23,38 +24,38 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
                                                                                                         ", ConsoleColor.DarkMagenta);
 
             var dir = new DirectoryInfo(ConfigurationGlobals.ApplicationDataFolder);
-            WriteHeadLine($"📁 App directory {dir.GetDirectorySize().GetDisplayFormattedFileSize()}");
+            WriteHeadLine($"{Emo.Directory.Icon()} App directory {dir.GetDirectorySize().GetDisplayFormattedFileSize()}");
             foreach (var file in dir.GetFiles())
             {
-                WriteLine($"├──📄 {file.Name}");
+                WriteLine($"├──{Emo.File.Icon()} {file.Name}");
             }
             foreach (var hostDirectory in dir.GetDirectories())
             {
                 if(hostDirectory.Name == "nvd") continue;
-                WriteHeadLine($"├──📁 {hostDirectory.Name} {hostDirectory.GetDirectorySize().GetDisplayFormattedFileSize()}");
+                WriteHeadLine($"├──{Emo.Directory.Icon()} {hostDirectory.Name} {hostDirectory.GetDirectorySize().GetDisplayFormattedFileSize()}");
                 foreach (var file in hostDirectory.GetFiles())
                 {
-                    WriteLine($"│   ├──📄 {file.Name} {file.Length.GetDisplayFormattedFileSize()}");
+                    WriteLine($"│   ├──{Emo.File.Icon()} {file.Name} {file.Length.GetDisplayFormattedFileSize()}");
                 }
             }
             var nvdDir = new DirectoryInfo(Path.Combine(ConfigurationGlobals.ApplicationDataFolder, "nvd"));
-            WriteHeadLine($"📁 NVD  files ({nvdDir.GetDirectorySize().GetDisplayFormattedFileSize()})");
+            WriteHeadLine($"{Emo.Directory.Icon()} NVD  files ({nvdDir.GetDirectorySize().GetDisplayFormattedFileSize()})");
             foreach (var file in nvdDir.GetFiles())
             {
-                WriteLine($"├──📄 {file.Name} {file.Length.GetDisplayFormattedFileSize()}");
+                WriteLine($"├──{Emo.File.Icon()} {file.Name} {file.Length.GetDisplayFormattedFileSize()}");
             }
             var nvdUpdateDir = new DirectoryInfo(Configuration.ThirdEyeAgent.Nvd.PathToUpdates.GetReplacedPlaceHolderPath());
-            WriteHeadLine($"📁 Update  files ({nvdUpdateDir.GetDirectorySize().GetDisplayFormattedFileSize()})");
+            WriteHeadLine($"{Emo.Directory.Icon()} Update  files ({nvdUpdateDir.GetDirectorySize().GetDisplayFormattedFileSize()})");
             foreach (var file in nvdUpdateDir.GetFiles())
             {
-                WriteLine($"├──📄 {file.Name} {file.Length.GetDisplayFormattedFileSize()}");
+                WriteLine($"├──{Emo.File.Icon()} {file.Name} {file.Length.GetDisplayFormattedFileSize()}");
             }
             
             var backupDir = new DirectoryInfo(Configuration.ThirdEyeAgent.BackupPath.GetReplacedPlaceHolderPath());
-            WriteHeadLine($"📁 Backup  workspaces ({backupDir.GetDirectorySize().GetDisplayFormattedFileSize()})");
+            WriteHeadLine($"{Emo.Directory.Icon()} Backup  workspaces ({backupDir.GetDirectorySize().GetDisplayFormattedFileSize()})");
             foreach (var directory in backupDir.GetDirectories())
             {
-                WriteLine($"├──📁 {directory.Name}");
+                WriteLine($"├──{Emo.Directory.Icon()} {directory.Name}");
             }
             IPowerCommandServices.DefaultInstance?.InfoPanelManager.Display();
 

@@ -27,7 +27,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var softwareDestinationFileName = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, $"{nameof(SoftwareObjects)}.data");
             if (File.Exists(softwareSourceFileName))
             {
-                var restoreSoftwareFile = DialogService.YesNoDialog("Do you want to restore the software file?");
+                var restoreSoftwareFile = DialogService.YesNoDialog("Do you want to restore the software file");
                 if (restoreSoftwareFile) File.Copy(softwareSourceFileName, softwareDestinationFileName, true);
             }
             var backups = Directory.GetDirectories(rootDirectory);
@@ -41,7 +41,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             if (string.IsNullOrEmpty(selectedBackup)) return;
 
             var destinationDir = Storage.StoragePath;
-            var confirmDeletion = DialogService.YesNoDialog($"This will delete the destination directory {destinationDir} and it´s content, continue?");
+            var confirmDeletion = DialogService.YesNoDialog($"This will delete the destination directory {destinationDir} and it´s content, continue");
             if(!confirmDeletion) return;
             Directory.Delete(destinationDir, recursive: true);
             IOService.CopyFolder(selectedBackup, destinationDir);

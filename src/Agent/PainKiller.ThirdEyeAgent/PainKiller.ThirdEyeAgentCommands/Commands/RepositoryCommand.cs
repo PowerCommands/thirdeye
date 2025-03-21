@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using PainKiller.PowerCommands.Shared.Enums;
+using PainKiller.PowerCommands.Shared.Extensions;
 using PainKiller.ThirdEyeAgentCommands.BaseClasses;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Managers.Workflows;
@@ -21,7 +23,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("➡ Type to filter results, press ENTER to select, BACKSPACE to delete, ESC to exit:");
+                Console.WriteLine($"{Emo.Right.Icon()} Type to filter results, press ENTER {Emo.Enter.Icon()} to select, BACKSPACE {Emo.Backspace.Icon()} to delete, ESC {Emo.Escape.Icon()} to exit:");
                 Console.Title = inputBuffer;
                 filtered = allRepositories.Where(p => p.Name.ToLower().Contains(inputBuffer)).ToList();
                 if (filtered.Count == 0) Console.WriteLine("No matching result... (Press ESC to exit)");

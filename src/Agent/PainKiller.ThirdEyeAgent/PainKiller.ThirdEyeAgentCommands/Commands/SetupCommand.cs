@@ -13,7 +13,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             var gitToken = EnvironmentService.Service.GetEnvironmentVariable(ConfigurationGlobals.GetAccessTokenName(true));
             var nvdApiKey = EnvironmentService.Service.GetEnvironmentVariable(ConfigurationGlobals.NvdApiKeyName);
 
-            if(!string.IsNullOrEmpty(authorizationToken)) WriteSuccessLine("Authorization token found: ✅");
+            if(!string.IsNullOrEmpty(authorizationToken)) WriteSuccessLine("Authorization token found!");
             else if(!Configuration.ThirdEyeAgent.Host.Contains("github"))
             {
                 WriteHeadLine("Authorization is needed to fetch your repositories.");
@@ -41,7 +41,7 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             else
             {
                 WriteHeadLine("NVD API key is you need to fetch CVEs direct from NVD API. (a local DB will be used otherwise)");
-                var setupNvdApiKey = DialogService.YesNoDialog("Do you want to setup a NVD API key now?");
+                var setupNvdApiKey = DialogService.YesNoDialog("Do you want to setup a NVD API key now");
                 if (setupNvdApiKey)
                 {
                     var apiKey = DialogService.SecretPromptDialog("Please input your NVD API key:");

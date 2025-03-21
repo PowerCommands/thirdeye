@@ -1,4 +1,6 @@
-﻿namespace PainKiller.PowerCommands.Core.Services
+﻿using PainKiller.PowerCommands.Shared.Extensions;
+
+namespace PainKiller.PowerCommands.Core.Services
 {
     public static class ListService
     {
@@ -12,27 +14,28 @@
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("➡ Type to filter results, press ENTER to select, BACKSPACE to delete, ESC to exit:");
+                Console.WriteLine($"{Emo.Right.Icon()} Type to filter results, press ENTER {Emo.Enter.Icon()} to select, BACKSPACE {Emo.Backspace.Icon()} to delete, ESC {Emo.Escape.Icon()} to exit:");
                 Console.Title = inputBuffer;
 
                 filteredItems = items.Where(item => match(item, inputBuffer)).ToList();
                 if (filteredItems.Count == 0)
                 {
-                    Console.WriteLine("No matching result... (Press ESC to exit)");
+                    Console.WriteLine($"No matching result... (Press ESC {Emo.Escape.Icon()} to exit)");
                 }
                 else
                 {
                     writer.WriteHeadLine(headline);
-                    presentation.Invoke(filteredItems); // **Rätt placerat!**
+                    presentation.Invoke(filteredItems);
                 }
-                Console.Write("\nPress enter to continue with all matching items. ");
+                Console.Write($"\nPress enter {Emo.Enter.Icon()} to continue with all matching items. ");
                 var key = Console.ReadKey(intercept: true);
+                Console.WriteLine();
 
                 if (key.Key == ConsoleKey.Escape) return filteredItems;
                 if (key.Key == ConsoleKey.Enter && filteredItems.Count > 0) break;
                 if (key.Key == ConsoleKey.Backspace && inputBuffer.Length > 0)
                 {
-                    inputBuffer = inputBuffer[..^1]; // Modernare sätt att ta bort sista tecknet
+                    inputBuffer = inputBuffer[..^1];
                 }
                 else if (!char.IsControl(key.KeyChar))
                 {

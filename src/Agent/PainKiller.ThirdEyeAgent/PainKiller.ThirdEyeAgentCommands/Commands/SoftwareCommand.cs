@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using PainKiller.PowerCommands.Core.Commands;
+using PainKiller.PowerCommands.Shared.Enums;
+using PainKiller.PowerCommands.Shared.Extensions;
 using PainKiller.ThirdEyeAgentCommands.Data;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Managers.Workflows;
@@ -46,15 +48,15 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("➡ Type to filter results, press ENTER to select, BACKSPACE to delete, ESC to exit:");
+                Console.WriteLine($"{Emo.Right.Icon()} Type to filter results, press ENTER {Emo.Enter.Icon()} to select, BACKSPACE {Emo.Backspace.Icon()} to delete, ESC {Emo.Escape.Icon()} to exit:");
                 Console.Title = inputBuffer;
                 filteredSoftware = softwareItems.Where(c => c.Name.ToLower().Contains(inputBuffer) || c.Version.ToLower().Contains(inputBuffer) || c.MetaInformation.ToLower().Contains(inputBuffer)).ToList();
-                if (filteredSoftware.Count == 0) Console.WriteLine("No matching result... (Press ESC to exit)");
+                if (filteredSoftware.Count == 0) Console.WriteLine($"No matching result... (Press Escape {Emo.Escape.Icon()} to exit)");
                 else
                 {
                     foreach (var c in filteredSoftware) Console.WriteLine($"{c.Name} {c.Version} {c.MetaInformation}");
                 }
-                Console.Write("\nPress enter to continue with all matching items. ");
+                Console.Write($"\nPress enter {Emo.Enter.Icon()} to continue with all matching items. ");
                 var key = Console.ReadKey(intercept: true);
 
                 if (key.Key == ConsoleKey.Escape) return;

@@ -1,7 +1,10 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel;
+using System.Globalization;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using PainKiller.PowerCommands.Shared.Enums;
 
 namespace PainKiller.PowerCommands.Shared.Extensions
 {
@@ -260,7 +263,7 @@ namespace PainKiller.PowerCommands.Shared.Extensions
 
         public static string Truncate(this string input, int maxLength, string ellipse = "...")
         {
-            if (string.IsNullOrEmpty(input) || input.Length <= maxLength) 
+            if (string.IsNullOrEmpty(input) || input.Length <= maxLength)
                 return input;
 
             return input.Substring(0, maxLength - ellipse.Length) + ellipse;
@@ -268,9 +271,16 @@ namespace PainKiller.PowerCommands.Shared.Extensions
         public static Guid GenerateGuidFromString(this string input)
         {
             using var md5 = MD5.Create();
-            byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
+            var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
             return new Guid(hash);
         }
         public static string ToCheck(this bool val, string trueCheck = "✅", string falseCheck = "") => val ? trueCheck : falseCheck;
+        public static string Icon(this Emo symbol)
+        {
+            var member = symbol.GetType().GetMember(symbol.ToString());
+            var attr = member[0].GetCustomAttribute<DescriptionAttribute>();
+            return attr?.Description ?? symbol.ToString();
+        }
+
     }
 }
