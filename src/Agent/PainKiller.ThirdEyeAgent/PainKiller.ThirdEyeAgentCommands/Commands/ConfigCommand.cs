@@ -30,7 +30,8 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             
             WriteHeadLine("👾 NVD");
             WriteCodeExample($"├── Url: ", Configuration.ThirdEyeAgent.Nvd.Url);
-            WriteCodeExample($"├── PathToUpdates: ", Configuration.ThirdEyeAgent.Nvd.PathToUpdates);
+            WriteCodeExample($"├── Path to updates: ", Configuration.ThirdEyeAgent.Nvd.PathToUpdates);
+            WriteCodeExample($"├── Path to backups: ", Configuration.ThirdEyeAgent.BackupPath);
             WriteCodeExample($"├── DelayIntervalSeconds: ", $"{Configuration.ThirdEyeAgent.Nvd.DelayIntervalSeconds}");
             WriteCodeExample($"├── PageSize: ", $"{Configuration.ThirdEyeAgent.Nvd.PageSize}");
             WriteCodeExample($"├── TimeoutSeconds: ", $"{Configuration.ThirdEyeAgent.Nvd.TimeoutSeconds}");
