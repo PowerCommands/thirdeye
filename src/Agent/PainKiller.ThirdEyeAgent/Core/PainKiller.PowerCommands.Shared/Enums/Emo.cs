@@ -60,7 +60,7 @@ public enum Emo
     /// ⎋
     [Description("⎋")] Escape,
     /// ⌫
-    [Description("⌫")] Backspace,
+    [Description("⌫ ")] Backspace,
     /// ❓
     [Description("❓")] Question
 }

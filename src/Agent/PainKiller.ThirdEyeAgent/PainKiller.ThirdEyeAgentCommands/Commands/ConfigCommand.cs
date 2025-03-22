@@ -27,8 +27,8 @@ namespace PainKiller.ThirdEyeAgentCommands.Commands
             WriteCodeExample($"├── Organization: ", Configuration.ThirdEyeAgent.OrganizationName);
             foreach (var team in Configuration.ThirdEyeAgent.Teams) WriteCodeExample($"├──{Emo.Team.Icon()} Team", team);
             foreach (var workspace in Configuration.ThirdEyeAgent.Workspaces) WriteCodeExample($"├──{Emo.Workspace.Icon()} Workspace", workspace);
-            foreach (var project in Configuration.ThirdEyeAgent.Ignores.Projects) WriteCodeExample($"├──{Emo.Directory.Icon()} Ignore project", project);
-            foreach (var repository in Configuration.ThirdEyeAgent.Ignores.Repositories) WriteCodeExample($"├──{Emo.Repository.Icon()} Ignore repo", repository);
+            foreach (var project in Configuration.ThirdEyeAgent.Ignores.Projects) WriteCodeExample($"├──{Emo.Filter.Icon()} Ignore project", project);
+            foreach (var repository in Configuration.ThirdEyeAgent.Ignores.Repositories) WriteCodeExample($"├──{Emo.Filter.Icon()} Ignore repo", repository);
             
             WriteHeadLine($"{Emo.Bug.Icon()} NVD");
             WriteCodeExample($"├── Url: ", Configuration.ThirdEyeAgent.Nvd.Url);

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using PainKiller.ThirdEyeAgentCommands.BaseClasses;
+﻿using PainKiller.ThirdEyeAgentCommands.BaseClasses;
 using PainKiller.ThirdEyeAgentCommands.Data;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.Enums;

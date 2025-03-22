@@ -1,4 +1,5 @@
-﻿using PainKiller.PowerCommands.Shared.Extensions;
+﻿using PainKiller.PowerCommands.Shared.Enums;
+using PainKiller.PowerCommands.Shared.Extensions;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
 using PainKiller.ThirdEyeAgentCommands.Enums;
@@ -13,47 +14,47 @@ public class PresentationManager(IConsoleWriter writer)
     {
         foreach (var finding in findings)
         {
-            writer.WriteHeadLine($"\n⚠️ {finding.Cve.Id} - {finding.Status} {finding.Cve.Description.Truncate(100)}");
-            writer.WriteHeadLine($"   📄 {finding.Description}");
-            writer.WriteHeadLine($"   📅 Created: {finding.Created}");
-            writer.WriteHeadLine($"   📅 Created: {finding.Created}");
+            writer.WriteHeadLine($"\n{Emo.Warning.Icon()} {finding.Cve.Id} - {finding.Status} {finding.Cve.Description.Truncate(100)}");
+            writer.WriteHeadLine($"   {Emo.File.Icon()} {finding.Description}");
+            writer.WriteHeadLine($"   {Emo.Clock.Icon()} Created: {finding.Created}");
+            writer.WriteHeadLine($"   {Emo.Clock.Icon()} Created: {finding.Created}");
         
-            writer.WriteHeadLine($"   🔍 Affected Projects: {finding.AffectedProjects.Count}");
+            writer.WriteHeadLine($"   {Emo.Search.Icon()} Affected Projects: {finding.AffectedProjects.Count}");
             if (finding.Mitigations.Any())
             {
-                writer.WriteHeadLine($"   🛡️ Mitigations: {finding.Mitigations.Count}");
+                writer.WriteHeadLine($"   {Emo.Shield.Icon()} Mitigations: {finding.Mitigations.Count}");
 
             }
         }
     }
     public void DisplayFinding(Finding finding)
     {
-        writer.WriteHeadLine($"\n⚠️ {finding.Cve.Id} - {finding.Status}");
-        writer.WriteHeadLine($"   📄 {finding.Description}");
-        writer.WriteHeadLine($"   📅 Created: {finding.Created}");
-        writer.WriteHeadLine($"   📅 Updated: {finding.Updated}");
-        writer.WriteHeadLine($"   🔍 Affected Projects: {finding.AffectedProjects.Count}");
+        writer.WriteHeadLine($"\n{Emo.Warning.Icon()} {finding.Cve.Id} - {finding.Status}");
+        writer.WriteHeadLine($"   {Emo.File.Icon()} {finding.Description}");
+        writer.WriteHeadLine($"   {Emo.Clock.Icon()} Created: {finding.Created}");
+        writer.WriteHeadLine($"   {Emo.Clock.Icon()} Updated: {finding.Updated}");
+        writer.WriteHeadLine($"   {Emo.Search.Icon()} Affected Projects: {finding.AffectedProjects.Count}");
     
         if (finding.Mitigations.Any())
         {
-            writer.WriteHeadLine("   🛡️ Mitigations:");
+            writer.WriteHeadLine($"   {Emo.Shield.Icon()} Mitigations:");
             foreach (var mitigation in finding.Mitigations)
             {
-                writer.WriteHeadLine($"   ├── ✅ {mitigation.Name}");
-                writer.WriteHeadLine($"   │  📅 Created: {mitigation.Created}");
+                writer.WriteHeadLine($"   ├── {Emo.Success.Icon()} {mitigation.Name}");
+                writer.WriteHeadLine($"   │  {Emo.Clock.Icon()} Created: {mitigation.Created}");
                 writer.WriteHeadLine($"   │  📝 {mitigation.Description}");
             }
         }
         else
         {
-            writer.WriteHeadLine("   ❌ No mitigations found.");
+            writer.WriteHeadLine($"   {Emo.Error.Icon()} No mitigations found.");
         }
     }
 
 
     public void DisplayRepository(string name, IEnumerable<Project> projects)
     {
-        writer.WriteHeadLine($"\n📁 {name}");
+        writer.WriteHeadLine($"\n{Emo.Directory.Icon()} {name}");
         foreach (var project in projects)
         {
             writer.WriteHeadLine($"├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
@@ -65,13 +66,13 @@ public class PresentationManager(IConsoleWriter writer)
     }
     public void DisplayTeam(Team team)
     {
-        writer.WriteHeadLine($"👨‍👩‍👧‍👦{team.Name.Trim()}");
+        writer.WriteHeadLine($"{Emo.Team.Icon()}{team.Name.Trim()}");
         writer.WriteHeadLine("  │   ├── Members");
-        foreach (var member in team.Members) writer.WriteHeadLine($"  │   ├── 👤 {member.Name}");
+        foreach (var member in team.Members) writer.WriteHeadLine($"  │   ├── {Emo.Member.Icon()} {member.Name}");
     }
     public void DisplayProject(Project project)
     {
-        writer.WriteHeadLine($"\n📁 {project.Name} {project.Framework} {project.Sdk}");
+        writer.WriteHeadLine($"\n{Emo.Directory.Icon()} {project.Name} {project.Framework} {project.Sdk}");
         
         writer.WriteHeadLine($"├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
         foreach (var component in project.Components)
@@ -86,15 +87,15 @@ public class PresentationManager(IConsoleWriter writer)
         foreach (var workspace in workspaces)
         {
             if (repositories.All(p => p.WorkspaceId != workspace.Id)) continue;
-            writer.WriteHeadLine($"  ├── 📦 {workspace.Name}");
+            writer.WriteHeadLine($"  ├── {Emo.Package.Icon()} {workspace.Name}");
             var projectTeams = teams.Where(t => t.WorkspaceIds.Any(p => p == workspace.Id));
             foreach (var team in projectTeams)
             {
-                writer.WriteHeadLine($"  │   ├── 👨‍👩‍👧‍👦 {team.Name.Trim()}");
+                writer.WriteHeadLine($"  │   ├── {Emo.Team.Icon()} {team.Name.Trim()}");
                 writer.WriteHeadLine("  │   ├── Members");
                 foreach (var member in team.Members)
                 {
-                    writer.WriteHeadLine($"  │   │   ├── 👤 {member.Name}");
+                    writer.WriteHeadLine($"  │   │   ├── {Emo.Member.Icon()} {member.Name}");
                 }
             }
             var projectRepos = repositories.Where(r => r.WorkspaceId == workspace.Id).ToList();
@@ -110,7 +111,7 @@ public class PresentationManager(IConsoleWriter writer)
         {
             var repoProjects = ObjectStorageService.Service.GetProjects().Where(dp => dp.RepositoryId == repository.RepositoryId).ToList();
             if (repoProjects.Count == 0) continue;
-            writer.WriteHeadLine($"  │   ├── 📁 {repository.Name}");
+            writer.WriteHeadLine($"  │   ├── {Emo.Directory.Icon()} {repository.Name}");
             foreach (var project in repoProjects)
             {
                 var components = project.Components;
@@ -131,7 +132,6 @@ public class PresentationManager(IConsoleWriter writer)
     }
     public List<ComponentCve> DisplayVulnerableComponents(List<ComponentCve> cve)
     {
-        
         var padLength = cve.Where(c => c.CveEntries != null).Select(c => c.CveEntries.Where(e => e.Id != null).Select(e => e.Id.Length).DefaultIfEmpty(0).Max()).DefaultIfEmpty(0).Max();
         
         var filter = "";
@@ -141,14 +141,14 @@ public class PresentationManager(IConsoleWriter writer)
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("➡ Type to filter results, press ENTER to select, BACKSPACE to delete, ESC to exit:");
+            Console.WriteLine($"{Emo.Right.Icon()} Type to filter results, press ENTER {Emo.Enter.Icon()} to select, BACKSPACE {Emo.Backspace.Icon()}  to delete, ESC {Emo.Escape.Icon()} to exit:");
             Console.Title = inputBuffer;
             filteredComponents = allComponents.Where(c => c.Name.ToLower().Contains(inputBuffer)).ToList();
             var showOnlyVulnerabilityCount = (filteredComponents.Count > 25);
-            if (filteredComponents.Count == 0) Console.WriteLine("No matching result... (Press ESC to exit)");
+            if (filteredComponents.Count == 0) Console.WriteLine($"No matching result... (Press ESC {Emo.Escape.Icon()} to exit)");
             else
             {
-                writer.WriteHeadLine("\n🔒 Vulnerabilities");
+                writer.WriteHeadLine($"\n{Emo.Lock.Icon()} Vulnerabilities");
                 foreach (var componentCve in filteredComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder))
                 {
                     if (showOnlyVulnerabilityCount)
@@ -170,7 +170,7 @@ public class PresentationManager(IConsoleWriter writer)
                     }
                 }
             }
-            Console.Write("\nPress enter to continue with all matching items. ");
+            Console.Write($"\nPress enter {Emo.Enter.Icon()} to continue with all matching items. ");
             var key = Console.ReadKey(intercept: true);
 
             if (key.Key == ConsoleKey.Escape) return filteredComponents;
@@ -201,18 +201,17 @@ public class PresentationManager(IConsoleWriter writer)
     {
         if (cveDetails?.vulnerabilities == null || cveDetails.vulnerabilities.Length == 0)
         {
-            writer.WriteHeadLine("🔒 No CVEs found.");
+            writer.WriteHeadLine($"{Emo.Lock.Icon()} No CVEs found.");
             return;
         }
 
-        writer.WriteHeadLine($"🔒 {cveDetails.vulnerabilities.Length} CVEs found");
+        writer.WriteHeadLine($"{Emo.Lock.Icon()} {cveDetails.vulnerabilities.Length} CVEs found");
 
         foreach (var cve in cveDetails.vulnerabilities)
         {
             var cveId = cve.cve.id ?? "Unknown ID";
             var description = cve.cve.descriptions?.FirstOrDefault()?.value ?? "No description available";
 
-            // Justerad hantering av CVSS-score och severity
             var cvssMetric = cve.cve.metrics?.cvssMetricV2?.FirstOrDefault();
             var cvssScore = cvssMetric?.cvssData?.baseScore.ToString() ?? "N/A";
             var severity = cvssMetric?.baseSeverity ?? "N/A";
@@ -256,7 +255,7 @@ public class PresentationManager(IConsoleWriter writer)
         Console.Clear();
         if (cveEntries.Count == 0) return;
         var takeCount = Console.WindowHeight - 6;
-        Console.WriteLine($"🔒 {takeCount} CVEs displayed (adjusted to console height)");
+        Console.WriteLine($"{Emo.Lock.Icon()} {takeCount} CVEs displayed (adjusted to console height)");
         Console.WriteLine($"{"CVE ID",-15} | {"CVSS",-5} | {"Severity",-10} | Description");
         Console.WriteLine(new string('-', 80));
 
