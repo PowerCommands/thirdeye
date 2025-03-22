@@ -34,7 +34,7 @@ public class ObjectStorageService : IObjectStorageService
     }
     private ObjectStorageService(string host)
     {
-        var storagePath = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, host.Replace("https://","").Replace("http://","").Replace("/",""));
+        var storagePath = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, host.Replace("https://","").Replace("http://","").Replace("/","").Replace("\\","_").Replace(":",""));
         StoragePath = storagePath;
         if(!Directory.Exists(storagePath)) Directory.CreateDirectory(storagePath);
         _teamStorage = new ObjectStorageBase<TeamObjects, Team>(storagePath);

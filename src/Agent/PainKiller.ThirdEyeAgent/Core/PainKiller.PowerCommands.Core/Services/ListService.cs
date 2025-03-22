@@ -57,6 +57,7 @@ namespace PainKiller.PowerCommands.Core.Services
                 var pageSize = (Console.WindowHeight < TopMargin ? TopMargin * 2 : Console.WindowHeight) - TopMargin;
                 var shouldContinue = true;
                 var totalPages = (listItems.Count / pageSize) + 1;
+                // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
                 while (shouldContinue)
                 {
                     var pageItems = listItems.Skip(currentPage * pageSize).Take(pageSize).ToList();
@@ -192,7 +193,6 @@ namespace PainKiller.PowerCommands.Core.Services
             Console.Write($"{label}");
             Console.ForegroundColor = originalColor;
         }
-
         public static Dictionary<int, string> FilteredListDialog(string header, List<string> items, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Blue, bool clearConsole = true)
         {
             if (items.Count == 0) return new Dictionary<int, string>();

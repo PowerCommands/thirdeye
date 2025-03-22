@@ -86,7 +86,12 @@ public static class ThirdEyeExtensions
         var parts = cve.Version.Split('.').Select(p => int.TryParse(p, out var num) ? num : 0).ToArray();
         return parts.Length > 0 ? parts.Aggregate(0, (acc, p) => acc * 1000 + p) : 0;
     }
-
+    public static GitHostType GetGitHostType(this string host)
+    {
+        if (host.Contains("github.com")) return GitHostType.Github;
+        if (Uri.TryCreate(host, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)) return GitHostType.Ads;
+        return GitHostType.Local;
+    }
     public static int ToVersionOrder(this string version)
     {
         var parts = version.Split('.').Select(p => int.TryParse(p, out var num) ? num : 0).ToArray();

@@ -1,5 +1,7 @@
 ﻿using PainKiller.ThirdEyeAgentCommands.Contracts;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
+using PainKiller.ThirdEyeAgentCommands.Enums;
+using PainKiller.ThirdEyeAgentCommands.Extensions;
 using PainKiller.ThirdEyeAgentCommands.Managers;
 using PainKiller.ThirdEyeAgentCommands.Services;
 
@@ -10,15 +12,21 @@ public abstract class ThirdEyeBaseCommando : CommandBase<PowerCommandsConfigurat
     private readonly List<Repository> _analyzedRepositories = [];
     protected ThirdEyeBaseCommando(string identifier, PowerCommandsConfiguration configuration) : base(identifier, configuration)
     {
-        var gitHub = configuration.ThirdEyeAgent.Host.Contains("github.com");
+        var config = Configuration.ThirdEyeAgent;
+        var gitHostType = config.Host.GetGitHostType();
+        var gitHub = config.Host.Contains("github.com");
         var accessToken = Configuration.Secret.DecryptSecret(ConfigurationGlobals.GetAccessTokenName(gitHub));
-        var ignoreRepositories = Configuration.ThirdEyeAgent.Ignores.Repositories;
-        var ignoreProjects = Configuration.ThirdEyeAgent.Ignores.Projects;
-        ObjectStorageService.Initialize(configuration.ThirdEyeAgent.Host);
+        var ignoreRepositories = config.Ignores.Repositories;
+        var ignoreProjects = config.Ignores.Projects;
+        ObjectStorageService.Initialize(config.Host);
         Storage = ObjectStorageService.Service;
-        GitManager = gitHub ? new GitHubManager(configuration.ThirdEyeAgent.Host, accessToken, configuration.ThirdEyeAgent.OrganizationName, ignoreRepositories, ignoreProjects,this) : new AdsManager(Configuration.ThirdEyeAgent.Host, accessToken, ignoreRepositories, ignoreProjects,this);
+        
+        if(gitHostType == GitHostType.Ads) GitManager = new AdsManager(config.Host, accessToken, ignoreRepositories, ignoreProjects,this);
+        else if (gitHostType == GitHostType.Github) GitManager = new GitHubManager(config.Host, accessToken, config.OrganizationName, ignoreRepositories, ignoreProjects, this);
+        else GitManager = new LocalDirectoryGitManager(config.Host, Environment.MachineName, this);
+        
         PresentationManager = new PresentationManager(this);
-        CveStorageService.Initialize(configuration.ThirdEyeAgent.Nvd.PathToUpdates);
+        CveStorageService.Initialize(config.Nvd.PathToUpdates);
         CveStorage = CveStorageService.Service;
     }
     protected ICveStorageService CveStorage { get; init; }
