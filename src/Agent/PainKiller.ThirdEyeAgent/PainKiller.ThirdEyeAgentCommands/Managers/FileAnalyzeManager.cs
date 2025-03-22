@@ -16,6 +16,7 @@ public class FileAnalyzeManager : IFileAnalyzeManager
             "Directory.Build.props", // dependencies .NET-projekt
             "Directory.Build.targets",
             "package.json", // Node.js/NPM
+            "package-lock.json", // Node.js/NPM
             "yarn.lock",
             "pnpm-lock.yaml",
             "requirements.txt", // Python pip
