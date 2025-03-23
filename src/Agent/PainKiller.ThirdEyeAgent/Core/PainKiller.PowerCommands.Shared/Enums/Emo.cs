@@ -52,15 +52,33 @@ public enum Emo
     /// ⬅️
     [Description("⬅️")] Left,
     /// ⬆️
-    [Description("➡️")] Up,
+    [Description("⬆️")] Up,
     /// ⬇️
-    [Description("⬅️")] Down,
+    [Description("⬇️")] Down,
     /// ⏎
     [Description("⏎")] Enter,
     /// ⎋
     [Description("⎋")] Escape,
     /// ⌫
-    [Description("⌫ ")] Backspace,
+    [Description("⌫")] Backspace,
     /// ❓
-    [Description("❓")] Question
+    [Description("❓")] Question,
+    /// 🔴
+    [Description("🔴")] CircleRed,
+    /// 🟠
+    [Description("🟠")] CircleOrange,
+    /// 🟡
+    [Description("🟡")] CircleYellow,
+    /// 🟢
+    [Description("🟢")] CircleGreen,
+    /// 🔵
+    [Description("🔵")] CircleBlue,
+    /// 🟣
+    [Description("🟣")] CirclePurple,
+    /// ⚫
+    [Description("⚫")] CircleBlack,
+    /// ⚪
+    [Description("⚪")] CircleWhite,
+    /// 🟤
+    [Description("🟤")] CircleBrown
 }
