@@ -1,4 +1,5 @@
-﻿using PainKiller.PowerCommands.Shared.Enums;
+﻿using Microsoft.TeamFoundation.Work.WebApi;
+using PainKiller.PowerCommands.Shared.Enums;
 using PainKiller.PowerCommands.Shared.Extensions;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects;
 using PainKiller.ThirdEyeAgentCommands.DomainObjects.Nvd;
@@ -100,7 +101,10 @@ public class PresentationManager(IConsoleWriter writer)
             }
             var projectRepos = repositories.Where(r => r.WorkspaceId == workspace.Id).ToList();
             if(projectRepos.Count == 0) continue;
-            ListService.ShowSelectFromFilteredList("  │   ├── Repos", projectRepos, (p, s) => p.Name.ToLower().Contains(s), ListFilteredProjectRepos, writer);
+            foreach (var repo in projectRepos)
+            {
+                writer.WriteHeadLine($"  │   │   ├── {Emo.Repository.Icon()} {repo.Name}");
+            }
         }
     }
 
