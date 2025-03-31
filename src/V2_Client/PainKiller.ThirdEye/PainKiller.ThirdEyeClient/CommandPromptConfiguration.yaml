@@ -1,0 +1,30 @@
+version: 1.0
+configuration:
+  custom:    
+  core:
+    name: PainKiller.ThirdEye
+    version: 1.0
+    prompt: cp>
+    defaultCommand: ''
+    showLogo: true
+    suggestions: 
+    - exit
+    roamingDirectoryName: CommandPrompt
+    modules:
+      security:
+        secrets:
+        - name: CommandPrompt_encryptionManager
+          options:
+            target: User
+      storage:
+        applicationDataFolder: PainKiller.ThirdEye
+        backupPath: backup
+      ollama:
+        baseAddress: localhost
+        port: 11434
+        model: gemma3:latest
+  log:
+    fileName: commandprompt.log
+    filePath: logs
+    rollingIntervall: Day
+    restrictedToMinimumLevel: Debug
