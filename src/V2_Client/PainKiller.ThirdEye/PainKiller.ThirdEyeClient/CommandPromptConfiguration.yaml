@@ -22,7 +22,7 @@ configuration:
       pathToUpdates: $ROAMING$\ThirdEye\nvd\updates
       latestCount: 100
   core:
-    name: PainKiller.ThirdEye
+    name: Third Eye
     version: 1.0
     prompt: cp>
     defaultCommand: ''
@@ -34,6 +34,15 @@ configuration:
       security:
         secrets:
         - name: CommandPrompt_encryptionManager
+          options:
+            target: User
+        - name: TE_RepositoryToken
+          options:
+            target: User
+        - name: TE_github_RepositoryToken
+          options:
+            target: User
+        - name: TE_api_key
           options:
             target: User
       storage:

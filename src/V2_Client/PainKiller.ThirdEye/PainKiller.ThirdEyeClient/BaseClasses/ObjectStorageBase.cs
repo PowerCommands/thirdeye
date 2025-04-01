@@ -3,11 +3,10 @@ using PainKiller.ThirdEyeClient.Contracts;
 
 namespace PainKiller.ThirdEyeClient.BaseClasses;
 
-public class ObjectStorageBase<T, TItem> : StorageBase where T : IDataObjects<TItem>, new() where TItem : class, new()
+public class ObjectStorageBase<T, TItem>(string storagePath) : StorageBase where T : IDataObjects<TItem>, new() where TItem : class, new()
 {
-    private T _dataObject;
+    private T _dataObject = StorageService<T>.Service.GetObject(Path.Combine(storagePath, $"{typeof(T).Name}.json"));
 
-    public ObjectStorageBase() => _dataObject = StorageService<T>.Service.GetObject(Path.Combine(CorePath, $"{typeof(T).Name}.json"));
     public List<TItem> GetItems() => _dataObject.Items;
 
     public void SaveItems(List<TItem> items)
