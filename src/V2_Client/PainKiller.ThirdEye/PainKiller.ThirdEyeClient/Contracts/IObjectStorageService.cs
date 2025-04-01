@@ -4,7 +4,6 @@ namespace PainKiller.ThirdEyeClient.Contracts;
 
 public interface IObjectStorageService
 {
-    string StoragePath { get; }
     List<Team> GetTeams();
     List<Workspace> GetWorkspaces();
     List<Repository> GetRepositories();

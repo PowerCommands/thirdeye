@@ -48,11 +48,11 @@ public class RestoreCommand(string identifier) : ThirdEyeBaseCommando(identifier
             return;
         }
 
-        var sourceTargetInfo = new DirectoryInfo(Storage.StoragePath);
+        var sourceTargetInfo = new DirectoryInfo(Configuration.ThirdEye.BackupPath);
         var selectedBackup = DialogService.PathDialog("Enter output path", sourceTargetInfo.FullName);
         if (string.IsNullOrEmpty(selectedBackup)) return;
 
-        var destinationDir = Storage.StoragePath;
+        var destinationDir = Configuration.Core.RoamingDirectory;
         var confirmDeletion = DialogService.YesNoDialog($"This will delete the destination directory {destinationDir} and its content, continue?");
         if (!confirmDeletion) return;
 

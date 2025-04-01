@@ -10,7 +10,7 @@
         public const string SetupConfigurationFile = "setup.yaml";
         public const string EncryptionEnvironmentVariableName = "_encryptionManager";
         public const string UserNamePlaceholder = "%USERNAME%";
-        public const string RoamingDirectoryPlaceholder = "%ROAMING%";
+        public const string RoamingDirectoryPlaceholder = "$ROAMING$";
         public const string QueryPlaceholder = "$QUERY$";
         public const string DocsDirectoryName = "Docs";
 

@@ -1,11 +1,10 @@
 ﻿using PainKiller.ThirdEyeClient.BaseClasses;
-using PainKiller.ThirdEyeClient.Bootstrap;
 using PainKiller.ThirdEyeClient.Contracts;
 using PainKiller.ThirdEyeClient.Data;
 using PainKiller.ThirdEyeClient.DomainObjects;
 
 namespace PainKiller.ThirdEyeClient.Services;
-public class ObjectStorageService : IObjectStorageService
+public class ObjectStorageService : StorageBase, IObjectStorageService
 {
     private readonly ObjectStorageBase<TeamObjects, Team> _teamStorage;
     private readonly ObjectStorageBase<WorkspaceObjects, Workspace> _workspaceStorage;
@@ -15,38 +14,18 @@ public class ObjectStorageService : IObjectStorageService
     private readonly ObjectStorageBase<CveComponentObjects, ComponentCve> _cveStorage;
     private readonly ObjectStorageBase<FindingObjects, Finding> _findingsStorage;
 
-
-    private static Lazy<IObjectStorageService>? _lazy;
-    public static void Initialize(CommandPromptConfiguration configuration)
+    public static IObjectStorageService Service { get; } = new ObjectStorageService();
+    
+    private ObjectStorageService()
     {
-        if (_lazy != null) return;
-        _lazy = new Lazy<IObjectStorageService>(() => new ObjectStorageService(configuration));
+        _teamStorage = new ObjectStorageBase<TeamObjects, Team>();
+        _workspaceStorage = new ObjectStorageBase<WorkspaceObjects, Workspace>();
+        _repositoryStorage = new ObjectStorageBase<RepositoryObjects, Repository>();
+        _componentStorage = new ObjectStorageBase<ThirdPartyComponentObjects, ThirdPartyComponent>();
+        _projectStorage = new ObjectStorageBase<ProjectObjects, Project>();
+        _cveStorage = new ObjectStorageBase<CveComponentObjects, ComponentCve>();
+        _findingsStorage = new ObjectStorageBase<FindingObjects, Finding>();
     }
-    public static IObjectStorageService Service
-    {
-        get
-        {
-            if (_lazy == null)
-            {
-                throw new InvalidOperationException($"{nameof(CveStorageService)} has not been initialized yet.");
-            }
-            return _lazy.Value;
-        }
-    }
-    private ObjectStorageService(CommandPromptConfiguration configuration)
-    {
-        var storagePath = Path.Combine(configuration.Core.RoamingDirectory, configuration.ThirdEye.Host.Replace("https://","").Replace("http://","").Replace("/","").Replace("\\","_").Replace(":",""));
-        StoragePath = storagePath;
-        if(!Directory.Exists(storagePath)) Directory.CreateDirectory(storagePath);
-        _teamStorage = new ObjectStorageBase<TeamObjects, Team>(storagePath);
-        _workspaceStorage = new ObjectStorageBase<WorkspaceObjects, Workspace>(storagePath);
-        _repositoryStorage = new ObjectStorageBase<RepositoryObjects, Repository>(storagePath);
-        _componentStorage = new ObjectStorageBase<ThirdPartyComponentObjects, ThirdPartyComponent>(storagePath);
-        _projectStorage = new ObjectStorageBase<ProjectObjects, Project>(storagePath);
-        _cveStorage = new ObjectStorageBase<CveComponentObjects, ComponentCve>(storagePath);
-        _findingsStorage = new ObjectStorageBase<FindingObjects, Finding>(storagePath);
-    }
-    public string StoragePath { get; private set; }
     public List<Team> GetTeams() => _teamStorage.GetItems();
     public List<Workspace> GetWorkspaces() => _workspaceStorage.GetItems();
     public List<Repository> GetRepositories() => _repositoryStorage.GetItems();

@@ -18,20 +18,20 @@ namespace PainKiller.ThirdEyeClient.Commands
             Startup.ShowLogo(Configuration.Core);
 
             Writer.WriteHeadLine($"{Emo.Settings.Icon()} Configuration");
-            Writer.WriteDescription($"├── Host: ", Configuration.ThirdEye.Host);
-            Writer.WriteDescription($"├── Organization: ", Configuration.ThirdEye.OrganizationName);
-            foreach (var team in Configuration.ThirdEye.Teams) Writer.WriteDescription($"├──{Emo.Team.Icon()} Team", team);
-            foreach (var workspace in Configuration.ThirdEye.Workspaces) Writer.WriteDescription($"├──{Emo.Workspace.Icon()} Workspace", workspace);
-            foreach (var project in Configuration.ThirdEye.Ignores.Projects) Writer.WriteDescription($"├──{Emo.Filter.Icon()} Ignore project", project);
-            foreach (var repository in Configuration.ThirdEye.Ignores.Repositories) Writer.WriteDescription($"├──{Emo.Filter.Icon()} Ignore repo", repository);
+            Writer.WriteDescription($"├── Host: ", Configuration.ThirdEye.Host, noBorder: true);
+            Writer.WriteDescription($"├── Organization: ", Configuration.ThirdEye.OrganizationName, noBorder: true);
+            foreach (var team in Configuration.ThirdEye.Teams) Writer.WriteDescription($"├──{Emo.Team.Icon()} Team", team, noBorder: true);
+            foreach (var workspace in Configuration.ThirdEye.Workspaces) Writer.WriteDescription($"├──{Emo.Workspace.Icon()} Workspace", workspace, noBorder: true);
+            foreach (var project in Configuration.ThirdEye.Ignores.Projects) Writer.WriteDescription($"├──{Emo.Filter.Icon()} Ignore project", project, noBorder: true);
+            foreach (var repository in Configuration.ThirdEye.Ignores.Repositories) Writer.WriteDescription($"├──{Emo.Filter.Icon()} Ignore repo", repository, noBorder: true);
             
             Writer.WriteHeadLine($"{Emo.Bug.Icon()} NVD");
-            Writer.WriteDescription($"├── Url: ", Configuration.ThirdEye.Nvd.Url);
-            Writer.WriteDescription($"├── Path to updates: ", Configuration.ThirdEye.Nvd.PathToUpdates);
-            Writer.WriteDescription($"├── Path to backups: ", Configuration.ThirdEye.BackupPath);
-            Writer.WriteDescription($"├── DelayIntervalSeconds: ", $"{Configuration.ThirdEye.Nvd.DelayIntervalSeconds}");
-            Writer.WriteDescription($"├── PageSize: ", $"{Configuration.ThirdEye.Nvd.PageSize}");
-            Writer.WriteDescription($"├── TimeoutSeconds: ", $"{Configuration.ThirdEye.Nvd.TimeoutSeconds}");
+            Writer.WriteDescription($"├── Url: ", Configuration.ThirdEye.Nvd.Url, noBorder: true);
+            Writer.WriteDescription($"├── Path to updates: ", Configuration.ThirdEye.Nvd.PathToUpdates, noBorder: true);
+            Writer.WriteDescription($"├── Path to backups: ", Configuration.ThirdEye.BackupPath, noBorder: true);
+            Writer.WriteDescription($"├── DelayIntervalSeconds: ", $"{Configuration.ThirdEye.Nvd.DelayIntervalSeconds}", noBorder: true);
+            Writer.WriteDescription($"├── PageSize: ", $"{Configuration.ThirdEye.Nvd.PageSize}", noBorder: true);
+            Writer.WriteDescription($"├── TimeoutSeconds: ", $"{Configuration.ThirdEye.Nvd.TimeoutSeconds}", noBorder: true);
 
             var authorizationToken = Environment.GetEnvironmentVariable(Configuration.ThirdEye.AccessToken, EnvironmentVariableTarget.User);
             var gitToken = Environment.GetEnvironmentVariable(Configuration.ThirdEye.AccessTokenGithub, EnvironmentVariableTarget.User);

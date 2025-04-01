@@ -10,7 +10,6 @@ public interface ICveStorageService
     void AppendEntries(List<CveEntry> cves, IConsoleWriter writer);
     DateTime LastUpdated { get; }
     int LoadedCveCount { get; }
-    string PathToUpdates { get; }
     string CreateUpdateFile();
     CveUpdateFileInfo GetUpdateInfo();
     bool NeedsUpdate();

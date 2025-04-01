@@ -3,7 +3,7 @@ configuration:
   thirdEye:
     host: https://klingsten.visualstudio.com/
     organizationName: Klingsten
-    backupPath: $ROAMING$\backups
+    backupPath: $ROAMING$\ThirdEye\backups
     workspaces: 
     - "*"
     teams: 
@@ -18,7 +18,8 @@ configuration:
       timeoutSeconds: 120
       pageSize: 2000
       delayIntervalSeconds: 2
-      pathToUpdates: $ROAMING$\nvd\updates
+      path: $ROAMING$\ThirdEye\nvd
+      pathToUpdates: $ROAMING$\ThirdEye\nvd\updates
       latestCount: 100
   core:
     name: PainKiller.ThirdEye

@@ -5,14 +5,20 @@ using static Serilog.Log;
 namespace PainKiller.CommandPrompt.CoreLib.Core.Presentation;
 public class SpectreConsoleWriter : IConsoleWriter
 {
-    public void WriteDescription(string label, string text, bool writeToLog = true, Color? consoleColor = null, string scope = "")
+    public void WriteDescription(string label, string text, bool writeToLog = true, Color? consoleColor = null, bool noBorder = false, string scope = "")
     {
         var color = consoleColor ?? Color.Blue;
+        if (noBorder)
+        {
+            Write($"{label} : ", writeToLog, color);
+            WriteLine(text, writeToLog, Color.Magenta1);
+            return;
+        }
         var panel = new Panel(new Markup($"[{color}]{label}[/] : [grey]{text}[/]"))
         {
             Border = BoxBorder.Rounded,
             Padding = new Padding(1, 1),
-            Header = new PanelHeader("[green]Description[/]", Justify.Center)
+            Header = new PanelHeader("[magenta]Description[/]", Justify.Center)
         };
 
         AnsiConsole.Write(panel);

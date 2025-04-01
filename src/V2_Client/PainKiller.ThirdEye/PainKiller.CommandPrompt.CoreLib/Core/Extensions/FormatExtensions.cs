@@ -257,6 +257,6 @@ public static class FormatExtensions
         return new Guid(hash);
     }
     public const string UserNamePlaceholder = "$USERNAME$";
-    public const string RoamingDirectoryPlaceholder = "%ROAMING$";
+    public const string RoamingDirectoryPlaceholder = "$ROAMING$";
     public static string GetReplacedPlaceHolderPath(this string uriWithPlaceHolder) => uriWithPlaceHolder.Replace(RoamingDirectoryPlaceholder, $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\{nameof(CommandPrompt)}").Replace(UserNamePlaceholder, Environment.UserName, StringComparison.CurrentCultureIgnoreCase);
 }

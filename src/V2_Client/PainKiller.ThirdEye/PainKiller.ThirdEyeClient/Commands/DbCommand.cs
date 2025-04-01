@@ -15,6 +15,14 @@ namespace PainKiller.ThirdEyeClient.Commands;
                   examples: ["//Show db information", "db"])]
 public class DbCommand(string identifier) : ThirdEyeBaseCommando(identifier)
 {
+    public override void OnInitialized()
+    {
+        if (!Directory.Exists(Configuration.Core.RoamingDirectory)) Directory.CreateDirectory(Configuration.Core.RoamingDirectory);
+        if (!Directory.Exists(Configuration.ThirdEye.BackupPath)) Directory.CreateDirectory(Configuration.ThirdEye.BackupPath);
+        if (!Directory.Exists(Configuration.ThirdEye.Nvd.Path)) Directory.CreateDirectory(Configuration.ThirdEye.Nvd.Path);
+        if (!Directory.Exists(Configuration.ThirdEye.Nvd.PathToUpdates)) Directory.CreateDirectory(Configuration.ThirdEye.Nvd.PathToUpdates);
+    }
+
     public override RunResult Run(ICommandLineInput input)
     {
         Writer.Clear();

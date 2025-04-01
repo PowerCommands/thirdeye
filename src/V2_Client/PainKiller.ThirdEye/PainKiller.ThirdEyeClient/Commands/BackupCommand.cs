@@ -19,16 +19,16 @@ namespace PainKiller.ThirdEyeClient.Commands
         }
         private void Backup()
         {
-            var rootDirectory = Configuration.ThirdEye.BackupPath.GetReplacedPlaceHolderPath();
-            if (!Directory.Exists(rootDirectory)) Directory.CreateDirectory(rootDirectory);
+            var backupDirectory = Configuration.ThirdEye.BackupPath.GetReplacedPlaceHolderPath();
 
             var softwareSourceFileName = Path.Combine(Configuration.Core.RoamingDirectory, $"{nameof(SoftwareObjects)}.data");
-            var softwareDestinationFileName = Path.Combine(rootDirectory, $"{nameof(SoftwareObjects)}.data");
+            var softwareDestinationFileName = Path.Combine(backupDirectory, $"{nameof(SoftwareObjects)}.data");
             File.Copy(softwareSourceFileName, softwareDestinationFileName, true);
             Writer.WriteSuccessLine($"Software file {softwareSourceFileName.GetCompressedPath(50)} backed up to {softwareDestinationFileName.GetCompressedPath(50)}");
-            var sourceDir = Storage.StoragePath;
+            
+            var sourceDir = Configuration.Core.RoamingDirectory;
             var sourceDirectoryInfo = new DirectoryInfo(sourceDir);
-            var targetDir = Path.Combine(rootDirectory, sourceDirectoryInfo.Name.FormatFileTimestamp());
+            var targetDir = Path.Combine(backupDirectory, sourceDirectoryInfo.Name.FormatFileTimestamp());
             IOService.CopyFolder(sourceDir, targetDir);
             Writer.WriteSuccessLine($"Directory {sourceDir.GetCompressedPath(50)} has been copied up to {targetDir.GetCompressedPath(50)}");
         }

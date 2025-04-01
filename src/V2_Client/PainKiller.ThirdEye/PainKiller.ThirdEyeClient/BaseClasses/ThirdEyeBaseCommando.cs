@@ -19,15 +19,13 @@ public abstract class ThirdEyeBaseCommando(string identifier) : ConsoleCommandBa
         var accessToken = Configuration.Core.Modules.Security.DecryptSecret(gitHub ? Configuration.ThirdEye.AccessTokenGithub : Configuration.ThirdEye.AccessToken);
         var ignoreRepositories = config.Ignores.Repositories;
         var ignoreProjects = config.Ignores.Projects;
-        ObjectStorageService.Initialize(Configuration);
+        
         Storage = ObjectStorageService.Service;
         
         if(gitHostType == GitHostType.Ads) GitManager = new AdsManager(config.Host, accessToken, ignoreRepositories, ignoreProjects,Writer);
         else if (gitHostType == GitHostType.Github) GitManager = new GitHubManager(config.Host, accessToken, config.OrganizationName, ignoreRepositories, ignoreProjects, Writer);
         else GitManager = new LocalDirectoryGitManager(config.Host, Environment.MachineName, Writer);
-        
         PresentationManager = new PresentationManager(Writer);
-        CveStorageService.Initialize(Configuration);
         CveStorage = CveStorageService.Service;
     }
 
