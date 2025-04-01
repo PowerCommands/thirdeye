@@ -1,5 +1,6 @@
 ﻿using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
 using PainKiller.CommandPrompt.CoreLib.Core.DomainObjects;
+using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Modules.StorageModule.Services;
 using PainKiller.ThirdEyeClient.Bootstrap;
 using PainKiller.ThirdEyeClient.Contracts;
@@ -31,8 +32,8 @@ public class CveStorageService : ICveStorageService
     }
     private CveStorageService(CommandPromptConfiguration configuration)
     {
-        PathToUpdates = configuration.ThirdEye.Nvd.PathToUpdates.Replace("$ROAMING$", configuration.Core.RoamingDirectoryName);
-        _storagePath = Path.Combine(configuration.Core.RoamingDirectoryName, "nvd");
+        PathToUpdates = configuration.ThirdEye.Nvd.PathToUpdates.GetReplacedPlaceHolderPath();
+        _storagePath = Path.Combine(configuration.Core.Modules.Storage.ApplicationDataFolder.GetReplacedPlaceHolderPath(), "nvd");
         if (!Directory.Exists(_storagePath)) Directory.CreateDirectory(_storagePath);
     }
     private readonly string _storagePath;

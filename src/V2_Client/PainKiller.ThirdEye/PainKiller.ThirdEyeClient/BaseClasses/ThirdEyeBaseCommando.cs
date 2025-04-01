@@ -20,15 +20,15 @@ public abstract class ThirdEyeBaseCommando : ConsoleCommandBase<CommandPromptCon
         var accessToken = Configuration.Core.Modules.Security.DecryptSecret(gitHub ? Configuration.ThirdEye.AccessTokenGithub : Configuration.ThirdEye.AccessToken);
         var ignoreRepositories = config.Ignores.Repositories;
         var ignoreProjects = config.Ignores.Projects;
-        ObjectStorageService.Initialize(config.Host);
+        ObjectStorageService.Initialize(Configuration);
         Storage = ObjectStorageService.Service;
         
-        if(gitHostType == GitHostType.Ads) GitManager = new AdsManager(config.Host, accessToken, ignoreRepositories, ignoreProjects,this);
-        else if (gitHostType == GitHostType.Github) GitManager = new GitHubManager(config.Host, accessToken, config.OrganizationName, ignoreRepositories, ignoreProjects, this);
-        else GitManager = new LocalDirectoryGitManager(config.Host, Environment.MachineName, this);
+        if(gitHostType == GitHostType.Ads) GitManager = new AdsManager(config.Host, accessToken, ignoreRepositories, ignoreProjects,Writer);
+        else if (gitHostType == GitHostType.Github) GitManager = new GitHubManager(config.Host, accessToken, config.OrganizationName, ignoreRepositories, ignoreProjects, Writer);
+        else GitManager = new LocalDirectoryGitManager(config.Host, Environment.MachineName, Writer);
         
         PresentationManager = new PresentationManager(Writer);
-        CveStorageService.Initialize(config.Nvd.PathToUpdates);
+        CveStorageService.Initialize(Configuration);
         CveStorage = CveStorageService.Service;
     }
     protected ICveStorageService CveStorage { get; init; }

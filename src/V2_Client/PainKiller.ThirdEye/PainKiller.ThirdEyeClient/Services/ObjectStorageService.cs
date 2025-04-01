@@ -1,4 +1,5 @@
 ﻿using PainKiller.ThirdEyeClient.BaseClasses;
+using PainKiller.ThirdEyeClient.Bootstrap;
 using PainKiller.ThirdEyeClient.Contracts;
 using PainKiller.ThirdEyeClient.Data;
 using PainKiller.ThirdEyeClient.DomainObjects;
@@ -16,10 +17,10 @@ public class ObjectStorageService : IObjectStorageService
 
 
     private static Lazy<IObjectStorageService>? _lazy;
-    public static void Initialize(string host)
+    public static void Initialize(CommandPromptConfiguration configuration)
     {
         if (_lazy != null) return;
-        _lazy = new Lazy<IObjectStorageService>(() => new ObjectStorageService(host));
+        _lazy = new Lazy<IObjectStorageService>(() => new ObjectStorageService(configuration));
     }
     public static IObjectStorageService Service
     {
@@ -32,9 +33,9 @@ public class ObjectStorageService : IObjectStorageService
             return _lazy.Value;
         }
     }
-    private ObjectStorageService(string host)
+    private ObjectStorageService(CommandPromptConfiguration configuration)
     {
-        var storagePath = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, host.Replace("https://","").Replace("http://","").Replace("/","").Replace("\\","_").Replace(":",""));
+        var storagePath = Path.Combine(configuration.Core.RoamingDirectory, configuration.ThirdEye.Host.Replace("https://","").Replace("http://","").Replace("/","").Replace("\\","_").Replace(":",""));
         StoragePath = storagePath;
         if(!Directory.Exists(storagePath)) Directory.CreateDirectory(storagePath);
         _teamStorage = new ObjectStorageBase<TeamObjects, Team>(storagePath);

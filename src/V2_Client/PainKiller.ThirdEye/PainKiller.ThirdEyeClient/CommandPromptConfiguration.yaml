@@ -9,7 +9,7 @@ configuration:
     showLogo: true
     suggestions: 
     - exit
-    roamingDirectoryName: CommandPrompt
+    roamingDirectoryName: ThirdEye
     modules:
       security:
         secrets:
@@ -17,7 +17,7 @@ configuration:
           options:
             target: User
       storage:
-        applicationDataFolder: PainKiller.ThirdEye
+        applicationDataFolder: $ROAMING$
         backupPath: backup
       ollama:
         baseAddress: localhost

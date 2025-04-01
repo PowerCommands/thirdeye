@@ -22,7 +22,7 @@ public class AnalyzeSoftwareWorkflow(IConsoleWriter writer, CommandPromptConfigu
     public override List<ComponentCve> GetVulnerableComponents(Repository? repository, string fileName = "")
     {
         var software = StorageService<SoftwareObjects>.Service.GetObject().Items.Select(c => new ThirdPartyComponent { Name = c.Name, Version = c.Version }).ToList();
-        var analyzer = new CveAnalyzeManager(writer);
+        var analyzer = new CveAnalyzeManager(writer, configuration);
         var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
         
         var components = string.IsNullOrEmpty(fileName) ?  analyzer.GetVulnerabilities(CveStorageService.Service.GetCveEntries(), software, threshold) : analyzer.GetVulnerabilities(fileName);

@@ -11,7 +11,7 @@ public class StorageService<T> : IStorageService<T> where T : new()
     private StorageService()
     {
         var configuration = ConfigurationService.Service.GetFlexible<ApplicationConfiguration>(Path.Combine(AppContext.BaseDirectory, "CommandPromptConfiguration.yaml"));
-        _applicationDataPath = Path.Combine(ApplicationConfiguration.CoreApplicationDataPath, configuration.Configuration.Core.Modules.Storage.ApplicationDataFolder);
+        _applicationDataPath = configuration.Configuration.Core.Modules.Storage.ApplicationDataFolder;
         _backupPath = configuration.Configuration.Core.Modules.Storage.BackupPath;
     }
     public static IStorageService<T> Service { get; } = new StorageService<T>();

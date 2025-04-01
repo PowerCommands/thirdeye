@@ -2,6 +2,7 @@
 using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
 using PainKiller.CommandPrompt.CoreLib.Core.Presentation;
 using PainKiller.CommandPrompt.CoreLib.Modules.StorageModule.Services;
+using PainKiller.ThirdEyeClient.Bootstrap;
 using PainKiller.ThirdEyeClient.Data;
 using PainKiller.ThirdEyeClient.DomainObjects;
 using PainKiller.ThirdEyeClient.DomainObjects.Nvd;
@@ -10,15 +11,16 @@ using PainKiller.ThirdEyeClient.Extensions;
 
 namespace PainKiller.ThirdEyeClient.Managers;
 
-public class CveAnalyzeManager(IConsoleWriter writer)
+public class CveAnalyzeManager(IConsoleWriter writer, CommandPromptConfiguration configuration)
 {
     public List<ComponentCve> GetVulnerabilities(List<CveEntry> cveEntries, List<ThirdPartyComponent> components, CvssSeverity threshold)
     {
-        var cacheFile = Path.Combine(ConfigurationGlobals.ApplicationDataFolder, $"{components.GenerateSignature(threshold)}.json");
+        var dataFolder = configuration.Core.RoamingDirectory;
+        var cacheFile = Path.Combine(dataFolder, $"{components.GenerateSignature(threshold)}.json");
         if (File.Exists(cacheFile))
         {
             var useCache = DialogService.YesNoDialog("This analyze has been runned before, would you like to use that result?");
-            if(useCache) return StorageService<CveComponentObjects>.Service.GetObject(Path.Combine(ConfigurationGlobals.ApplicationDataFolder, $"{components.GenerateSignature(threshold)}.json")).Items;
+            if(useCache) return StorageService<CveComponentObjects>.Service.GetObject(Path.Combine(dataFolder, $"{components.GenerateSignature(threshold)}.json")).Items;
             else File.Delete(cacheFile);
         }
         var vulnerableComponents = new ConcurrentBag<ComponentCve>();
@@ -27,7 +29,7 @@ public class CveAnalyzeManager(IConsoleWriter writer)
 
         Parallel.ForEach(components, component =>
         {
-            writer.WriteCodeExample("Analyze", $"{component.Name} {component.Version}");
+            writer.WriteDescription("Analyze", $"{component.Name} {component.Version}");
 
             var entries = cveEntries.Where(cv => cv.IsAffectedProduct(component.Name, component.Version)).ToList();
             if (entries.Count > 0)
@@ -48,7 +50,7 @@ public class CveAnalyzeManager(IConsoleWriter writer)
         Console.BackgroundColor = bColor;
         var retVal = vulnerableComponents.OrderByDescending(c => c.MaxCveEntry).ThenBy(c => c.VersionOrder).ToList();
         var storeObjects = new CveComponentObjects { Items = retVal, LastUpdated = DateTime.Now };
-        StorageService<CveComponentObjects>.Service.StoreObject(storeObjects, Path.Combine(ConfigurationGlobals.ApplicationDataFolder, $"{components.GenerateSignature(threshold)}.json"));
+        StorageService<CveComponentObjects>.Service.StoreObject(storeObjects, Path.Combine(dataFolder, $"{components.GenerateSignature(threshold)}.json"));
         return retVal;
     }
     public List<ComponentCve> GetVulnerabilities(string fileName) => StorageService<CveComponentObjects>.Service.GetObject(fileName).Items;

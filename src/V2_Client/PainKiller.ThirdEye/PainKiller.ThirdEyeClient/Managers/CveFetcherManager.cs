@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
+using PainKiller.CommandPrompt.CoreLib.Logging.Services;
 using PainKiller.ThirdEyeClient.Bootstrap.Configuration;
 using PainKiller.ThirdEyeClient.Contracts;
 using PainKiller.ThirdEyeClient.DomainObjects.Nvd;
@@ -13,6 +14,7 @@ public class CveFetcherManager(ICveStorageService storage, NvdConfiguration conf
 {
     private readonly HttpClient _client = new(){Timeout = TimeSpan.FromSeconds(configuration.TimeoutSeconds)};
     private readonly string _baseUrl = configuration.Url;
+    private readonly ILogger<CveFetcherManager> _logger = LoggerProvider.CreateLogger<CveFetcherManager>();
 
     public async Task<List<CveEntry>> FetchAllCvesAsync()
     {
@@ -36,7 +38,7 @@ public class CveFetcherManager(ICveStorageService storage, NvdConfiguration conf
 
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    writer.WriteFailureLine("API returned 403 Forbidden. Waiting 1 minute before retry...");
+                    writer.WriteError("API returned 403 Forbidden. Waiting 1 minute before retry...");
                     await Task.Delay(60000); // Wait one minute before retrying
                     continue;
                 }
@@ -59,7 +61,7 @@ public class CveFetcherManager(ICveStorageService storage, NvdConfiguration conf
             }
             catch (Exception ex)
             {
-                writer.WriteFailureLine($"Error fetching CVEs: {ex.Message}");
+                writer.WriteError($"Error fetching CVEs: {ex.Message}");
                 break;
             }
             await Task.Delay(configuration.DelayIntervalSeconds); // Protects against rate limiting
@@ -74,7 +76,7 @@ public class CveFetcherManager(ICveStorageService storage, NvdConfiguration conf
         {
             if (v?.cve == null)
             {
-                writer.WriteFailureLine("Skipped a CVE entry due to missing data.");
+                writer.WriteError("Skipped a CVE entry due to missing data.");
                 continue;
             }
 
@@ -98,7 +100,7 @@ public class CveFetcherManager(ICveStorageService storage, NvdConfiguration conf
             }
             catch (Exception ex)
             {
-                writer.WriteFailureLine($"Error processing CVE {v.cve.id}: {ex.Message}");
+                writer.WriteError($"Error processing CVE {v.cve.id}: {ex.Message}");
             }
         }
         storage.AppendEntries(result, writer);
@@ -111,7 +113,7 @@ public class CveFetcherManager(ICveStorageService storage, NvdConfiguration conf
         var cache = CveCacheObjectsService.Service.Get(cveId);
         if (cache != null)
         {
-            PowerCommandServices.Service.Logger.Log(LogLevel.Information, $"CVE {cveId} fetched from local cache.");
+            _logger.LogError($"CVE {cveId} fetched from local cache.");
             return cache;
         }
         var url = $"{_baseUrl}?cveId={cveId}";

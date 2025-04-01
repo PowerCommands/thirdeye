@@ -1,12 +1,14 @@
 ﻿using System.Text.Json;
 using System.Xml;
 using Microsoft.Extensions.Logging;
+using PainKiller.CommandPrompt.CoreLib.Logging.Services;
 using PainKiller.ThirdEyeClient.DomainObjects;
 
 namespace PainKiller.ThirdEyeClient.Managers;
 
 public static class ProjectManager
 {
+    private static readonly ILogger<Program> _logger = LoggerProvider.CreateLogger<Program>();
     public static List<Project> IdentifyProjects(List<Item> files)
     {
         try
@@ -16,7 +18,7 @@ public static class ProjectManager
         }
         catch(Exception ex)
         {
-            PowerCommandServices.Service.Logger.Log(LogLevel.Error, $"{nameof(ProjectManager)} {nameof(IdentifyProjects)} {ex.Message}");
+            _logger.LogError($"{nameof(ProjectManager)} {nameof(IdentifyProjects)} {ex.Message}");
         }
         return [];
     }
@@ -43,7 +45,7 @@ public static class ProjectManager
         }
         catch(Exception ex)
         {
-            PowerCommandServices.Service.Logger.Log(LogLevel.Error, $"{nameof(ProjectManager)} {nameof(ExtractVersion)} {ex.Message}");
+            _logger.LogError($"{nameof(ProjectManager)} {nameof(ExtractVersion)} {ex.Message}");
         }
         return "-";
     }
@@ -62,7 +64,7 @@ public static class ProjectManager
         }
         catch (Exception ex)
         {
-            PowerCommandServices.Service.Logger.Log(LogLevel.Error, $"{nameof(ProjectManager)} {nameof(ExtractFramework)} {ex.Message}");
+            _logger.LogError($"{nameof(ProjectManager)} {nameof(ExtractFramework)} {ex.Message}");
         }
         return "-";
     }
@@ -83,7 +85,7 @@ public static class ProjectManager
         }
         catch (Exception ex)
         {
-            PowerCommandServices.Service.Logger.Log(LogLevel.Error, $"{nameof(ProjectManager)} {nameof(ExtractSdk)} {ex.Message}");
+            _logger.LogError($"{nameof(ProjectManager)} {nameof(ExtractSdk)} {ex.Message}");
         }
         return "-";
     }
@@ -109,7 +111,7 @@ public static class ProjectManager
         }
         catch (Exception ex)
         {
-            PowerCommandServices.Service.Logger.Log(LogLevel.Error, $"{nameof(ProjectManager)} {nameof(DetectLanguage)} {ex.Message}");
+            _logger.LogError($"{nameof(ProjectManager)} {nameof(DetectLanguage)} {ex.Message}");
         }
         return "-";
     }

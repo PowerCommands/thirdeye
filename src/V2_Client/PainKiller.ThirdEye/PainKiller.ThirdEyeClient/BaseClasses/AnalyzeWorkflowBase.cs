@@ -60,7 +60,7 @@ public class AnalyzeWorkflowBase(IConsoleWriter writer, CommandPromptConfigurati
     {
         var filteredThirdPartyComponents = repository == null ? ObjectStorageService.Service.GetThirdPartyComponents() : FilterService.Service.GetThirdPartyComponents(repository).ToList();
         if (!string.IsNullOrEmpty(name)) filteredThirdPartyComponents = filteredThirdPartyComponents.Where(c => c.Name.ToLower().Contains(name.ToLower())).ToList();
-        var analyzer = new CveAnalyzeManager(writer);
+        var analyzer = new CveAnalyzeManager(writer, configuration);
         var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
         var components = analyzer.GetVulnerabilities(CveStorageService.Service.GetCveEntries(), filteredThirdPartyComponents, threshold);
         VulnerableComponents = PresentationManager.DisplayVulnerableComponents(components);

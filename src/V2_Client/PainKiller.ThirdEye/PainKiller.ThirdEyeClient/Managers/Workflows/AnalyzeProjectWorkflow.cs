@@ -32,7 +32,7 @@ public class AnalyzeProjectWorkflow(IConsoleWriter writer2, CommandPromptConfigu
     public List<ComponentCve> GetVulnerableComponents(string projectName = "")
     {
         var filteredThirdPartyComponents = FilterService.Service.GetThirdPartyComponents(projectName).ToList();
-        var analyzer = new CveAnalyzeManager(writer2);
+        var analyzer = new CveAnalyzeManager(writer2, configuration);
         var threshold = ToolbarService.NavigateToolbar<CvssSeverity>();
         var components = analyzer.GetVulnerabilities(CveStorageService.Service.GetCveEntries(), filteredThirdPartyComponents, threshold);
         VulnerableComponents = PresentationManager.DisplayVulnerableComponents(components);
