@@ -1,6 +1,25 @@
 version: 1.0
 configuration:
-  custom:    
+  thirdEye:
+    host: https://klingsten.visualstudio.com/
+    organizationName: Klingsten
+    backupPath: $ROAMING$\backups
+    workspaces: 
+    - "*"
+    teams: 
+    - "*"     
+    ignores:
+      repositories:
+      - "GlitchFinder"
+      projects:
+      - "*"
+    nvd:
+      url: https://services.nvd.nist.gov/rest/json/cves/2.0
+      timeoutSeconds: 120
+      pageSize: 2000
+      delayIntervalSeconds: 2
+      pathToUpdates: $ROAMING$\nvd\updates
+      latestCount: 100
   core:
     name: PainKiller.ThirdEye
     version: 1.0
@@ -9,7 +28,7 @@ configuration:
     showLogo: true
     suggestions: 
     - exit
-    roamingDirectoryName: ThirdEye
+    roamingDirectory: ThirdEye
     modules:
       security:
         secrets:

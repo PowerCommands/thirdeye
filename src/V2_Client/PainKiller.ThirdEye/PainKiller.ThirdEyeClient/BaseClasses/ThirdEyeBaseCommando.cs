@@ -9,10 +9,9 @@ using PainKiller.ThirdEyeClient.Managers;
 using PainKiller.ThirdEyeClient.Services;
 
 namespace PainKiller.ThirdEyeClient.BaseClasses;
-public abstract class ThirdEyeBaseCommando : ConsoleCommandBase<CommandPromptConfiguration>
+public abstract class ThirdEyeBaseCommando(string identifier) : ConsoleCommandBase<CommandPromptConfiguration>(identifier)
 {
-    private readonly List<Repository> _analyzedRepositories = [];
-    protected ThirdEyeBaseCommando(string identifier) : base(identifier)
+    public override void OnInitialized()
     {
         var config = Configuration.ThirdEye;
         var gitHostType = config.Host.GetGitHostType();
@@ -31,13 +30,14 @@ public abstract class ThirdEyeBaseCommando : ConsoleCommandBase<CommandPromptCon
         CveStorageService.Initialize(Configuration);
         CveStorage = CveStorageService.Service;
     }
-    protected ICveStorageService CveStorage { get; init; }
-    protected IObjectStorageService Storage { get; }
-    protected IGitManager GitManager { get; }
+
+    protected ICveStorageService CveStorage { get; private set; } = null!;
+    protected IObjectStorageService Storage { get; private set; } = null!;
+    protected IGitManager GitManager { get; private set; } = null!;
     protected IFileAnalyzeManager AnalyzeManager { get; } = new FileAnalyzeManager();
-    protected PresentationManager PresentationManager { get; }
-    
-    
+    protected PresentationManager PresentationManager { get; private set; } = null!;
+
+
     protected void ProjectSearch(ThirdPartyComponent component, bool detailedSearch)
     {
         var projects = Storage.GetProjects().Where(dp => dp.Components.Any(c => c.Name == component.Name && (c.Version == component.Version || !detailedSearch))).ToList();
