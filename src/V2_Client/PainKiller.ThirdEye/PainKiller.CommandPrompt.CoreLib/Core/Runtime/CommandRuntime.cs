@@ -1,6 +1,5 @@
 ﻿namespace PainKiller.CommandPrompt.CoreLib.Core.Runtime;
-
-public class CommandRuntime
+public class CommandRuntime : ICommandRuntime
 {
     private readonly Dictionary<string, IConsoleCommand> _commands;
     private readonly CommandExecutor _executor;

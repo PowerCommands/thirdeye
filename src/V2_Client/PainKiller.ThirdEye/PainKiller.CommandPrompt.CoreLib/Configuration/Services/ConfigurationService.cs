@@ -2,9 +2,7 @@
 using PainKiller.CommandPrompt.CoreLib.Configuration.Extensions;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-
 namespace PainKiller.CommandPrompt.CoreLib.Configuration.Services;
-
 public class ConfigurationService : IConfigurationService
     {
         private ConfigurationService() { }
@@ -39,11 +37,10 @@ public class ConfigurationService : IConfigurationService
 
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                .IgnoreUnmatchedProperties() // Viktigt: Ignorera okända fält
+                .IgnoreUnmatchedProperties()
                 .Build();
             try
             {
-                // Försök att deserialisera direkt till den utökade klassen
                 var config = deserializer.Deserialize<YamlContainer<T>>(yamlContent);
                 return config;
             }
@@ -53,7 +50,6 @@ public class ConfigurationService : IConfigurationService
 
                 try
                 {
-                    // Försök igen med basklassen och ignorera okända fält
                     var baseDeserializer = new DeserializerBuilder()
                         .WithNamingConvention(CamelCaseNamingConvention.Instance)
                         .IgnoreUnmatchedProperties()
@@ -100,7 +96,6 @@ public class ConfigurationService : IConfigurationService
         /// Return a configuration file stored in the AppData/Roaming/PowerCommands directory, if the file does not exist it will be created.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="defaultIfMissing"></param>
         /// <param name="inputFileName"></param>
         /// <returns></returns>
         public YamlContainer<T> GetAppDataConfiguration<T>(string inputFileName = "") where T : new()

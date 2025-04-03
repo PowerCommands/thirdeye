@@ -20,7 +20,8 @@ public static class Startup
         
         var logger = LoggerProvider.CreateLogger<Program>();
         logger.LogInformation($"{config.Core.Name} started, configuration read and logging initialized.");
-        
+
+        Console.CursorTop = config.Core.Modules.InfoPanel.Height;
         ShowLogo(config.Core);
         EventBusService.Service.Subscribe<SetupRequiredEventArgs>(args =>
         {
@@ -29,7 +30,8 @@ public static class Startup
         });
         var commands = CommandDiscoveryService.DiscoverCommands(config);
         foreach (var consoleCommand in commands) consoleCommand.OnInitialized();
-        
+        Console.CursorTop = config.Core.Modules.InfoPanel.Height + 10;
+
         var suggestions = new List<string>();
         suggestions.AddRange(config.Core.Suggestions);
         suggestions.AddRange(commands.Select(c => c.Identifier).ToArray());

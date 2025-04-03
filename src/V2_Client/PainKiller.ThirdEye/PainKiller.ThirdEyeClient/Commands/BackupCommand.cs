@@ -26,7 +26,7 @@ namespace PainKiller.ThirdEyeClient.Commands
             File.Copy(softwareSourceFileName, softwareDestinationFileName, true);
             Writer.WriteSuccessLine($"Software file {softwareSourceFileName.GetCompressedPath(50)} backed up to {softwareDestinationFileName.GetCompressedPath(50)}");
             
-            var sourceDir = Configuration.Core.RoamingDirectory;
+            var sourceDir = Storage.StoragePath;
             var sourceDirectoryInfo = new DirectoryInfo(sourceDir);
             var targetDir = Path.Combine(backupDirectory, sourceDirectoryInfo.Name.FormatFileTimestamp());
             IOService.CopyFolder(sourceDir, targetDir);

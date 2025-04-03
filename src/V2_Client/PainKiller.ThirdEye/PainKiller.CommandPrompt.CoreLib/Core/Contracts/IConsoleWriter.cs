@@ -16,4 +16,5 @@ public interface IConsoleWriter
     void WriteRowWithColor(int top, ConsoleColor foregroundColor, ConsoleColor backgroundColor, string rowContent);
     void Clear();
     void ClearRow(int top);
+    void SetMargin(int reservedLines);
 }

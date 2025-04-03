@@ -2,7 +2,7 @@
 
 namespace PainKiller.CommandPrompt.CoreLib.Core.Runtime;
 
-public class InputParser
+public class InputParser : IInputParser
 {
     public ICommandLineInput Parse(string rawInput)
     {

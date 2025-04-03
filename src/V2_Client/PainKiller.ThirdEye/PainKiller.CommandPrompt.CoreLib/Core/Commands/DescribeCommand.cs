@@ -29,17 +29,19 @@ public class DescribeCommand(string identifier) : ConsoleCommandBase<Application
             .AddColumn("[grey]Field[/]")
             .AddColumn("[grey]Values[/]");
 
-        void AddRow(string label, IEnumerable<string> values)
+        void AddRow(string label, IEnumerable<string> values, bool prefixWithDash = false)
         {
             var content = values.Any()
-                ? string.Join("\n", values.Select(v => $"- {Markup.Escape(v)}"))
+                ? string.Join("\n", values.Select(v => v.StartsWith("//")
+                    ? $"[green]{Markup.Escape(v)}[/]"
+                    : (prefixWithDash ? $"--{Markup.Escape(v)}" : Markup.Escape(v))))
                 : "[grey](none)[/]";
             table.AddRow($"[bold]{label}[/]", content);
         }
 
         table.AddEmptyRow();
         AddRow("Arguments", attr.Arguments);
-        AddRow("Options", attr.Options);
+        AddRow("Options", attr.Options, prefixWithDash: true);  // Options alltid med "--" framför
         AddRow("Quotes", attr.Quotes);
         AddRow("Examples", attr.Examples);
         AddRow("Suggestions", attr.Suggestions);

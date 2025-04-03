@@ -2,7 +2,7 @@
 
 public abstract class ConsoleCommandBase<TConfig>(string identifier) : IConsoleCommand
 {
-    protected IConsoleWriter Writer { get; } = new SpectreConsoleWriter();
+    protected IConsoleWriter Writer => ConsoleService.Writer;
     public string Identifier { get; } = identifier;
     public TConfig Configuration { get; private set; } = default!;
     protected virtual void SetConfiguration(TConfig config) => Configuration = config;

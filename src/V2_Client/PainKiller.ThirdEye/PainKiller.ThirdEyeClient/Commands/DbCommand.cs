@@ -4,9 +4,12 @@ using PainKiller.CommandPrompt.CoreLib.Core.Enums;
 using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Core.Presentation;
 using PainKiller.CommandPrompt.CoreLib.Metadata.Attributes;
+using PainKiller.CommandPrompt.CoreLib.Modules.InfoPanelModule.DomainObjects;
+using PainKiller.CommandPrompt.CoreLib.Modules.InfoPanelModule.Services;
 using PainKiller.CommandPrompt.CoreLib.Modules.ShellModule.Services;
 using PainKiller.ThirdEyeClient.BaseClasses;
 using PainKiller.ThirdEyeClient.Bootstrap;
+using Spectre.Console;
 
 namespace PainKiller.ThirdEyeClient.Commands;
 
@@ -21,6 +24,7 @@ public class DbCommand(string identifier) : ThirdEyeBaseCommando(identifier)
         if (!Directory.Exists(Configuration.ThirdEye.BackupPath)) Directory.CreateDirectory(Configuration.ThirdEye.BackupPath);
         if (!Directory.Exists(Configuration.ThirdEye.Nvd.Path)) Directory.CreateDirectory(Configuration.ThirdEye.Nvd.Path);
         if (!Directory.Exists(Configuration.ThirdEye.Nvd.PathToUpdates)) Directory.CreateDirectory(Configuration.ThirdEye.Nvd.PathToUpdates);
+        InfoPanelService.Instance.RegisterContent(new DefaultInfoPanel(new DefaultInfoPanelContent()));
     }
 
     public override RunResult Run(ICommandLineInput input)

@@ -4,7 +4,7 @@ using PainKiller.ReadLine.Contracts;
 
 namespace PainKiller.CommandPrompt.CoreLib.Core.Runtime;
 
-public class CommandLoop(CommandRuntime runtime, IUserInputReader inputReader, CoreConfiguration config)
+public class CommandLoop(ICommandRuntime runtime, IUserInputReader inputReader, CoreConfiguration config) : ICommandLoop
 {
     private readonly ILogger<CommandLoop> _logger = LoggerProvider.CreateLogger<CommandLoop>();
     public void Start()

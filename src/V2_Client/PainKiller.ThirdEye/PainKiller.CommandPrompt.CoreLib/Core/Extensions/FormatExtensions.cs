@@ -174,6 +174,7 @@ public static class FormatExtensions
             // Database files
             { ".db", "Database file" },
             { ".sql", "SQL database file" },
+            { ".data", "Object storage file" },
             { ".sqlite", "SQLite database file" },
             { ".mdb", "Microsoft Access database" },
 
@@ -256,6 +257,7 @@ public static class FormatExtensions
         var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
         return new Guid(hash);
     }
+
     public const string UserNamePlaceholder = "$USERNAME$";
     public const string RoamingDirectoryPlaceholder = "$ROAMING$";
     public static string GetReplacedPlaceHolderPath(this string uriWithPlaceHolder) => uriWithPlaceHolder.Replace(RoamingDirectoryPlaceholder, $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\{nameof(CommandPrompt)}").Replace(UserNamePlaceholder, Environment.UserName, StringComparison.CurrentCultureIgnoreCase);

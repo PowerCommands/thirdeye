@@ -27,5 +27,6 @@ public interface IObjectStorageService
     int InsertProjects(IEnumerable<Project> projects);
     void InsertOrUpdateCve(ComponentCve componentCve);
     void InsertOrUpdateFinding(Finding finding);
+    string StoragePath { get; }
     void ReLoad();
 }

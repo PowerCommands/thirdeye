@@ -1,7 +1,6 @@
 ﻿using Spectre.Console;
 
 namespace PainKiller.CommandPrompt.CoreLib.Core.Presentation;
-
 public static class InteractiveFilter<T>
 {
     public static void Run(IEnumerable<T> items, Func<T, string, bool> filter, Action<IEnumerable<T>, int> display, Action<T>? onSelected = null)
@@ -13,16 +12,13 @@ public static class InteractiveFilter<T>
 
         while (true)
         {
-            AnsiConsole.Clear();
+            ConsoleService.Writer.Clear();
+            AnsiConsole.MarkupLine("[grey]Use [italic]Up/Down Arrows[/] to navigate, [italic]Enter[/] to select, [italic]Escape[/] to exit, [italic]Backspace[/] to delete filter, [italic]Any character[/] to filter.[/]");
             display(filtered, selectedIndex);
 
-            if (!string.IsNullOrWhiteSpace(filterString))
-            {
-                AnsiConsole.MarkupLine($"\n[grey]Filter:[/] [italic]{Markup.Escape(filterString)}[/]");
-            }
+            if (!string.IsNullOrWhiteSpace(filterString)) AnsiConsole.MarkupLine($"\n[grey]Filter:[/] [italic]{Markup.Escape(filterString)}[/]");
 
             var key = Console.ReadKey(intercept: true);
-
             switch (key.Key)
             {
                 case ConsoleKey.Enter:
@@ -66,6 +62,7 @@ public static class InteractiveFilter<T>
                     }
                     break;
             }
+
             if (selectedIndex >= filtered.Count)
                 selectedIndex = Math.Max(0, filtered.Count - 1);
         }

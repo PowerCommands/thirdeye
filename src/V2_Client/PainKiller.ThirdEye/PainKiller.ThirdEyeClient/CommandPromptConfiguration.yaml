@@ -52,6 +52,10 @@ configuration:
         baseAddress: localhost
         port: 11434
         model: gemma3:latest
+      infoPanel:
+        enabled: true
+        height: 2
+        updateIntervalSeconds: 1
   log:
     fileName: commandprompt.log
     filePath: logs
