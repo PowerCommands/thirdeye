@@ -23,44 +23,41 @@ public class ComponentCommand(string identifier) : ThirdEyeBaseCommando(identifi
 
         var allComponents = Storage.GetThirdPartyComponents();
 
-        var filteredComponents = InteractiveFilterMultiSelect<ThirdPartyComponent>.Run(
+        InteractiveFilter<ThirdPartyComponent>.Run(
             allComponents,
             (component, filterString) => component.Name.ToLower().Contains(filterString) ||
                                          component.Version.ToLower().Contains(filterString) ||
                                          component.Path.ToLower().Contains(filterString),
-            (filtered, selectedIndex) =>
+            (components, selectedIndex) =>
             {
                 Console.Clear();
                 Console.WriteLine("Choose a component to view details (use arrow keys to navigate, Enter to select):");
-                var thirdPartyComponents = filtered.ToList();
+                var thirdPartyComponents = components.ToList();
                 for (int i = 0; i < thirdPartyComponents.Count; i++)
                 {
                     var prefix = i == selectedIndex ? "> " : "  ";
                     Console.WriteLine($"{prefix}{thirdPartyComponents[i].Name} {thirdPartyComponents[i].Version}");
                 }
+            },
+            (selectedComponent) =>
+            {
+                if (selectedComponent != null)
+                {
+                    Writer.WriteLine();
+                    Writer.WriteDescription(selectedComponent.Name, selectedComponent.Version);
+                    var analyzeComponent = DialogService.YesNoDialog("Do you want to analyze this component?");
+                    if (analyzeComponent)
+                    {
+                        var workflow = new AnalyzeComponentWorkflow(this.Writer, Configuration, selectedComponent);
+                        workflow.Run(filter);
+                    }
+                    else
+                    {
+                        ProjectSearch(selectedComponent, detailedSearch: true);
+                    }
+                }
             }
         );
-
-        if (filteredComponents.Count == 0)
-        {
-            Console.WriteLine("No matching components found.");
-            return Ok();
-        }
-
-        var selectedComponent = filteredComponents.FirstOrDefault();
-        if (selectedComponent != null)
-        {
-            Writer.WriteLine();
-            Writer.WriteDescription(selectedComponent.Name, selectedComponent.Version);
-            var analyzeComponent = DialogService.YesNoDialog("Do you want to analyze this component?");
-            if (analyzeComponent)
-            {
-                var workflow = new AnalyzeComponentWorkflow(this.Writer, Configuration, selectedComponent);
-                workflow.Run(filter);
-                return Ok();
-            }
-            ProjectSearch(selectedComponent, detailedSearch: true);
-        }
 
         return Ok();
     }
