@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using PainKiller.CommandPrompt.CoreLib.Core.BaseClasses;
+using PainKiller.CommandPrompt.CoreLib.Core.Events;
 using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Metadata.Attributes;
 using PainKiller.CommandPrompt.CoreLib.Modules.ShellModule.DomainObjects;
@@ -17,7 +18,7 @@ namespace PainKiller.CommandPrompt.CoreLib.Modules.ShellModule.Commands;
                  "- 'size > 100' → larger than 100 MB\n" +
                  "- 'type = image' → jpg, png, gif, etc\n" +
                  "- 'updated < 30d' → modified in last 30 days",
-    options: ["browse", "drive-info"],
+    options: ["browse", "drive-info", "delete"],
     arguments: ["Path to directory (optional)"],
     examples:
     [
@@ -27,8 +28,10 @@ namespace PainKiller.CommandPrompt.CoreLib.Modules.ShellModule.Commands;
         "//Enter directory and filter", "dir C:\\temp"
     ]
 )]
-public class DirCommand(string identifier) : ConsoleCommandBase<ApplicationConfiguration>(identifier)
+public class DirCommand : ConsoleCommandBase<ApplicationConfiguration>
 {
+    private void OnWorkingDirectoryChanged(WorkingDirectoryChangedEventArgs e) => UpdateSuggestions(e.NewWorkingDirectory);
+    public DirCommand(string identifier) : base(identifier) => EventBusService.Service.Subscribe<WorkingDirectoryChangedEventArgs>(OnWorkingDirectoryChanged);
     public override RunResult Run(ICommandLineInput input)
     {
         if (input.Options.ContainsKey("drive-info")) return ShowDriveInfo();
@@ -39,10 +42,10 @@ public class DirCommand(string identifier) : ConsoleCommandBase<ApplicationConfi
 
         path = Path.GetFullPath(path);
         if (!Directory.Exists(path)) return Nok($"Directory not found: {path}");
-
+        if (input.Options.ContainsKey("delete")) return Delete(path);
         if (input.Options.ContainsKey("browse")) ShellService.Default.OpenDirectory(path);
         Environment.CurrentDirectory = path;
-
+        EventBusService.Service.Publish(new WorkingDirectoryChangedEventArgs(path));
         var entries = GetDirectoryEntries();
         SuggestionProviderManager.AppendContextBoundSuggestions(Identifier, entries.Select(e => e.Name).ToArray());
 
@@ -232,10 +235,30 @@ public class DirCommand(string identifier) : ConsoleCommandBase<ApplicationConfi
         }
         return Ok();
     }
-
+    private RunResult Delete(string dir)
+    {
+        var directoryInfo = new DirectoryInfo(dir);
+        var confirm = DialogService.YesNoDialog($"Do you want to delete directory {directoryInfo.FullName}?");
+        if (confirm)
+        {
+            Directory.Delete(dir, recursive: true);
+            Writer.WriteSuccessLine($"Directory [{directoryInfo.FullName}] deleted.");
+        }
+        return Ok();
+    }
     private void OnSelected(DirEntry entry)
     {
         Writer.Clear();
         Writer.WriteTable([entry]);
+    }
+    private void UpdateSuggestions(string newWorkingDirectory)
+    {
+        if (Directory.Exists(newWorkingDirectory))
+        {
+            var directories = Directory.GetDirectories(newWorkingDirectory)
+                .Select(d => new DirectoryInfo(d).Name)
+                .ToArray();
+            SuggestionProviderManager.AppendContextBoundSuggestions(Identifier, directories.Select(e => e).ToArray());
+        }
     }
 }

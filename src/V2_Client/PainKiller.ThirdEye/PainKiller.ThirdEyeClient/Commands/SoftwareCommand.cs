@@ -1,7 +1,6 @@
 ﻿using PainKiller.CommandPrompt.CoreLib.Core.BaseClasses;
 using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
 using PainKiller.CommandPrompt.CoreLib.Core.DomainObjects;
-using PainKiller.CommandPrompt.CoreLib.Core.Enums;
 using PainKiller.CommandPrompt.CoreLib.Core.Events;
 using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Core.Presentation;
@@ -23,7 +22,7 @@ public class SoftwareCommand : ConsoleCommandBase<CommandPromptConfiguration>
 {
     private void OnWorkingDirectoryChanged(WorkingDirectoryChangedEventArgs e) => UpdateSuggestions(e.NewWorkingDirectory);
     public SoftwareCommand(string identifier) : base(identifier) => EventBusService.Service.Subscribe<WorkingDirectoryChangedEventArgs>(OnWorkingDirectoryChanged);
-    
+
     public override RunResult Run(ICommandLineInput input)
     {
         var fileName = string.Join(' ', input.Arguments);
@@ -52,54 +51,32 @@ public class SoftwareCommand : ConsoleCommandBase<CommandPromptConfiguration>
     public void DisplaySoftware(string filter)
     {
         var softwareItems = StorageService<SoftwareObjects>.Service.GetObject().Items;
-        List<Software> filteredSoftware;
-        var inputBuffer = filter;
-        while (true)
-        {
-            Writer.Clear();
-            Writer.WriteLine($"{Emo.Right.Icon()} Type to filter results, press ENTER {Emo.Enter.Icon()} to select, BACKSPACE {Emo.Backspace.Icon()} to delete, ESC {Emo.Escape.Icon()} to exit:");
-            Writer.WriteLine($"Current filter: {inputBuffer}");
-            filteredSoftware = softwareItems.Where(c => 
-                c.Name.ToLower().Contains(inputBuffer) || 
-                c.Version.ToLower().Contains(inputBuffer) || 
-                c.MetaInformation.ToLower().Contains(inputBuffer)
-            ).ToList();
 
-            if (filteredSoftware.Count == 0) 
-                Writer.WriteLine($"No matching result... (Press Escape {Emo.Escape.Icon()} to exit)");
-            else
+        InteractiveFilter<Software>.Run(
+            softwareItems,
+            (software, filterString) => software.Name.ToLower().Contains(filterString) ||
+                                         software.Version.ToLower().Contains(filterString) ||
+                                         software.MetaInformation.ToLower().Contains(filterString),
+            (softwares, selectedIndex) =>
             {
-                foreach (var c in filteredSoftware) 
-                    Writer.WriteLine($"{c.Name} {c.Version} {c.MetaInformation}");
-            }
-
-            Writer.WriteLine($"\nPress enter {Emo.Enter.Icon()} to continue with all matching items.");
-            var key = Console.ReadKey(intercept: true);
-
-            if (key.Key == ConsoleKey.Escape) return;
-            if (key.Key == ConsoleKey.Enter && filteredSoftware.Count > 0) break;
-            if (key.Key == ConsoleKey.Backspace)
+                Console.Clear();
+                Console.WriteLine("Choose a software item to view details (use arrow keys to navigate, Enter to select):");
+                var softwareList = softwares.ToList();
+                for (int i = 0; i < softwareList.Count; i++)
+                {
+                    var prefix = i == selectedIndex ? "> " : "  ";
+                    Console.WriteLine($"{prefix}{softwareList[i].Name} Version: {softwareList[i].Version} {softwareList[i].MetaInformation}");
+                }
+            },
+            (selectedSoftware) =>
             {
-                if (inputBuffer.Length > 0) inputBuffer = inputBuffer.Substring(0, inputBuffer.Length - 1);
+                if (selectedSoftware != null)
+                {
+                    Writer.WriteLine();
+                    Writer.WriteDescription(selectedSoftware.Name, selectedSoftware.Version);
+                }
             }
-            else if (!char.IsControl(key.KeyChar))
-            {
-                inputBuffer += key.KeyChar;
-            }
-        }
-
-        Writer.WriteLine();
-        Writer.WriteLine($"{Configuration.Core.Name} {Configuration.Core.Version}");
-        
-        if (filteredSoftware.Count > 0)
-        {
-            var selected = ListService.ListDialog("Choose a component to view details.", filteredSoftware.Select(c => $"{c.Name} Version: {c.Version} {c.MetaInformation}").ToList(), autoSelectIfOnlyOneItem: false);
-            if (selected.Count <= 0) return;
-
-            var component = filteredSoftware[selected.First().Key];
-            Writer.WriteLine();
-            Writer.WriteDescription(component.Name, component.Version);
-        }
+        );
     }
     private RunResult Analyze(string fileName)
     {

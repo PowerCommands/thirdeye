@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text;
 using PainKiller.CommandPrompt.CoreLib.Configuration.Services;
+using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Modules.StorageModule.Contracts;
 
 namespace PainKiller.CommandPrompt.CoreLib.Modules.StorageModule.Services;
@@ -11,8 +12,8 @@ public class StorageService<T> : IStorageService<T> where T : new()
     private StorageService()
     {
         var configuration = ConfigurationService.Service.GetFlexible<ApplicationConfiguration>(Path.Combine(AppContext.BaseDirectory, "CommandPromptConfiguration.yaml"));
-        _applicationDataPath = configuration.Configuration.Core.Modules.Storage.ApplicationDataFolder;
-        _backupPath = configuration.Configuration.Core.Modules.Storage.BackupPath;
+        _applicationDataPath = configuration.Configuration.Core.Modules.Storage.ApplicationDataFolder.GetReplacedPlaceHolderPath();
+        _backupPath = configuration.Configuration.Core.Modules.Storage.BackupPath.GetReplacedPlaceHolderPath();
     }
     public static IStorageService<T> Service { get; } = new StorageService<T>();
     public string StoreObject(T storeObject, string fileName = "")

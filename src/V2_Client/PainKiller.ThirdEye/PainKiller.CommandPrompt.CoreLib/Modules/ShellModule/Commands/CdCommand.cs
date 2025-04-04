@@ -29,13 +29,23 @@ public class CdCommand : ConsoleCommandBase<ApplicationConfiguration>
     public override RunResult Run(ICommandLineInput input)
     {
         var path = Environment.CurrentDirectory;
-        var arg = input.Arguments.FirstOrDefault();
+        var arg = string.Join(" ", input.Arguments).Trim();
         var lowerArgs = input.Options.Select(o => o.Key.ToLower()).ToList();
 
         if (arg == "\\") path = Directory.GetDirectoryRoot(path);
         else if (arg == "..") path = Path.GetDirectoryName(path) ?? path;
-        else if (!string.IsNullOrWhiteSpace(arg)) path = Path.Combine(path, arg);
-
+        else if (!string.IsNullOrWhiteSpace(arg))
+        {
+            // Hantera sökvägar med mellanslag korrekt
+            if (Path.IsPathRooted(arg))
+            {
+                path = arg;
+            }
+            else
+            {
+                path = Path.Combine(path, arg);
+            }
+        }
         if (lowerArgs.Contains("roaming"))
             path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Configuration.Core.RoamingDirectory);
         else if (lowerArgs.Contains("startup"))
