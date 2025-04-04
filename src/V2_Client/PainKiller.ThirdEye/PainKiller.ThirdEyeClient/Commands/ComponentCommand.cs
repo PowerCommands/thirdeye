@@ -1,6 +1,5 @@
 ﻿using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
 using PainKiller.CommandPrompt.CoreLib.Core.DomainObjects;
-using PainKiller.CommandPrompt.CoreLib.Core.Enums;
 using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Core.Presentation;
 using PainKiller.CommandPrompt.CoreLib.Metadata.Attributes;
@@ -23,53 +22,49 @@ public class ComponentCommand(string identifier) : ThirdEyeBaseCommando(identifi
         if (input.HasOption("analyze")) return Analyze(filter);
 
         var allComponents = Storage.GetThirdPartyComponents();
-        List<ThirdPartyComponent> filteredComponents;
-        var inputBuffer = filter;
-        while (true)
-        {
-            Console.Clear();
-            Console.WriteLine($"{Emo.Right.Icon()} Type to filter results, press ENTER {Emo.Enter.Icon()} to select, BACKSPACE {Emo.Backspace.Icon()}  to delete, ESC {Emo.Escape.Icon()} to exit:");
-            Console.Title = inputBuffer;
-            filteredComponents = allComponents.Where(c => c.Name.ToLower().Contains(inputBuffer) || c.Version.ToLower().Contains(inputBuffer) || c.Path.ToLower().Contains(inputBuffer)).ToList();
-            if (filteredComponents.Count == 0) Console.WriteLine($"No matching result... (Press ESC {Emo.Escape.Icon()} to exit)");
-            else
-            {
-                foreach (var c in filteredComponents) Console.WriteLine($"{c.Name} {c.Version}");
-            }
-            Console.Write($"\nPress enter {Emo.Enter.Icon()} to continue with all matching items. ");
-            var key = Console.ReadKey(intercept: true);
 
-            if (key.Key == ConsoleKey.Escape) return Ok();
-            if (key.Key == ConsoleKey.Enter && filteredComponents.Count > 0) break;
-            if (key.Key == ConsoleKey.Backspace)
+        var filteredComponents = InteractiveFilterMultiSelect<ThirdPartyComponent>.Run(
+            allComponents,
+            (component, filterString) => component.Name.ToLower().Contains(filterString) ||
+                                         component.Version.ToLower().Contains(filterString) ||
+                                         component.Path.ToLower().Contains(filterString),
+            (filtered, selectedIndex) =>
             {
-                if (inputBuffer.Length > 0) inputBuffer = inputBuffer.Substring(0, inputBuffer.Length - 1);
+                Console.Clear();
+                Console.WriteLine("Choose a component to view details (use arrow keys to navigate, Enter to select):");
+                var thirdPartyComponents = filtered.ToList();
+                for (int i = 0; i < thirdPartyComponents.Count; i++)
+                {
+                    var prefix = i == selectedIndex ? "> " : "  ";
+                    Console.WriteLine($"{prefix}{thirdPartyComponents[i].Name} {thirdPartyComponents[i].Version}");
+                }
             }
-            else if (!char.IsControl(key.KeyChar))
-            {
-                inputBuffer += key.KeyChar;
-            }
+        );
+
+        if (filteredComponents.Count == 0)
+        {
+            Console.WriteLine("No matching components found.");
+            return Ok();
         }
-        Console.Title = $"{Configuration.Core.Name} {Configuration.Core.Version}";
-        if (filteredComponents.Count > 0)
-        {
-            var selected = ListService.ListDialog("Choose a component to view details.", filteredComponents.Select(c => $"{c.Name} {c.Version}").ToList(), autoSelectIfOnlyOneItem: false);
-            if (selected.Count <= 0) return Ok();
 
-            var component = filteredComponents[selected.First().Key];
+        var selectedComponent = filteredComponents.FirstOrDefault();
+        if (selectedComponent != null)
+        {
             Writer.WriteLine();
-            Writer.WriteDescription(component.Name, component.Version);
+            Writer.WriteDescription(selectedComponent.Name, selectedComponent.Version);
             var analyzeComponent = DialogService.YesNoDialog("Do you want to analyze this component?");
             if (analyzeComponent)
             {
-                var workflow = new AnalyzeComponentWorkflow(this.Writer, Configuration, component);
+                var workflow = new AnalyzeComponentWorkflow(this.Writer, Configuration, selectedComponent);
                 workflow.Run(filter);
                 return Ok();
             }
-            ProjectSearch(component, detailedSearch: true);
+            ProjectSearch(selectedComponent, detailedSearch: true);
         }
+
         return Ok();
     }
+
     private RunResult Analyze(string filter)
     {
         var workflow = new AnalyzeComponentWorkflow(this.Writer, Configuration, new ThirdPartyComponent{Name = "*"});
