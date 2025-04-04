@@ -55,7 +55,7 @@ configuration:
       infoPanel:
         enabled: true
         height: 2
-        updateIntervalSeconds: 1
+        updateIntervalSeconds: -1
   log:
     fileName: commandprompt.log
     filePath: logs

@@ -9,7 +9,7 @@ using PainKiller.CommandPrompt.CoreLib.Modules.InfoPanelModule.Services;
 using PainKiller.CommandPrompt.CoreLib.Modules.ShellModule.Services;
 using PainKiller.ThirdEyeClient.BaseClasses;
 using PainKiller.ThirdEyeClient.Bootstrap;
-using Spectre.Console;
+using PainKiller.ThirdEyeClient.DomainObjects;
 
 namespace PainKiller.ThirdEyeClient.Commands;
 
@@ -24,7 +24,7 @@ public class DbCommand(string identifier) : ThirdEyeBaseCommando(identifier)
         if (!Directory.Exists(Configuration.ThirdEye.BackupPath)) Directory.CreateDirectory(Configuration.ThirdEye.BackupPath);
         if (!Directory.Exists(Configuration.ThirdEye.Nvd.Path)) Directory.CreateDirectory(Configuration.ThirdEye.Nvd.Path);
         if (!Directory.Exists(Configuration.ThirdEye.Nvd.PathToUpdates)) Directory.CreateDirectory(Configuration.ThirdEye.Nvd.PathToUpdates);
-        InfoPanelService.Instance.RegisterContent(new DefaultInfoPanel(new DefaultInfoPanelContent()));
+        InfoPanelService.Instance.RegisterContent(new DefaultInfoPanel(new ThirdEyeInfoPanelContent(Configuration.ThirdEye)));
     }
 
     public override RunResult Run(ICommandLineInput input)
@@ -47,7 +47,6 @@ public class DbCommand(string identifier) : ThirdEyeBaseCommando(identifier)
                 Writer.WriteLine($"│   ├──{Emo.File.Icon()} {file.Name} {file.Length.GetDisplayFormattedFileSize()}");
             }
         }
-
         var nvdDir = new DirectoryInfo(Path.Combine(Configuration.Core.RoamingDirectory, "nvd"));
         Writer.WriteHeadLine($"{Emo.Directory.Icon()} NVD files ({nvdDir.GetDirectorySize().GetDisplayFormattedFileSize()})");
         foreach (var file in nvdDir.GetFiles())
