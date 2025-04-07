@@ -3,7 +3,7 @@ using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Core.Presentation;
 using PainKiller.CommandPrompt.CoreLib.Core.Services;
 using PainKiller.CommandPrompt.CoreLib.Modules.SecurityModule.Extensions;
-using PainKiller.ThirdEyeClient.Bootstrap;
+using PainKiller.ThirdEyeClient.Configuration;
 using PainKiller.ThirdEyeClient.DomainObjects;
 using PainKiller.ThirdEyeClient.DomainObjects.Nvd;
 using PainKiller.ThirdEyeClient.Enums;

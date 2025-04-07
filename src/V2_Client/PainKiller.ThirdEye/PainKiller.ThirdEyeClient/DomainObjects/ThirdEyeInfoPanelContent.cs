@@ -1,5 +1,5 @@
 ﻿using PainKiller.CommandPrompt.CoreLib.Modules.InfoPanelModule.Contracts;
-using PainKiller.ThirdEyeClient.Bootstrap.Configuration;
+using PainKiller.ThirdEyeClient.Configuration;
 using PainKiller.ThirdEyeClient.Services;
 
 namespace PainKiller.ThirdEyeClient.DomainObjects;

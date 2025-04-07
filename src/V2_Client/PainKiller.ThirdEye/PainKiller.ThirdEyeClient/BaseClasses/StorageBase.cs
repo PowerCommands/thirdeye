@@ -1,6 +1,6 @@
 ﻿using PainKiller.CommandPrompt.CoreLib.Configuration.Services;
 using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
-using PainKiller.ThirdEyeClient.Bootstrap;
+using PainKiller.ThirdEyeClient.Configuration;
 
 namespace PainKiller.ThirdEyeClient.BaseClasses;
 

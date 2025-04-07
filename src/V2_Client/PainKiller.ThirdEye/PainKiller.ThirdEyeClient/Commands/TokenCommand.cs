@@ -4,7 +4,7 @@ using PainKiller.CommandPrompt.CoreLib.Core.DomainObjects;
 using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Metadata.Attributes;
 using PainKiller.CommandPrompt.CoreLib.Modules.SecurityModule.Extensions;
-using PainKiller.ThirdEyeClient.Bootstrap;
+using PainKiller.ThirdEyeClient.Configuration;
 
 namespace PainKiller.ThirdEyeClient.Commands;
 [CommandDesign(description: "Create an access token",

@@ -1,6 +1,6 @@
 ﻿using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 
-namespace PainKiller.ThirdEyeClient.Bootstrap.Configuration;
+namespace PainKiller.ThirdEyeClient.Configuration;
 
 public class NvdConfiguration
 {

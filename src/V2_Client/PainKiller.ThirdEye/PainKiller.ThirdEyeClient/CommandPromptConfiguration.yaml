@@ -29,7 +29,7 @@ configuration:
     showLogo: true
     suggestions: 
     - exit
-    roamingDirectory: ThirdEye
+    roamingDirectory: $ROAMING$\ThirdEye
     modules:
       security:
         secrets:
@@ -46,7 +46,7 @@ configuration:
           options:
             target: User
       storage:
-        applicationDataFolder: $ROAMING$
+        applicationDataFolder: ThirdEye
         backupPath: backup
       ollama:
         baseAddress: localhost

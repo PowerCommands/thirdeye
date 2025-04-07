@@ -1,5 +1,5 @@
 ﻿using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
-using PainKiller.ThirdEyeClient.Bootstrap.Configuration;
+using PainKiller.ThirdEyeClient.Configuration;
 using PainKiller.ThirdEyeClient.Contracts;
 using PainKiller.ThirdEyeClient.DomainObjects;
 using PainKiller.ThirdEyeClient.Extensions;

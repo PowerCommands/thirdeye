@@ -2,7 +2,7 @@
 using PainKiller.CommandPrompt.CoreLib.Core.Presentation;
 using PainKiller.CommandPrompt.CoreLib.Modules.StorageModule.Services;
 using PainKiller.ThirdEyeClient.BaseClasses;
-using PainKiller.ThirdEyeClient.Bootstrap;
+using PainKiller.ThirdEyeClient.Configuration;
 using PainKiller.ThirdEyeClient.Data;
 using PainKiller.ThirdEyeClient.DomainObjects;
 using PainKiller.ThirdEyeClient.Enums;

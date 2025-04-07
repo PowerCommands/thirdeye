@@ -1,7 +1,7 @@
 ﻿using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
 using PainKiller.CommandPrompt.CoreLib.Core.Presentation;
 using PainKiller.ThirdEyeClient.BaseClasses;
-using PainKiller.ThirdEyeClient.Bootstrap;
+using PainKiller.ThirdEyeClient.Configuration;
 using PainKiller.ThirdEyeClient.DomainObjects;
 using PainKiller.ThirdEyeClient.Enums;
 using PainKiller.ThirdEyeClient.Services;

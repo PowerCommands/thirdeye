@@ -6,6 +6,7 @@ using PainKiller.CommandPrompt.CoreLib.Core.Runtime;
 using PainKiller.CommandPrompt.CoreLib.Core.Services;
 using PainKiller.CommandPrompt.CoreLib.Logging.Services;
 using PainKiller.ReadLine;
+using PainKiller.ThirdEyeClient.Configuration;
 using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
@@ -20,6 +21,8 @@ public static class Startup
         
         var logger = LoggerProvider.CreateLogger<Program>();
         logger.LogInformation($"{config.Core.Name} started, configuration read and logging initialized.");
+
+        if(!Directory.Exists(Path.Combine(ApplicationConfiguration.CoreApplicationDataPath, config.Core.RoamingDirectory))) Directory.CreateDirectory(Path.Combine(ApplicationConfiguration.CoreApplicationDataPath, config.Core.RoamingDirectory));
 
         Console.CursorTop = config.Core.Modules.InfoPanel.Height;
         ShowLogo(config.Core);

@@ -1,4 +1,4 @@
-﻿namespace PainKiller.ThirdEyeClient.Bootstrap.Configuration;
+﻿namespace PainKiller.ThirdEyeClient.Configuration;
 
 public class IgnoreConfiguration
 {

@@ -3,7 +3,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
 using PainKiller.CommandPrompt.CoreLib.Logging.Services;
-using PainKiller.ThirdEyeClient.Bootstrap.Configuration;
+using PainKiller.ThirdEyeClient.Configuration;
 using PainKiller.ThirdEyeClient.Contracts;
 using PainKiller.ThirdEyeClient.DomainObjects.Nvd;
 using PainKiller.ThirdEyeClient.Services;

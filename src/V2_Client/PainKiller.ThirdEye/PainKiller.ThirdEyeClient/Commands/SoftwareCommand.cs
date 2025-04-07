@@ -8,7 +8,7 @@ using PainKiller.CommandPrompt.CoreLib.Core.Services;
 using PainKiller.CommandPrompt.CoreLib.Metadata.Attributes;
 using PainKiller.CommandPrompt.CoreLib.Modules.StorageModule.Services;
 using PainKiller.ReadLine.Managers;
-using PainKiller.ThirdEyeClient.Bootstrap;
+using PainKiller.ThirdEyeClient.Configuration;
 using PainKiller.ThirdEyeClient.Data;
 using PainKiller.ThirdEyeClient.DomainObjects;
 using PainKiller.ThirdEyeClient.Managers.Workflows;

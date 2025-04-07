@@ -1,6 +1,6 @@
 ﻿using PainKiller.CommandPrompt.CoreLib.Core.BaseClasses;
 using PainKiller.CommandPrompt.CoreLib.Modules.SecurityModule.Extensions;
-using PainKiller.ThirdEyeClient.Bootstrap;
+using PainKiller.ThirdEyeClient.Configuration;
 using PainKiller.ThirdEyeClient.Contracts;
 using PainKiller.ThirdEyeClient.DomainObjects;
 using PainKiller.ThirdEyeClient.Enums;

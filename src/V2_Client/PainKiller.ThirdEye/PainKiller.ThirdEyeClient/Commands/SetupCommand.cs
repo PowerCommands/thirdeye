@@ -3,7 +3,7 @@ using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
 using PainKiller.CommandPrompt.CoreLib.Core.DomainObjects;
 using PainKiller.CommandPrompt.CoreLib.Core.Presentation;
 using PainKiller.CommandPrompt.CoreLib.Modules.SecurityModule.Extensions;
-using PainKiller.ThirdEyeClient.Bootstrap;
+using PainKiller.ThirdEyeClient.Configuration;
 
 namespace PainKiller.ThirdEyeClient.Commands;
 
