@@ -1,3 +1,3 @@
 using PainKiller.ThirdEyeClient.Bootstrap;
 
-Startup.Build().Start();
+Startup.Build().Start(args);

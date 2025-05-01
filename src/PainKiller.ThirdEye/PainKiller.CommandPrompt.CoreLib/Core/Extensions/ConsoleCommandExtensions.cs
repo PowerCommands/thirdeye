@@ -1,6 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Globalization;
+using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 using PainKiller.CommandPrompt.CoreLib.Core.Runtime;
 using PainKiller.CommandPrompt.CoreLib.Logging.Services;
+using PainKiller.CommandPrompt.CoreLib.Metadata.DomainObjects;
+using PainKiller.CommandPrompt.CoreLib.Metadata.Extensions;
 
 namespace PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 
@@ -33,7 +37,7 @@ public static class ConsoleCommandExtensions
     }
     public static RunResult ExecuteWithSimpleOptions(this IConsoleCommand command, string[]? arguments = null, string[]? quotes = null, params string[] options)
     {
-        var optionsDict = options.ToDictionary(opt => opt, opt => string.Empty);
+        var optionsDict = options.ToDictionary(opt => opt, _ => string.Empty);
         return command.Execute(arguments: arguments, quotes: quotes, options: optionsDict);
     }
     private static string BuildRaw(
@@ -57,4 +61,62 @@ public static class ConsoleCommandExtensions
     }
     public static bool HasOption(this ICommandLineInput input, string option) => input.Options.ContainsKey(option.ToLower());
     public static string GetOptionValue(this ICommandLineInput input, string option) => input.Options.TryGetValue(option.ToLower(), out var value) ? value : string.Empty;
+    public static T GetTypedOptionValue<T>(this ICommandLineInput input, string option, string defaultValue)
+    {
+        input.Options.TryGetValue(option.ToLower(), out var rawValue);
+        var stringValue = rawValue ?? defaultValue;
+        if (typeof(T).IsEnum) return (T)Enum.Parse(typeof(T), stringValue, ignoreCase: true);
+        return (T)Convert.ChangeType(stringValue, typeof(T), CultureInfo.InvariantCulture);
+    }
+    public static bool TryGetOption<T>(this ICommandLineInput input, out T value, T defaultValue = default!, [CallerArgumentExpression("value")] string optionName = null!)
+    {
+        try
+        {
+            optionName = optionName.Split(' ').Last().ToLowerInvariant();
+            if (!input.Options.TryGetValue(optionName, out var raw))
+            {
+                value = defaultValue;
+                return false;
+            }
+            if (typeof(T) == typeof(bool))
+            {
+                value = (T)(object)true;
+                return true;
+            }
+            if (string.IsNullOrEmpty(raw))
+            {
+                value = defaultValue;
+                return false;
+            }
+            if (typeof(T).IsEnum)
+            {
+                value = (T)Enum.Parse(typeof(T), raw, ignoreCase: true);
+            }
+            else
+            {
+                value = (T)Convert.ChangeType(raw, typeof(T), CultureInfo.InvariantCulture);
+            }
+            return true;
+        }
+        catch
+        {
+            value = defaultValue;
+            return false;
+        }
+    }
+    public static string GetSuggestion(this IConsoleCommand command, string? argument, string defaultValue)
+    {
+        var retVal = argument;
+        var metaData = command.GetMetadata() ?? new CommandMetadata();
+        if (string.IsNullOrEmpty(argument) || metaData.Suggestions.All(s => s != argument)) retVal = "medium_term";
+        return retVal ?? defaultValue;
+    }
+    public static string GetFullPath(this ICommandLineInput input)
+    {
+        var path = input.Arguments.FirstOrDefault() ?? Environment.CurrentDirectory;
+        if (!path.Contains('\\') && !Path.IsPathRooted(path))
+            path = Path.Combine(Environment.CurrentDirectory, path);
+        var retVal = Path.GetFullPath(path);
+        return retVal.GetReplacedPlaceHolderPath();
+    }
 }

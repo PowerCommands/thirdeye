@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using PainKiller.CommandPrompt.CoreLib.Core.Events;
 using PainKiller.CommandPrompt.CoreLib.Metadata;
 
 namespace PainKiller.CommandPrompt.CoreLib.Core.Services;
@@ -39,6 +40,7 @@ public static class CommandDiscoveryService
             _cache.Add(command);
             metadataRegistry.Register(command);
         }
+        EventBusService.Service.Publish(new CommandsDiscoveredEventArgs(_cache.Select(c => c.Identifier).ToArray()));
         return _cache;
     }
 
