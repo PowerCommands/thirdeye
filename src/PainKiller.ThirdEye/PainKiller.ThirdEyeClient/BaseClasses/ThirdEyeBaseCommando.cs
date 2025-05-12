@@ -34,8 +34,6 @@ public abstract class ThirdEyeBaseCommando(string identifier) : ConsoleCommandBa
     protected IGitManager GitManager { get; private set; } = null!;
     protected IFileAnalyzeManager AnalyzeManager { get; } = new FileAnalyzeManager();
     protected PresentationManager PresentationManager { get; private set; } = null!;
-
-
     protected void ProjectSearch(ThirdPartyComponent component, bool detailedSearch)
     {
         var projects = Storage.GetProjects().Where(dp => dp.Components.Any(c => c.Name == component.Name && (c.Version == component.Version || !detailedSearch))).ToList();
@@ -51,5 +49,7 @@ public abstract class ThirdEyeBaseCommando(string identifier) : ConsoleCommandBa
             }
         }
         PresentationManager.DisplayOrganization(Configuration.ThirdEye.OrganizationName, workspaces, repos, teams, projects, component, skipEmpty: true);
+        var reportManager = new ReportManager(Path.Combine(AppContext.BaseDirectory, $"component_report"));
+        reportManager.Create(Configuration.ThirdEye.OrganizationName, repos, projects, component);
     }
 }
