@@ -43,7 +43,7 @@ public class CveCommand(string identifier) : ThirdEyeBaseCommando(identifier)
         }
         else
         {
-            Writer.WriteError($"CVE {cveId} not found or could not be fetched.");
+            Writer.WriteError($"CVE {cveId} not found or could not be fetched.", nameof(CveCommand));
         }
         return Ok();
     }

@@ -38,7 +38,7 @@ public class CveFetcherManager(ICveStorageService storage, NvdConfiguration conf
 
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    writer.WriteError("API returned 403 Forbidden. Waiting 1 minute before retry...");
+                    writer.WriteError("API returned 403 Forbidden. Waiting 1 minute before retry...", nameof(FetchAllCvesAsync));
                     await Task.Delay(60000); // Wait one minute before retrying
                     continue;
                 }
@@ -61,7 +61,7 @@ public class CveFetcherManager(ICveStorageService storage, NvdConfiguration conf
             }
             catch (Exception ex)
             {
-                writer.WriteError($"Error fetching CVEs: {ex.Message}");
+                writer.WriteError($"Error fetching CVEs: {ex.Message}", nameof(FetchAllCvesAsync));
                 break;
             }
             await Task.Delay(configuration.DelayIntervalSeconds); // Protects against rate limiting
@@ -76,7 +76,7 @@ public class CveFetcherManager(ICveStorageService storage, NvdConfiguration conf
         {
             if (v?.cve == null)
             {
-                writer.WriteError("Skipped a CVE entry due to missing data.");
+                writer.WriteError("Skipped a CVE entry due to missing data.", nameof(ProcessCveEntries));
                 continue;
             }
 
@@ -100,7 +100,7 @@ public class CveFetcherManager(ICveStorageService storage, NvdConfiguration conf
             }
             catch (Exception ex)
             {
-                writer.WriteError($"Error processing CVE {v.cve.id}: {ex.Message}");
+                writer.WriteError($"Error processing CVE {v.cve.id}: {ex.Message}", nameof(ProcessCveEntries));
             }
         }
         storage.AppendEntries(result, writer);

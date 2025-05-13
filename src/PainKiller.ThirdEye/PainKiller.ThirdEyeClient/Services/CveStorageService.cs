@@ -80,14 +80,14 @@ public class CveStorageService : StorageBase, ICveStorageService
                 var checkSum = new FileChecksum(currentFileName);
                 writer.WriteSuccessLine($"CVE database updated with {_cveObjects.Entries.Count} entries.");
                 if(checkSum.Mde5Hash == updateFileInfo.Checksum) writer.WriteSuccessLine($"Checksum verified: {checkSum.Mde5Hash}");
-                else writer.WriteError($"Checksum verification failed: {checkSum.Mde5Hash} != {updateFileInfo.Checksum}");
+                else writer.WriteError($"Checksum verification failed: {checkSum.Mde5Hash} != {updateFileInfo.Checksum}", nameof(Update));
                 return true;
             }
             throw new IOException("CVE database file missing after copy operation.");
         }
         catch(Exception ex)
         {
-            writer.WriteError($"Failed to update CVE database, original file is restored. {ex.Message}");
+            writer.WriteError($"Failed to update CVE database, original file is restored. {ex.Message}", nameof(Update));
             if (File.Exists(currentFileName)) File.Delete(currentFileName);
             File.Move(backupFileName, currentFileName);
             return false;

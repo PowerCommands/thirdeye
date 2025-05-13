@@ -46,7 +46,7 @@ configuration:
           options:
             target: User
       storage:
-        applicationDataFolder: ThirdEye
+        applicationDataFolder: $ROAMING$\ThirdEye
         backupPath: backup
       ollama:
         baseAddress: localhost

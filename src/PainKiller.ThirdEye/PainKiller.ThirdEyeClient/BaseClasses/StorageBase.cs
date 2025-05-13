@@ -9,7 +9,7 @@ public class StorageBase
     protected StorageBase()
     {
         var config = ConfigurationService.Service.Get<CommandPromptConfiguration>().Configuration;
-        CorePath = config.Core.RoamingDirectory;
+        CorePath = Path.Combine(config.Core.RoamingDirectory, config.ThirdEye.Host.Replace("https://", "").Replace("http://", "").Replace("/", "").Replace("\\", "_").Replace(":", ""));
         NvdUpdatePath = config.ThirdEye.Nvd.PathToUpdates.GetReplacedPlaceHolderPath();
         BackupPath = config.ThirdEye.BackupPath.GetReplacedPlaceHolderPath();
         NvdPath = config.ThirdEye.Nvd.Path.GetReplacedPlaceHolderPath();

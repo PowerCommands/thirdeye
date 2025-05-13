@@ -10,7 +10,7 @@ public class LocalDirectoryGitManager(string path, string description, IConsoleW
     public void Connect()
     {
         if (Directory.Exists(path)) writer.WriteSuccessLine($"{path} exists!");
-        else writer.WriteError($"{path} does not exists!");
+        else writer.WriteError($"{path} does not exists!", nameof(Connect));
     }
     public IEnumerable<Workspace> GetWorkspaces()
     {
@@ -67,7 +67,7 @@ public class LocalDirectoryGitManager(string path, string description, IConsoleW
         }
         catch (Exception ex)
         {
-            writer.WriteError(ex.Message);
+            writer.WriteError(ex.Message, nameof(GetAllFilesInRepository));
         }
         return new List<Item>();
     }

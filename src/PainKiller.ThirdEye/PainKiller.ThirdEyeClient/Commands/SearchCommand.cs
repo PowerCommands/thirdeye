@@ -9,13 +9,12 @@ namespace PainKiller.ThirdEyeClient.Commands;
 
 [CommandDesign(description: "Search for components",
     arguments: ["<search arguments>"],
-    options: ["analyze"],
-    examples: ["//Search components","component <search1> <search2>...","//Analyze all components","component --analyze","//Analyze with filter","component <search> --analyze"])]
+    examples: ["//Search component entity.framework","search entity.framework"])]
 public class SearchCommand(string identifier) : ThirdEyeBaseCommando(identifier)
 {
     public override RunResult Run(ICommandLineInput input)
     {
-        var filter = $"{input.Arguments.FirstOrDefault()}".ToLower();
+        var initFilter = $"{input.Arguments.FirstOrDefault()}".ToLower();
         var allComponents = Storage.GetThirdPartyComponents();
 
         InteractiveFilter<ThirdPartyComponent>.Run(allComponents, (component, filterString) => component.Name.ToLower().Contains(filterString) || component.Version.ToLower().Contains(filterString) || component.Path.ToLower().Contains(filterString), (components, selectedIndex) =>
@@ -38,7 +37,8 @@ public class SearchCommand(string identifier) : ThirdEyeBaseCommando(identifier)
                     
                     ProjectSearch(selectedComponent, detailedSearch: true);
                 }
-            }
+            },
+            initFilter
         );
         return Ok();
     }

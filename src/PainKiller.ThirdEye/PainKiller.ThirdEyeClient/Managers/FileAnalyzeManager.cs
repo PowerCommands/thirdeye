@@ -50,7 +50,12 @@ public class FileAnalyzeManager : IFileAnalyzeManager
             {
                 if (extractor.CanHandle(file))
                 {
-                    components.AddRange(extractor.ExtractComponents(file));
+                    var extractedComponents = extractor.ExtractComponents(file);
+                    foreach (var extractedComponent in extractedComponents)
+                    {
+                        extractedComponent.UserId = file.UserId;
+                        components.Add(extractedComponent);
+                    }
                 }
             }
         }

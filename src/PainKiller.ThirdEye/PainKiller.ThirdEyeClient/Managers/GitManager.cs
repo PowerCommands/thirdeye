@@ -51,7 +51,7 @@ public class GitHubManager : IGitManager
         }
         else
         {
-            _writer.WriteError($"Failed to connect to GitHub: {response.ReasonPhrase}");
+            _writer.WriteError($"Failed to connect to GitHub: {response.ReasonPhrase}", nameof(Connect));
         }
     }
     public IEnumerable<Workspace> GetWorkspaces() => new List<Workspace> { new Workspace { Name = _organizationName, Description = "Github account", LastUpdateTime = DateTime.Now, Revision = 1, State = "Active", Url = _serverUrl, Id = _organizationName.GenerateGuidFromString()} };

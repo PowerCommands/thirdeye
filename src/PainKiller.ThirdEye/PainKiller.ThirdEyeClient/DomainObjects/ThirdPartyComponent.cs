@@ -6,6 +6,7 @@ public class ThirdPartyComponent
     public string Version { get; set; } = "";
     public string Path { get; set; } = "";
     public string CommitId { get; set; } = "";
+    public string UserId { get; set; } = "";
     public int VersionOrder
     {
         get

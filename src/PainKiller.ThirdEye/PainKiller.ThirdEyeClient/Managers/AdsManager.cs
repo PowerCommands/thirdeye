@@ -103,7 +103,7 @@ public class AdsManager(string serverUrl, string accessToken, string[] ignoredRe
         }
         catch(Exception ex)
         {
-            writer.WriteError($"Error fetching repository with project id: {projectId} {ex.Message}");
+            writer.WriteError($"Error fetching repository with project id: {projectId} {ex.Message}", nameof(GetRepositories));
             return new List<Repository>();
         }
     }
@@ -134,7 +134,11 @@ public class AdsManager(string serverUrl, string accessToken, string[] ignoredRe
         {
             var gitClient = _connection.GetClient<GitHttpClient>();
             var items = gitClient.GetItemsAsync(repositoryId.ToString(), scopePath: "/", recursionLevel: VersionControlRecursionType.Full).Result.Select(i => new Item { CommitId = i.CommitId, Content = i.Content, IsFolder = i.IsFolder, Path = i.Path, RepositoryId = repositoryId}).ToList();
-            foreach (var item in items.Where(i => FileAnalyzeManager.IsRelevantFile(i.Path))) item.Content = GetContent(item, repositoryId);
+            foreach (var item in items.Where(i => FileAnalyzeManager.IsRelevantFile(i.Path)))
+            {
+                item.Content = GetContent(item, repositoryId);
+                item.UserId = GetUserId(repositoryId, item.CommitId) ?? string.Empty;
+            }
             return items;
         }
         catch (Exception ex)
@@ -150,5 +154,11 @@ public class AdsManager(string serverUrl, string accessToken, string[] ignoredRe
         if (stream == null) return string.Empty;
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();
+    }
+    private string? GetUserId(Guid repositoryId, string commitId)
+    {
+        var gitClient = _connection.GetClient<GitHttpClient>();
+        var commit = gitClient.GetCommitAsync(commitId, repositoryId.ToString()).Result;
+        return commit.Committer?.Email;
     }
 }

@@ -6,4 +6,5 @@ public class Item
     public string Path { get; set; } = "";
     public bool IsFolder { get; set; }
     public string Content { get; set; } = "";
+    public string UserId { get; set; } = "";
 }
