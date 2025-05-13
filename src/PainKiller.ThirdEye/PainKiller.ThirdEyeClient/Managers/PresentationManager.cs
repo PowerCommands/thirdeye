@@ -1,4 +1,5 @@
-﻿using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
+﻿using System.Xml.Linq;
+using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
 using PainKiller.CommandPrompt.CoreLib.Core.Enums;
 using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Core.Presentation;
@@ -72,14 +73,13 @@ public class PresentationManager(IConsoleWriter writer)
         writer.WriteHeadLine("  │   ├── Members");
         foreach (var member in team.Members) writer.WriteHeadLine($"  │   ├── {Emo.Member.Icon()} {member.Name}");
     }
-    public void DisplayProject(Project project)
+    public void DisplayProject(Project project, string repositoryName)
     {
-        writer.WriteHeadLine($"\n{Emo.Directory.Icon()} {project.Name} {project.Framework} {project.Sdk}");
-        
-        writer.WriteHeadLine($"├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
+        writer.WriteHeadLine($"\n{Emo.Directory.Icon()} {repositoryName}");
+        writer.WriteHeadLine($" ├── 🈁 {project.Name} {project.Sdk} {project.Language} {project.Framework}");
         foreach (var component in project.Components)
         {
-            writer.WriteHeadLine($"│  ├── {component.Name} {component.Version}");
+            writer.WriteHeadLine($" │   ├── {component.Name} {component.Version}");
         }
     }
     public void DisplayOrganization(string organizationName, List<Workspace> workspaces, List<Repository> repositories, List<Team> teams, List<Project> projects, ThirdPartyComponent? filter, bool skipEmpty = false)

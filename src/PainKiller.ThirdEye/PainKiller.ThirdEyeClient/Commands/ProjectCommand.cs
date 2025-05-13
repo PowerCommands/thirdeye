@@ -37,7 +37,8 @@ public class ProjectCommand(string identifier) : ThirdEyeBaseCommando(identifier
                 if (selectedProject != null)
                 {
                     Writer.WriteLine();
-                    PresentationManager.DisplayProject(selectedProject);
+                    var repo = Storage.GetRepositories().FirstOrDefault(r => r.RepositoryId == selectedProject.RepositoryId);
+                    PresentationManager.DisplayProject(selectedProject, repo.Name);
                     var analyzeProjectQuery = DialogService.YesNoDialog($"Do you want to analyze {selectedProject.Name} for vulnerabilities?");
                     if (analyzeProjectQuery)
                     {
