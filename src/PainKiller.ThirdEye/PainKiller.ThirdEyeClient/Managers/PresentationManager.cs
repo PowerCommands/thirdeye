@@ -108,6 +108,22 @@ public class PresentationManager(IConsoleWriter writer)
             }
         }
     }
+    public void DisplayComponents(string organizationName, List<Workspace> workspaces, List<Repository> repositories, List<Team> teams, List<Project> projects, ThirdPartyComponent? filter, bool skipEmpty = false)
+    {
+        _thirdPartyComponentFilter = filter;
+        writer.WriteHeadLine($"\n🏠 {organizationName}");
+        foreach (var workspace in workspaces)
+        {
+            if (repositories.All(p => p.WorkspaceId != workspace.Id)) continue;
+            writer.WriteHeadLine($"  ├── {Emo.Package.Icon()} {workspace.Name}");
+            var projectRepos = repositories.Where(r => r.WorkspaceId == workspace.Id).ToList();
+            if(projectRepos.Count == 0) continue;
+            foreach (var repo in projectRepos)
+            {
+                writer.WriteHeadLine($"  │   │   ├── {Emo.Repository.Icon()} {repo.Name}");
+            }
+        }
+    }
 
     private ThirdPartyComponent? _thirdPartyComponentFilter;
     private void ListFilteredProjectRepos(List<Repository> projectRepos)

@@ -1,5 +1,6 @@
 ﻿using PainKiller.CommandPrompt.CoreLib.Core.BaseClasses;
 using PainKiller.CommandPrompt.CoreLib.Modules.SecurityModule.Extensions;
+using PainKiller.CommandPrompt.CoreLib.Modules.ShellModule.Services;
 using PainKiller.ThirdEyeClient.Configuration;
 using PainKiller.ThirdEyeClient.Contracts;
 using PainKiller.ThirdEyeClient.DomainObjects;
@@ -28,7 +29,6 @@ public abstract class ThirdEyeBaseCommando(string identifier) : ConsoleCommandBa
         PresentationManager = new PresentationManager(Writer);
         CveStorage = CveStorageService.Service;
     }
-
     protected ICveStorageService CveStorage { get; private set; } = null!;
     protected IObjectStorageService Storage { get; private set; } = null!;
     protected IGitManager GitManager { get; private set; } = null!;
@@ -51,5 +51,26 @@ public abstract class ThirdEyeBaseCommando(string identifier) : ConsoleCommandBa
         PresentationManager.DisplayOrganization(Configuration.ThirdEye.OrganizationName, workspaces, repos, teams, projects, component, skipEmpty: true);
         var reportManager = new ReportManager(Path.Combine(AppContext.BaseDirectory, $"component_report"));
         reportManager.Create(Configuration.ThirdEye.OrganizationName, repos, projects, component);
+    }
+
+    protected void ComponentSearch(ThirdPartyComponent component, bool detailedSearch)
+    {
+        var projects = Storage.GetProjects().Where(dp => dp.Components.Any(c => c.Name == component.Name && (c.Version == component.Version || !detailedSearch))).ToList();
+        var workspaces = Storage.GetWorkspaces().Where(p => projects.Any(dp => dp.WorkspaceId == p.Id)).ToList();
+        var repos = new List<Repository>();
+        var teams = Storage.GetTeams();
+        foreach (var projectRepos in workspaces.Select(project => Storage.GetRepositories().Where(r => r.WorkspaceId == project.Id)))
+        {
+            foreach (var projectRepo in projectRepos)
+            {
+                if(projects.Any(p => p.RepositoryId == projectRepo.RepositoryId))
+                    repos.Add(projectRepo);
+            }
+        }
+        PresentationManager.DisplayComponents(Configuration.ThirdEye.OrganizationName, workspaces, repos, teams, projects, component, skipEmpty: true);
+        var reportManager = new ReportManager(Path.Combine(AppContext.BaseDirectory, $"component_report"));
+        var fileName = reportManager.Create(Configuration.ThirdEye.OrganizationName, repos, projects, component);
+        Writer.WriteSuccessLine($"Successfully write a report to file: {fileName}");
+        ShellService.Default.OpenWithDefaultProgram(fileName);
     }
 }

@@ -5,7 +5,7 @@ namespace PainKiller.ThirdEyeClient.Managers;
 
 public class ReportManager(string fileName = "report.md")
 {
-    public void Create(string organizationName, List<Repository> repositories, List<Project> projects, ThirdPartyComponent filter)
+    public string Create(string organizationName, List<Repository> repositories, List<Project> projects, ThirdPartyComponent filter)
     {
         var mdDoc = new MarkdownManager();
         mdDoc.AddParagraph($"Component found in {repositories.Count} repositories.");
@@ -24,6 +24,9 @@ public class ReportManager(string fileName = "report.md")
                 }
             }
         }
-        mdDoc.SaveToFile($"{fileName.FormatFileTimestamp()}.md");
+
+        var fullFileName = $"{fileName.FormatFileTimestamp()}.md";
+        mdDoc.SaveToFile(fullFileName);
+        return fullFileName;
     }
 }

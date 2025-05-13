@@ -2,7 +2,8 @@
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.Common;
-using Microsoft.VisualStudio.Services.Graph.Client;
+using Microsoft.VisualStudio.Services.Identity;
+using Microsoft.VisualStudio.Services.Identity.Client;
 using Microsoft.VisualStudio.Services.WebApi;
 using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
 using PainKiller.CommandPrompt.CoreLib.Logging.Services;
@@ -60,7 +61,7 @@ public class AdsManager(string serverUrl, string accessToken, string[] ignoredRe
                         }
                         continue;
                     }
-                    var email = GetEmailFromDescriptor(teamMember.Identity.Descriptor);
+                    var email = GetEmailFromDescriptor(teamMember.Identity.DisplayName);
                     var member = new Member { Name = teamMember.Identity.DisplayName, Url = teamMember.Identity.Url, Id = teamMember.Identity.Id, IsTeamAdmin = teamMember.IsTeamAdmin, Email = $"{email}"};
                     member.TeamIds.Add(webApiTeam.Id);
                     members.Add(member);
@@ -163,10 +164,11 @@ public class AdsManager(string serverUrl, string accessToken, string[] ignoredRe
         var commit = gitClient.GetCommitAsync(commitId, repositoryId.ToString()).Result;
         return commit.Committer?.Email;
     }
-    private string? GetEmailFromDescriptor(string descriptor)
+    private string? GetEmailFromDescriptor(string displayName)
     {
-        var graphClient = _connection.GetClient<GraphHttpClient>();
-        var user = graphClient.GetUserAsync(descriptor).Result;
-        return user.MailAddress;
+        var identityClient = _connection.GetClient<IdentityHttpClient>();
+        var identity = identityClient.ReadIdentitiesAsync(IdentitySearchFilter.General, displayName).Result.FirstOrDefault();
+        var email = identity?.Properties?.GetValueOrDefault("Mail")?.ToString();
+        return email;
     }
 }

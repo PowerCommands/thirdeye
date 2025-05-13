@@ -18,15 +18,14 @@ public class ObjectStorageService : StorageBase, IObjectStorageService
     public string StoragePath { get; private set; }
     private ObjectStorageService()
     {
-        var storagePath = Path.Combine(CorePath, Host.Replace("https://","").Replace("http://","").Replace("/","").Replace("\\","_").Replace(":",""));
-        StoragePath = storagePath;
-        _teamStorage = new ObjectStorageBase<TeamObjects, Team>(storagePath);
-        _workspaceStorage = new ObjectStorageBase<WorkspaceObjects, Workspace>(storagePath);
-        _repositoryStorage = new ObjectStorageBase<RepositoryObjects, Repository>(storagePath);
-        _componentStorage = new ObjectStorageBase<ThirdPartyComponentObjects, ThirdPartyComponent>(storagePath);
-        _projectStorage = new ObjectStorageBase<ProjectObjects, Project>(storagePath);
-        _cveStorage = new ObjectStorageBase<CveComponentObjects, ComponentCve>(storagePath);
-        _findingsStorage = new ObjectStorageBase<FindingObjects, Finding>(storagePath);
+        StoragePath = CorePath;
+        _teamStorage = new ObjectStorageBase<TeamObjects, Team>(StoragePath);
+        _workspaceStorage = new ObjectStorageBase<WorkspaceObjects, Workspace>(StoragePath);
+        _repositoryStorage = new ObjectStorageBase<RepositoryObjects, Repository>(StoragePath);
+        _componentStorage = new ObjectStorageBase<ThirdPartyComponentObjects, ThirdPartyComponent>(StoragePath);
+        _projectStorage = new ObjectStorageBase<ProjectObjects, Project>(StoragePath);
+        _cveStorage = new ObjectStorageBase<CveComponentObjects, ComponentCve>(StoragePath);
+        _findingsStorage = new ObjectStorageBase<FindingObjects, Finding>(StoragePath);
     }
     public List<Team> GetTeams() => _teamStorage.GetItems();
     public List<Workspace> GetWorkspaces() => _workspaceStorage.GetItems();
