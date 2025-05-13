@@ -15,8 +15,8 @@ public class TokenCommand(string identifier) : ConsoleCommandBase<CommandPromptC
 {
     public override RunResult Run(ICommandLineInput input)
     {
-        var token = $"{input.Arguments.FirstOrDefault()}".ToLower();
-        var accessTokenName = input.HasOption("githug") ? Configuration.ThirdEye.AccessTokenGithub : Configuration.ThirdEye.AccessToken;
+        var token = $"{input.Arguments.FirstOrDefault()}";
+        var accessTokenName = input.HasOption("github") ? Configuration.ThirdEye.AccessTokenGithub : Configuration.ThirdEye.AccessToken;
         Configuration.Core.Modules.Security.EncryptSecret(EnvironmentVariableTarget.User, accessTokenName, token);
         Writer.WriteSuccessLine("\nToken has been created");
         return Ok();

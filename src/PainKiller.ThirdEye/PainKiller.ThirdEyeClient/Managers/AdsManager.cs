@@ -2,6 +2,7 @@
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.VisualStudio.Services.Common;
+using Microsoft.VisualStudio.Services.Graph.Client;
 using Microsoft.VisualStudio.Services.WebApi;
 using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
 using PainKiller.CommandPrompt.CoreLib.Logging.Services;
@@ -59,11 +60,12 @@ public class AdsManager(string serverUrl, string accessToken, string[] ignoredRe
                         }
                         continue;
                     }
-                    var member = new Member { Name = teamMember.Identity.DisplayName, Url = teamMember.Identity.Url, Id = teamMember.Identity.Id, IsTeamAdmin = teamMember.IsTeamAdmin };
+                    var email = GetEmailFromDescriptor(teamMember.Identity.Descriptor);
+                    var member = new Member { Name = teamMember.Identity.DisplayName, Url = teamMember.Identity.Url, Id = teamMember.Identity.Id, IsTeamAdmin = teamMember.IsTeamAdmin, Email = $"{email}"};
                     member.TeamIds.Add(webApiTeam.Id);
                     members.Add(member);
                 }
-                var team = new Team { Description = webApiTeam.Description, Id = webApiTeam.Id, Name = webApiTeam.Name, Url = webApiTeam.Url, Members = teamMembers.Select(m => new Member { Name = m.Identity.DisplayName, Url = m.Identity.Url, Id = m.Identity.Id, IsTeamAdmin = m.IsTeamAdmin }).ToList() };
+                var team = new Team { Description = webApiTeam.Description, Id = webApiTeam.Id, Name = webApiTeam.Name, Url = webApiTeam.Url, Members = members };
                 team.WorkspaceIds.Add(project.Id);
                 retVal.Add(team);
             }
@@ -160,5 +162,11 @@ public class AdsManager(string serverUrl, string accessToken, string[] ignoredRe
         var gitClient = _connection.GetClient<GitHttpClient>();
         var commit = gitClient.GetCommitAsync(commitId, repositoryId.ToString()).Result;
         return commit.Committer?.Email;
+    }
+    private string? GetEmailFromDescriptor(string descriptor)
+    {
+        var graphClient = _connection.GetClient<GraphHttpClient>();
+        var user = graphClient.GetUserAsync(descriptor).Result;
+        return user.MailAddress;
     }
 }

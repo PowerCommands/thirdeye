@@ -1,4 +1,6 @@
-﻿namespace PainKiller.ThirdEyeClient.DomainObjects;
+﻿using Microsoft.VisualStudio.Services.WebApi;
+
+namespace PainKiller.ThirdEyeClient.DomainObjects;
 
 public class Team
 {
