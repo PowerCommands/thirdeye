@@ -1,11 +1,8 @@
 ﻿namespace PainKiller.ThirdEyeClient.Commands;
 
 [CommandDesign(description: "Search for components",
-
     arguments: ["<search arguments>"],
-
     examples: ["//Search after components with the name hangfire", "search hangfire"])]
-
 public class SearchCommand(string identifier) : ThirdEyeBaseCommando(identifier)
 {
     public override RunResult Run(ICommandLineInput input)
