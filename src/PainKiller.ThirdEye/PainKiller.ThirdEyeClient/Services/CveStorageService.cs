@@ -1,6 +1,4 @@
-﻿using PainKiller.CommandPrompt.CoreLib.Core.DomainObjects;
-using PainKiller.CommandPrompt.CoreLib.Modules.StorageModule.Services;
-using PainKiller.ThirdEyeClient.BaseClasses;
+﻿using PainKiller.CommandPrompt.CoreLib.Modules.StorageModule.Services;
 using PainKiller.ThirdEyeClient.Contracts;
 using PainKiller.ThirdEyeClient.Data;
 

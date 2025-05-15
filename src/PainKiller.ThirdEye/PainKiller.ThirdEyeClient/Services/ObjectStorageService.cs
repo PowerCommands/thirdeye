@@ -1,5 +1,4 @@
-﻿using PainKiller.ThirdEyeClient.BaseClasses;
-using PainKiller.ThirdEyeClient.Contracts;
+﻿using PainKiller.ThirdEyeClient.Contracts;
 using PainKiller.ThirdEyeClient.Data;
 
 namespace PainKiller.ThirdEyeClient.Services;

@@ -1,5 +1,4 @@
-﻿using PainKiller.ThirdEyeClient.BaseClasses;
-using PainKiller.ThirdEyeClient.Configuration;
+﻿using PainKiller.ThirdEyeClient.Configuration;
 
 namespace PainKiller.ThirdEyeClient.Managers.Workflows;
 

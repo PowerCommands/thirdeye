@@ -1,7 +1,4 @@
-﻿using PainKiller.CommandPrompt.CoreLib.Core.DomainObjects;
-using PainKiller.CommandPrompt.CoreLib.Metadata.Attributes;
-using PainKiller.CommandPrompt.CoreLib.Modules.SecurityModule.Extensions;
-using PainKiller.ThirdEyeClient.BaseClasses;
+﻿using PainKiller.CommandPrompt.CoreLib.Modules.SecurityModule.Extensions;
 using PainKiller.ThirdEyeClient.Managers;
 
 namespace PainKiller.ThirdEyeClient.Commands;

@@ -1,8 +1,4 @@
-﻿using PainKiller.CommandPrompt.CoreLib.Core.DomainObjects;
-using PainKiller.CommandPrompt.CoreLib.Metadata.Attributes;
-using PainKiller.ThirdEyeClient.BaseClasses;
-
-namespace PainKiller.ThirdEyeClient.Commands;
+﻿namespace PainKiller.ThirdEyeClient.Commands;
 
 [CommandDesign(description: "Handle findings",
     arguments: [],
