@@ -1,6 +1,4 @@
-﻿using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
-
-namespace PainKiller.ThirdEyeClient.Configuration;
+﻿namespace PainKiller.ThirdEyeClient.Configuration;
 
 public class ThirdEyeConfiguration
 {

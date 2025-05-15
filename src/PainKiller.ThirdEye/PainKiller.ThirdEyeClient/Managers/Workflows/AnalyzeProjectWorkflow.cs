@@ -1,10 +1,5 @@
-﻿using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
-using PainKiller.CommandPrompt.CoreLib.Core.Presentation;
-using PainKiller.ThirdEyeClient.BaseClasses;
+﻿using PainKiller.ThirdEyeClient.BaseClasses;
 using PainKiller.ThirdEyeClient.Configuration;
-using PainKiller.ThirdEyeClient.DomainObjects;
-using PainKiller.ThirdEyeClient.Enums;
-using PainKiller.ThirdEyeClient.Services;
 
 namespace PainKiller.ThirdEyeClient.Managers.Workflows;
 

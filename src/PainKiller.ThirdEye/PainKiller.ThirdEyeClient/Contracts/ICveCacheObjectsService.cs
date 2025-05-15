@@ -1,6 +1,4 @@
-﻿using PainKiller.ThirdEyeClient.DomainObjects.Nvd;
-
-namespace PainKiller.ThirdEyeClient.Contracts;
+﻿namespace PainKiller.ThirdEyeClient.Contracts;
 public interface ICveCacheObjectsService
 {
     List<CveDetailResponse> CveDetails { get; set; }

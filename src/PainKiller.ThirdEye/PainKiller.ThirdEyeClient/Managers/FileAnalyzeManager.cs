@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using PainKiller.ThirdEyeClient.Contracts;
-using PainKiller.ThirdEyeClient.DomainObjects;
 
 namespace PainKiller.ThirdEyeClient.Managers;
 

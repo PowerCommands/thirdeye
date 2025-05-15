@@ -1,6 +1,4 @@
-﻿using PainKiller.ThirdEyeClient.Enums;
-
-namespace PainKiller.ThirdEyeClient.DomainObjects;
+﻿namespace PainKiller.ThirdEyeClient.DomainObjects;
 
 public class AnalyzeCache
 {

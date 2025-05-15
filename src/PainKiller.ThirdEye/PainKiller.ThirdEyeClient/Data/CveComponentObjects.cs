@@ -1,6 +1,4 @@
 ﻿using PainKiller.ThirdEyeClient.Contracts;
-using PainKiller.ThirdEyeClient.DomainObjects;
-using PainKiller.ThirdEyeClient.Enums;
 
 namespace PainKiller.ThirdEyeClient.Data;
 public class CveComponentObjects : IDataObjects<ComponentCve>

@@ -1,13 +1,9 @@
 ﻿using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
-using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Logging.Services;
 using PainKiller.ThirdEyeClient.Contracts;
-using PainKiller.ThirdEyeClient.DomainObjects;
 using PainKiller.ThirdEyeClient.DomainObjects.Github;
-using PainKiller.ThirdEyeClient.Extensions;
 
 namespace PainKiller.ThirdEyeClient.Managers;
 

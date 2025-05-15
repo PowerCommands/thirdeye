@@ -1,7 +1,6 @@
 ﻿using PainKiller.ThirdEyeClient.BaseClasses;
 using PainKiller.ThirdEyeClient.Contracts;
 using PainKiller.ThirdEyeClient.Data;
-using PainKiller.ThirdEyeClient.DomainObjects;
 
 namespace PainKiller.ThirdEyeClient.Services;
 public class ObjectStorageService : StorageBase, IObjectStorageService

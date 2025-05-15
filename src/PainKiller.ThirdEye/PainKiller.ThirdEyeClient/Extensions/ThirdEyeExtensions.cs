@@ -1,8 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using PainKiller.ThirdEyeClient.Configuration;
-using PainKiller.ThirdEyeClient.DomainObjects;
-using PainKiller.ThirdEyeClient.Enums;
 
 namespace PainKiller.ThirdEyeClient.Extensions;
 

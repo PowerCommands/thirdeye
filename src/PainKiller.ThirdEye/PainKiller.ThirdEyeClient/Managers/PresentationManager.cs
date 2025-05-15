@@ -1,15 +1,4 @@
-﻿using System.Xml.Linq;
-using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
-using PainKiller.CommandPrompt.CoreLib.Core.Enums;
-using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
-using PainKiller.CommandPrompt.CoreLib.Core.Presentation;
-using PainKiller.ThirdEyeClient.DomainObjects;
-using PainKiller.ThirdEyeClient.DomainObjects.Nvd;
-using PainKiller.ThirdEyeClient.Enums;
-using PainKiller.ThirdEyeClient.Extensions;
-using PainKiller.ThirdEyeClient.Services;
-
-namespace PainKiller.ThirdEyeClient.Managers;
+﻿namespace PainKiller.ThirdEyeClient.Managers;
 
 public class PresentationManager(IConsoleWriter writer)
 {

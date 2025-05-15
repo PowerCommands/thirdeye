@@ -1,6 +1,4 @@
-﻿using PainKiller.ThirdEyeClient.DomainObjects;
-
-namespace PainKiller.ThirdEyeClient.Contracts;
+﻿namespace PainKiller.ThirdEyeClient.Contracts;
 
 public interface IObjectStorageService
 {

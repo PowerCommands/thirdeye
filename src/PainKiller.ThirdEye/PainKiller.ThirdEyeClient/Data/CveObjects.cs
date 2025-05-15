@@ -1,6 +1,4 @@
-﻿using PainKiller.ThirdEyeClient.DomainObjects.Nvd;
-
-namespace PainKiller.ThirdEyeClient.Data;
+﻿namespace PainKiller.ThirdEyeClient.Data;
 
 public class CveObjects
 {

@@ -1,7 +1,4 @@
-﻿using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
-using PainKiller.ThirdEyeClient.DomainObjects;
-
-namespace PainKiller.ThirdEyeClient.Managers;
+﻿namespace PainKiller.ThirdEyeClient.Managers;
 
 public class ReportManager(string fileName = "report.md")
 {

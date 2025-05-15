@@ -3,11 +3,7 @@ using PainKiller.CommandPrompt.CoreLib.Modules.SecurityModule.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Modules.ShellModule.Services;
 using PainKiller.ThirdEyeClient.Configuration;
 using PainKiller.ThirdEyeClient.Contracts;
-using PainKiller.ThirdEyeClient.DomainObjects;
-using PainKiller.ThirdEyeClient.Enums;
-using PainKiller.ThirdEyeClient.Extensions;
 using PainKiller.ThirdEyeClient.Managers;
-using PainKiller.ThirdEyeClient.Services;
 
 namespace PainKiller.ThirdEyeClient.BaseClasses;
 public abstract class ThirdEyeBaseCommando(string identifier) : ConsoleCommandBase<CommandPromptConfiguration>(identifier)

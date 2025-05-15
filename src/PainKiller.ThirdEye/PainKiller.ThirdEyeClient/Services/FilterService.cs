@@ -1,5 +1,4 @@
 ﻿using PainKiller.ThirdEyeClient.Contracts;
-using PainKiller.ThirdEyeClient.DomainObjects;
 
 namespace PainKiller.ThirdEyeClient.Services;
 public class FilterService

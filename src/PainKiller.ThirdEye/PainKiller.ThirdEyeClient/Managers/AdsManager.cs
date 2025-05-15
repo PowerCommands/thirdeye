@@ -5,10 +5,8 @@ using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.Identity;
 using Microsoft.VisualStudio.Services.Identity.Client;
 using Microsoft.VisualStudio.Services.WebApi;
-using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
 using PainKiller.CommandPrompt.CoreLib.Logging.Services;
 using PainKiller.ThirdEyeClient.Contracts;
-using PainKiller.ThirdEyeClient.DomainObjects;
 
 namespace PainKiller.ThirdEyeClient.Managers;
 public class AdsManager(string serverUrl, string accessToken, string[] ignoredRepositories, string[] ignoredProjects ,IConsoleWriter writer) : IGitManager

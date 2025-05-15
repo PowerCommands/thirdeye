@@ -1,7 +1,4 @@
-﻿using PainKiller.ThirdEyeClient.DomainObjects.Nvd;
-using PainKiller.ThirdEyeClient.Enums;
-
-namespace PainKiller.ThirdEyeClient.DomainObjects;
+﻿namespace PainKiller.ThirdEyeClient.DomainObjects;
 
 public class Finding
 {

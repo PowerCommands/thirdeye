@@ -1,7 +1,5 @@
 ﻿using PainKiller.ThirdEyeClient.Data;
-using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
 using PainKiller.CommandPrompt.CoreLib.Core.DomainObjects;
-using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Metadata.Attributes;
 using PainKiller.CommandPrompt.CoreLib.Modules.ShellModule.Services;
 using PainKiller.ThirdEyeClient.BaseClasses;

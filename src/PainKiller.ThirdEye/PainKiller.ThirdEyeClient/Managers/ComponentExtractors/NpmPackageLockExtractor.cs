@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using PainKiller.ThirdEyeClient.Contracts;
-using PainKiller.ThirdEyeClient.DomainObjects;
 
 namespace PainKiller.ThirdEyeClient.Managers.ComponentExtractors;
 public class NpmPackageLockExtractor : IComponentExtractor

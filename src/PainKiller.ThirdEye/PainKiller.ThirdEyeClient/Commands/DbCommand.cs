@@ -1,15 +1,10 @@
-﻿using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
-using PainKiller.CommandPrompt.CoreLib.Core.DomainObjects;
-using PainKiller.CommandPrompt.CoreLib.Core.Enums;
-using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
-using PainKiller.CommandPrompt.CoreLib.Core.Presentation;
+﻿using PainKiller.CommandPrompt.CoreLib.Core.DomainObjects;
 using PainKiller.CommandPrompt.CoreLib.Metadata.Attributes;
 using PainKiller.CommandPrompt.CoreLib.Modules.InfoPanelModule.DomainObjects;
 using PainKiller.CommandPrompt.CoreLib.Modules.InfoPanelModule.Services;
 using PainKiller.CommandPrompt.CoreLib.Modules.ShellModule.Services;
 using PainKiller.ThirdEyeClient.BaseClasses;
 using PainKiller.ThirdEyeClient.Bootstrap;
-using PainKiller.ThirdEyeClient.DomainObjects;
 
 namespace PainKiller.ThirdEyeClient.Commands;
 

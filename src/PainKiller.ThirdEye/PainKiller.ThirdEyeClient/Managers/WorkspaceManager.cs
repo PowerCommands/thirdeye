@@ -1,8 +1,5 @@
-﻿using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
-using PainKiller.ThirdEyeClient.Configuration;
+﻿using PainKiller.ThirdEyeClient.Configuration;
 using PainKiller.ThirdEyeClient.Contracts;
-using PainKiller.ThirdEyeClient.DomainObjects;
-using PainKiller.ThirdEyeClient.Extensions;
 
 namespace PainKiller.ThirdEyeClient.Managers;
 public class WorkspaceManager(IGitManager gitManager, IObjectStorageService storage, IFileAnalyzeManager analyzeManager, IConsoleWriter writer, ThirdEyeConfiguration configuration)

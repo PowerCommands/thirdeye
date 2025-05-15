@@ -2,7 +2,6 @@
 using System.Xml;
 using Microsoft.Extensions.Logging;
 using PainKiller.CommandPrompt.CoreLib.Logging.Services;
-using PainKiller.ThirdEyeClient.DomainObjects;
 
 namespace PainKiller.ThirdEyeClient.Managers;
 

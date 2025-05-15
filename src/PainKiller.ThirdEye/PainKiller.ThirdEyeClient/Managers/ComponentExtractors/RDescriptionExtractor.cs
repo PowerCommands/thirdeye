@@ -1,5 +1,4 @@
 ﻿using PainKiller.ThirdEyeClient.Contracts;
-using PainKiller.ThirdEyeClient.DomainObjects;
 
 namespace PainKiller.ThirdEyeClient.Managers.ComponentExtractors;
 public class RDescriptionExtractor : IComponentExtractor

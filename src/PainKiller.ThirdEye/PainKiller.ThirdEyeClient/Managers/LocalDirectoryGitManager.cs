@@ -1,7 +1,4 @@
-﻿using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
-using PainKiller.CommandPrompt.CoreLib.Core.Extensions;
-using PainKiller.ThirdEyeClient.Contracts;
-using PainKiller.ThirdEyeClient.DomainObjects;
+﻿using PainKiller.ThirdEyeClient.Contracts;
 
 namespace PainKiller.ThirdEyeClient.Managers;
 

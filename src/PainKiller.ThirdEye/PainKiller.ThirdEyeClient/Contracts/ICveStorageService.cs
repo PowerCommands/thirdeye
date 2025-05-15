@@ -1,8 +1,4 @@
-﻿using PainKiller.CommandPrompt.CoreLib.Core.Contracts;
-using PainKiller.ThirdEyeClient.DomainObjects;
-using PainKiller.ThirdEyeClient.DomainObjects.Nvd;
-
-namespace PainKiller.ThirdEyeClient.Contracts;
+﻿namespace PainKiller.ThirdEyeClient.Contracts;
 
 public interface ICveStorageService
 {
