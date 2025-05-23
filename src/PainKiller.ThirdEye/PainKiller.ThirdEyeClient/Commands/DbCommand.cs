@@ -16,7 +16,7 @@ public class DbCommand(string identifier) : ThirdEyeBaseCommando(identifier)
         if (!Directory.Exists(Configuration.ThirdEye.BackupPath)) Directory.CreateDirectory(Configuration.ThirdEye.BackupPath);
         if (!Directory.Exists(Configuration.ThirdEye.Nvd.Path)) Directory.CreateDirectory(Configuration.ThirdEye.Nvd.Path);
         if (!Directory.Exists(Configuration.ThirdEye.Nvd.PathToUpdates)) Directory.CreateDirectory(Configuration.ThirdEye.Nvd.PathToUpdates);
-        InfoPanelService.Instance.RegisterContent(new DefaultInfoPanel(new ThirdEyeInfoPanelContent(Configuration.ThirdEye)));
+        InfoPanelService.Instance.RegisterContent(new DefaultInfoPanel(new ThirdEyeInfoPanelContent(Configuration.ThirdEye), Configuration.Core.Modules.InfoPanel));
     }
 
     public override RunResult Run(ICommandLineInput input)

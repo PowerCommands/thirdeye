@@ -1,8 +1,10 @@
-﻿using PainKiller.CommandPrompt.CoreLib.Core.BaseClasses;
+﻿using System.ComponentModel;
+using PainKiller.CommandPrompt.CoreLib.Core.BaseClasses;
 using PainKiller.CommandPrompt.CoreLib.Modules.SecurityModule.Extensions;
 using PainKiller.CommandPrompt.CoreLib.Modules.ShellModule.Services;
 using PainKiller.ThirdEyeClient.Configuration;
 using PainKiller.ThirdEyeClient.Contracts;
+using PainKiller.ThirdEyeClient.DomainObjects;
 using PainKiller.ThirdEyeClient.Managers;
 
 namespace PainKiller.ThirdEyeClient.BaseClasses;
@@ -45,8 +47,8 @@ public abstract class ThirdEyeBaseCommando(string identifier) : ConsoleCommandBa
             }
         }
         PresentationManager.DisplayOrganization(Configuration.ThirdEye.OrganizationName, workspaces, repos, teams, projects, component, skipEmpty: true);
-        var reportManager = new ReportManager(Path.Combine(AppContext.BaseDirectory, $"component_report"));
-        reportManager.Create(Configuration.ThirdEye.OrganizationName, repos, projects, component);
+        var fileName = CreateReport(repos, projects, component.Name);
+        Writer.WriteSuccessLine($"Successfully write a report to file: {fileName}");
     }
 
     protected void ComponentSearch(ThirdPartyComponent component, bool detailedSearch)
@@ -64,9 +66,14 @@ public abstract class ThirdEyeBaseCommando(string identifier) : ConsoleCommandBa
             }
         }
         PresentationManager.DisplayComponents(Configuration.ThirdEye.OrganizationName, workspaces, repos, teams, projects, component, skipEmpty: true);
-        var reportManager = new ReportManager(Path.Combine(AppContext.BaseDirectory, $"component_report"));
-        var fileName = reportManager.Create(Configuration.ThirdEye.OrganizationName, repos, projects, component);
+        var fileName = CreateReport(repos, projects, component.Name);
         Writer.WriteSuccessLine($"Successfully write a report to file: {fileName}");
+    }
+    protected string CreateReport(List<Repository> repos, List<Project> projects, string filter)
+    {
+        var reportManager = new ReportManager(Path.Combine(AppContext.BaseDirectory, $"component_report"));
+        var fileName = reportManager.Create(Configuration.ThirdEye.OrganizationName, repos, projects, filter);
         ShellService.Default.OpenWithDefaultProgram(fileName);
+        return fileName;
     }
 }

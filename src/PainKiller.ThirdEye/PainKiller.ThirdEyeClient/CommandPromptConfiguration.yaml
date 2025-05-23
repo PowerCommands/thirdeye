@@ -56,6 +56,8 @@ configuration:
         enabled: true
         height: 2
         updateIntervalSeconds: -1
+        backgroundColor: DarkMagenta
+        foregroundColor: white
   log:
     fileName: commandprompt.log
     filePath: logs

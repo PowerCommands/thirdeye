@@ -18,9 +18,11 @@ public class VersionCommand(string identifier) : ThirdEyeBaseCommando(identifier
                 Name = g.Key,
                 Versions = g.Select(c => c.Version).Distinct().OrderBy(v => v).ToList()
             })
+            .Where(g => g.Versions.Count > 1)
             .OrderByDescending(g => g.Versions.Count)
             .ThenBy(g => g.Name)
             .ToList();
+
         InteractiveFilter<ComponentVersionGroup>.Run(
             grouped,
             (component, filterString) => component.Name.ToLower().Contains(filterString.ToLower()),
@@ -28,11 +30,10 @@ public class VersionCommand(string identifier) : ThirdEyeBaseCommando(identifier
             {
                 Console.Clear();
                 Console.WriteLine("Choose a component (use arrow keys and Enter):");
-                var list2 = list.ToList();
-                for (int i = 0; i < list2.Count; i++)
+                var listExpanded = list.ToList();
+                for (int i = 0; i < listExpanded.Count; i++)
                 {
-                    var item = list2[i];
-                    if (item.Versions.Count < 2) continue;
+                    var item = listExpanded[i];
                     var prefix = i == selectedIndex ? "> " : "  ";
                     Console.WriteLine($"{prefix}{item.Name} ({item.Versions.Count})");
                 }
@@ -41,44 +42,72 @@ public class VersionCommand(string identifier) : ThirdEyeBaseCommando(identifier
             {
                 if (selectedGroup == null) return;
 
-                if (selectedGroup.Versions.Count == 1)
+                var versionSelection = ListService.ListDialog(
+                    $"Choose the latest (ok) version of {selectedGroup.Name}",
+                    selectedGroup.Versions.ToList()
+                );
+
+                if (versionSelection.Count == 0) return;
+
+                var selectedVersion = selectedGroup.Versions[versionSelection.First().Key];
+                var olderVersions = selectedGroup.Versions.Where(v => string.Compare(v, selectedVersion, StringComparison.OrdinalIgnoreCase) < 0).ToList();
+
+                if (olderVersions.Count == 0)
                 {
-                    ShowUsage(selectedGroup.Name, selectedGroup.Versions.First());
+                    Writer.WriteLine("No older versions found.");
                     return;
                 }
-                var versionSelection = ListService.ListDialog($"Choose a version of {selectedGroup.Name}", selectedGroup.Versions.ToList());
-                if (versionSelection.Count == 0) return;
-                var selectedVersion = selectedGroup.Versions[versionSelection.First().Key];
-                ShowUsage(selectedGroup.Name, selectedVersion);
+
+                var projects = new List<Project>();
+                var repos = new List<Repository>();
+                var name = selectedGroup.Name;
+
+                var existingProjectIds = new HashSet<string>();
+                var existingRepoIds = new HashSet<Guid>();
+
+                foreach (var oldVersion in olderVersions)
+                {
+                    var matchedProjects = Storage.GetProjects()
+                        .Where(p => p.Components.Any(c => c.Name == name && c.Version == oldVersion) && existingProjectIds.Add(p.Path))
+                        .ToList();
+
+                    projects.AddRange(matchedProjects);
+
+                    var matchedRepos = Storage.GetRepositories()
+                        .Where(r => matchedProjects.Any(p => p.RepositoryId == r.RepositoryId) && existingRepoIds.Add(r.RepositoryId))
+                        .ToList();
+
+                    repos.AddRange(matchedRepos);
+                }
+
+                ShowUsage(selectedGroup.Name, projects, repos);
             }
         );
         return Ok();
     }
-    private void ShowUsage(string componentName, string version)
+    private void ShowUsage(string componentName, List<Project> projects, List<Repository> repos)
     {
-        var projects = Storage.GetProjects().Where(p => p.Components.Any(c => c.Name == componentName && c.Version == version)).ToList();
-        var repos = Storage.GetRepositories().Where(r => projects.Any(p => p.RepositoryId == r.RepositoryId)).ToList();
-
-        Console.Clear();
-        Console.WriteLine($"Component: {componentName}");
-        Console.WriteLine($"Version: {version}");
-        Console.WriteLine($"\nUsed in {projects.Count} project(s):\n");
+        Writer.WriteSeparator();
+        Writer.WriteLine($"Component: {componentName}");
+        Writer.WriteLine($"\nUsed in {projects.Count} project(s):\n");
 
         foreach (var project in projects)
         {
             var repo = repos.FirstOrDefault(r => r.RepositoryId == project.RepositoryId);
             var repoName = repo?.Name ?? "Unknown Repo";
 
-            var matchingComponent = project.Components.FirstOrDefault(c => c.Name == componentName && c.Version == version);
+            var matchingComponent = project.Components.FirstOrDefault(c => c.Name == componentName);
             var user = matchingComponent?.UserId;
             var userDisplay = string.IsNullOrWhiteSpace(user) ? "" : $" (User: {user})";
 
-            Console.WriteLine($"- {project.Name} [{repoName}]{userDisplay}");
+            Console.WriteLine($"{componentName} {matchingComponent?.Version} - {project.Name} [{repoName}]{userDisplay}");
         }
+        var fileName = CreateReport(repos, projects, componentName);
+        Writer.WriteSuccessLine($"Successfully write a report to file: {fileName}");
     }
     private class ComponentVersionGroup
     {
-        public string Name { get; set; } = string.Empty;
-        public List<string> Versions { get; set; } = new();
+        public string Name { get; init; } = string.Empty;
+        public List<string> Versions { get; init; } = new();
     }
 }
